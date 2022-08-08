@@ -1,0 +1,8 @@
+# Data clearing jobs > clear expired login limits
+1 */6 * * * $SERVER_BACKEND_FOLDER/venv/bin/python3 $SERVER_BACKEND_FOLDER/backend_main/db_operations/scheduled/clear_expired_login_limits.py
+
+# Data clearing jobs > clear expired login limits
+2 */6 * * * $SERVER_BACKEND_FOLDER/venv/bin/python3 $SERVER_BACKEND_FOLDER/backend_main/db_operations/scheduled/clear_expired_sessions.py
+
+# Update missing searchable data
+0 */12 * * * $SERVER_BACKEND_FOLDER/venv/bin/python3 $SERVER_BACKEND_FOLDER/backend_main/db_operations/scheduled/update_searchables.py

@@ -1,0 +1,49 @@
+{
+    "app": {
+        "host": "$BACKEND_SETTING_APP_HOST",
+        "port": $BACKEND_SETTING_APP_PORT,
+        "use_forwarded": $BACKEND_SETTING_USE_FORWARDED,
+        "debug": $BACKEND_SETTING_DEBUG,
+        "default_user": {
+            "login": "$BACKEND_SETTING_DEFAULT_USER_LOGIN",
+            "password": "$BACKEND_SETTING_DEFAULT_USER_PASSWORD",
+            "username": "$BACKEND_SETTING_DEFAULT_USER_USERNAME"
+        },
+        "token_lifetime": $BACKEND_SETTING_TOKEN_LIFETIME,
+
+        "composite_hierarchy_max_depth": $BACKEND_SETTING_MAX_HIERARCHY_DEPTH
+    },
+
+    "cors_urls": ["http://$SERVER_ADDR", "https://$SERVER_ADDR"],
+
+    "db": {
+        "db_host": "$BACKEND_SETTING_DB_DATABASE_HOST",
+        "db_port": $BACKEND_SETTING_DB_DATABASE_PORT,
+        
+        "db_init_database": "$BACKEND_SETTING_DB_INIT_DATABASE",
+        "db_init_username": "$BACKEND_SETTING_DB_INIT_USERNAME",
+        "db_init_password": "$BACKEND_SETTING_DB_INIT_PASSWORD",
+        
+        "db_database": "$BACKEND_SETTING_DB_DATABASE",
+        "db_username": "$BACKEND_SETTING_DB_USERNAME",
+        "db_password": "$BACKEND_SETTING_DB_PASSWORD"
+    },
+
+    "auxillary": {
+        "enable_searchables_updates": $BACKEND_SETTING_ENABLE_SEARCHABLE_UPDATES
+    },
+
+    "logging": {
+        "folder": "$BACKEND_SETTING_LOGGING_FOLDER",
+        "file_separator": "$BACKEND_SETTING_LOGGING_FILE_SEPARATOR",
+        "file_separator_replacement": "$BACKEND_SETTING_LOGGING_FILE_SEPARATOR_REPLACEMENT",
+
+        "app_event_log_mode": "$BACKEND_SETTING_LOGGING_APP_EVENT_LOGGING_MODE",
+        "app_event_log_file_mode_interval": $BACKEND_SETTING_LOGGING_APP_EVENT_LOGGING_FILE_MODE_INTERVAL,
+        "app_access_log_mode": "$BACKEND_SETTING_LOGGING_APP_ACCESS_LOGGING_MODE",
+        "app_access_log_file_mode_interval": $BACKEND_SETTING_LOGGING_APP_ACCESS_LOGGING_FILE_MODE_INTERVAL,
+
+        "db_mode": "$BACKEND_SETTING_LOGGING_DB_LOGGING_MODE",
+        "scheduled_mode": "$BACKEND_SETTING_LOGGING_SCHEDULED_LOGGING_MODE"
+    }
+}

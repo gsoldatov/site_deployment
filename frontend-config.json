@@ -1,0 +1,12 @@
+{
+    "app": {
+        "backendURL": "https://$SERVER_ADDR:$SERVER_BACKEND_HTTPS_PORT",
+        "compositeChapters": {
+            "maxHierarchyDepth": $BACKEND_SETTING_MAX_HIERARCHY_DEPTH
+        }
+    },
+
+    "server": {
+        "port": $FRONTEND_SETTING_EXPRESS_PORT
+    }
+}
