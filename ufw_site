@@ -1,0 +1,10 @@
+# UFW rules for site frontend & backend
+[Site Frontend]
+title=Site frontend (HTTP + HTTPS)
+description=Rules for site frontend
+ports=$SERVER_FRONTEND_HTTP_PORT,$SERVER_FRONTEND_HTTPS_PORT/tcp
+
+[Site Backend]
+title=Site backend (HTTP + HTTPS)
+description=Rules for site backend
+ports=$SERVER_BACKEND_HTTP_PORT,$SERVER_BACKEND_HTTPS_PORT/tcp
