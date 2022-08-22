@@ -29,8 +29,8 @@ npm install;
 
 # Build and copy production config
 # NOTE: run on local machine
-envsubst <$LOCAL_SITE_FOLDER/deployment/templates/frontend-config.json > $LOCAL_SITE_FOLDER/deployment/build/frontend-config.json;
-scp $LOCAL_SITE_FOLDER/deployment/build/frontend-config.json $SERVER_USER@$SERVER_ADDR:$SERVER_FRONTEND_FOLDER/src;
+envsubst <$LOCAL_SITE_FOLDER/deployment/manual/templates/frontend-config.json > $LOCAL_SITE_FOLDER/deployment/manual/build/frontend-config.json;
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/frontend-config.json $SERVER_USER@$SERVER_ADDR:$SERVER_FRONTEND_FOLDER/src;
 
 # NOTE: run on production server
 mv -f $SERVER_FRONTEND_FOLDER/src/frontend-config.json $SERVER_FRONTEND_FOLDER/src/config.json;
@@ -81,8 +81,8 @@ pip install -r requirements.txt;
 
 # Build and copy production config
 # NOTE: run on local machine
-envsubst <$LOCAL_SITE_FOLDER/deployment/templates/backend-config.json > $LOCAL_SITE_FOLDER/deployment/build/backend-config.json;
-scp $LOCAL_SITE_FOLDER/deployment/build/backend-config.json $SERVER_USER@$SERVER_ADDR:$SERVER_BACKEND_FOLDER/backend_main;
+envsubst <$LOCAL_SITE_FOLDER/deployment/manual/templates/backend-config.json > $LOCAL_SITE_FOLDER/deployment/manual/build/backend-config.json;
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/backend-config.json $SERVER_USER@$SERVER_ADDR:$SERVER_BACKEND_FOLDER/backend_main;
 
 # NOTE: run on production server
 mv -f $SERVER_BACKEND_FOLDER/backend_main/backend-config.json $SERVER_BACKEND_FOLDER/backend_main/config.json;
@@ -96,8 +96,8 @@ python -m backend_main.db;
 
 # Copy systemd backend unit configuration
 # NOTE: run on local machine
-envsubst <$LOCAL_SITE_FOLDER/deployment/templates/site_backend.service > $LOCAL_SITE_FOLDER/deployment/build/site_backend.service;
-scp $LOCAL_SITE_FOLDER/deployment/build/site_backend.service $SERVER_USER@$SERVER_ADDR:/etc/systemd/system;
+envsubst <$LOCAL_SITE_FOLDER/deployment/manual/templates/site_backend.service > $LOCAL_SITE_FOLDER/deployment/manual/build/site_backend.service;
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/site_backend.service $SERVER_USER@$SERVER_ADDR:/etc/systemd/system;
 
 # Reload systemd & start service
 # NOTE: run on production server
@@ -108,8 +108,8 @@ systemctl enable site_backend;
 ############################# Database scheduled jobs #############################
 # Generate and copy crontab for the site user
 # NOTE: run on local machine
-envsubst <$LOCAL_SITE_FOLDER/deployment/templates/crontab_site > $LOCAL_SITE_FOLDER/deployment/build/crontab_site;
-scp $LOCAL_SITE_FOLDER/deployment/build/crontab_site $SERVER_USER@$SERVER_ADDR:$SERVER_BACKEND_FOLDER;
+envsubst <$LOCAL_SITE_FOLDER/deployment/manual/templates/crontab_site > $LOCAL_SITE_FOLDER/deployment/manual/build/crontab_site;
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/crontab_site $SERVER_USER@$SERVER_ADDR:$SERVER_BACKEND_FOLDER;
 
 # NOTE: run on production server
 cat $SERVER_BACKEND_FOLDER/crontab_site | crontab -u $SITE_USER -;
@@ -122,21 +122,21 @@ apt install -y nginx;
 
 # Build & copy production config files
 # NOTE: run on local machine
-envsubst <$LOCAL_SITE_FOLDER/deployment/templates/nginx.conf | tail -n +7 | sed -e 's/§/$/g' > $LOCAL_SITE_FOLDER/deployment/build/nginx.conf;    # Substitute environment variables -> remove starting comments -> substitute dollar signs
-scp $LOCAL_SITE_FOLDER/deployment/build/nginx.conf $SERVER_USER@$SERVER_ADDR:/etc/nginx;
-scp $LOCAL_SITE_FOLDER/deployment/immutable/nginx_forwarded_header $SERVER_USER@$SERVER_ADDR:/etc/nginx;
+envsubst <$LOCAL_SITE_FOLDER/deployment/manual/templates/nginx.conf | tail -n +7 | sed -e 's/§/$/g' > $LOCAL_SITE_FOLDER/deployment/manual/build/nginx.conf;    # Substitute environment variables -> remove starting comments -> substitute dollar signs
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/nginx.conf $SERVER_USER@$SERVER_ADDR:/etc/nginx;
+scp $LOCAL_SITE_FOLDER/deployment/manual/immutable/nginx_forwarded_header $SERVER_USER@$SERVER_ADDR:/etc/nginx;
 
 # HTTPS self-signed certificate & key
-openssl req -x509 -noenc -newkey rsa:2048 -days 3650 -keyout $LOCAL_SITE_FOLDER/deployment/build/site.key -out $LOCAL_SITE_FOLDER/deployment/build/site.crt -subj "/";
-scp $LOCAL_SITE_FOLDER/deployment/build/site.crt $SERVER_USER@$SERVER_ADDR:/etc/ssl;
-scp $LOCAL_SITE_FOLDER/deployment/build/site.key $SERVER_USER@$SERVER_ADDR:/etc/ssl;
+openssl req -x509 -noenc -newkey rsa:2048 -days 3650 -keyout $LOCAL_SITE_FOLDER/deployment/manual/build/site.key -out $LOCAL_SITE_FOLDER/deployment/manual/build/site.crt -subj "/";
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/site.crt $SERVER_USER@$SERVER_ADDR:/etc/ssl;
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/site.key $SERVER_USER@$SERVER_ADDR:/etc/ssl;
 
 # NOTE: run on production server
 systemctl reload nginx;
 
 # Enable log rotation for Nginx (default is daily with 14 )
 # NOTE: run on local machine
-scp $LOCAL_SITE_FOLDER/deployment/immutable/logrotate_nginx $SERVER_USER@$SERVER_ADDR:/etc/logrotate.d;
+scp $LOCAL_SITE_FOLDER/deployment/manual/immutable/logrotate_nginx $SERVER_USER@$SERVER_ADDR:/etc/logrotate.d;
 
 # NOTE: run on production server
 mv -f /etc/logrotate.d/logrotate_nginx /etc/logrotate.d/nginx;
@@ -144,8 +144,8 @@ mv -f /etc/logrotate.d/logrotate_nginx /etc/logrotate.d/nginx;
 ############################# UFW configuration #############################
 # Build & copy site rules
 # NOTE: run on local machine
-envsubst <$LOCAL_SITE_FOLDER/deployment/templates/ufw_site > $LOCAL_SITE_FOLDER/deployment/build/ufw_site;
-scp $LOCAL_SITE_FOLDER/deployment/build/ufw_site $SERVER_USER@$SERVER_ADDR:/etc/ufw/applications.d;
+envsubst <$LOCAL_SITE_FOLDER/deployment/manual/templates/ufw_site > $LOCAL_SITE_FOLDER/deployment/manual/build/ufw_site;
+scp $LOCAL_SITE_FOLDER/deployment/manual/build/ufw_site $SERVER_USER@$SERVER_ADDR:/etc/ufw/applications.d;
 
 # NOTE: run on production server
 mv -f /etc/ufw/applications.d/ufw_site /etc/ufw/applications.d/site;
