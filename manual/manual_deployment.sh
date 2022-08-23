@@ -40,7 +40,7 @@ npm run build;
 
 # Set ownership & permissions
 chown -R root:$SITE_USER $SERVER_FRONTEND_FOLDER;
-chmod -R 664 $SERVER_FRONTEND_FOLDER;
+chmod -R 774 $SERVER_FRONTEND_FOLDER;
 
 ############################# Backend #############################
 # Python & dependencies
@@ -89,7 +89,7 @@ mv -f $SERVER_BACKEND_FOLDER/backend_main/backend-config.json $SERVER_BACKEND_FO
 
 # Set ownership & permissions
 chown -R root:$SITE_USER $SERVER_BACKEND_FOLDER;
-chmod -R 664 $SERVER_BACKEND_FOLDER;
+chmod -R 774 $SERVER_BACKEND_FOLDER;
 
 # Apply database migrations
 python -m backend_main.db;
