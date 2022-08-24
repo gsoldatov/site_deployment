@@ -1,0 +1,12 @@
+{
+    "app": {
+        "backendURL": "https://{{ server_addr }}:{{ server_backend_https_port }}",
+        "compositeChapters": {
+            "maxHierarchyDepth": {{ backend_setting_max_hierarchy_depth }}
+        }
+    },
+
+    "server": {
+        "port": {{ frontend_setting_express_port }}
+    }
+}

@@ -1,0 +1,49 @@
+{
+    "app": {
+        "host": "{{ backend_setting_app_host }}",
+        "port": {{ backend_setting_app_port }},
+        "use_forwarded": {{ backend_setting_use_forwarded }},
+        "debug": {{ backend_setting_debug }},
+        "default_user": {
+            "login": "{{ backend_setting_default_user_login }}",
+            "password": "{{ backend_setting_default_user_password }}",
+            "username": "{{ backend_setting_default_user_username }}"
+        },
+        "token_lifetime": {{ backend_setting_token_lifetime }},
+
+        "composite_hierarchy_max_depth": {{ backend_setting_max_hierarchy_depth }}
+    },
+
+    "cors_urls": ["http://{{ server_addr }}", "https://{{ server_addr }}"],
+
+    "db": {
+        "db_host": "{{ backend_setting_db_database_host }}",
+        "db_port": {{ backend_setting_db_database_port }},
+        
+        "db_init_database": "{{ backend_setting_db_init_database }}",
+        "db_init_username": "{{ backend_setting_db_init_username }}",
+        "db_init_password": "{{ backend_setting_db_init_password }}",
+        
+        "db_database": "{{ backend_setting_db_database }}",
+        "db_username": "{{ backend_setting_db_username }}",
+        "db_password": "{{ backend_setting_db_password }}"
+    },
+
+    "auxillary": {
+        "enable_searchables_updates": {{ backend_setting_enable_searchable_updates }}
+    },
+
+    "logging": {
+        "folder": "{{ backend_setting_logging_folder }}",
+        "file_separator": "{{ backend_setting_loggine_file_separator }}",
+        "file_separator_replacement": "{{ backend_setting_logging_file_separator_replacement }}",
+
+        "app_event_log_mode": "{{ backend_setting_logging_app_event_logging_mode }}",
+        "app_event_log_file_mode_interval": {{ backend_setting_logging_app_event_logging_file_mode_interval }},
+        "app_access_log_mode": "{{ backend_setting_logging_app_access_logging_mode }}",
+        "app_access_log_file_mode_interval": {{ backend_setting_logging_app_access_logging_file_mode_interval }},
+
+        "db_mode": "{{ backend_setting_logging_db_logging_mode }}",
+        "scheduled_mode": "{{ backend_setting_logging_scheduled_logging_mode }}"
+    }
+}

@@ -1,0 +1,14 @@
+[Unit]
+Description=Site backend app server
+
+[Service]
+User={{ site_user }}
+WorkingDirectory={{ backend_folder }}
+ExecStart={{ backend_folder }}/venv/bin/python3 -m backend_main
+
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+# Run when system is ready
+WantedBy=multi-user.target

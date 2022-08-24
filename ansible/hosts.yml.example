@@ -1,0 +1,5 @@
+all:
+  hosts:
+    srv:
+      ansible_host: $SERVER_ADDR
+      ansible_user: $SERVER_USER

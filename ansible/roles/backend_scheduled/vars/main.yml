@@ -1,0 +1,2 @@
+site_user: "{{ lookup('env', 'SITE_USER') }}"
+backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"

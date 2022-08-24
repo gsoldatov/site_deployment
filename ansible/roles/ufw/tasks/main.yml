@@ -1,0 +1,24 @@
+# UFW configuration
+- name: Ensure UFW is installed
+  apt:
+    state: present
+    update_cache: true
+    pkg: ufw
+
+- name: Build & copy site rules
+  template: 
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: templates/ufw_frontend, dest: /etc/ufw/applications.d/site_frontend }
+    - { src: templates/ufw_backend, dest: /etc/ufw/applications.d/site_backend }
+
+- name: Enable UFW rules
+  command: "ufw allow '{{ item }}'"
+  with_items:
+    - "Site Frontend"
+    - "Site Backend"
+    - "OpenSSH"
+
+- name: Enable UFW
+  command: ufw --force enable

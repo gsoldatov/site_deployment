@@ -1,0 +1,17 @@
+server_addr: "{{ lookup('env', 'SERVER_ADDR') }}"
+server_backend_https_port: "{{ lookup('env', 'SERVER_BACKEND_HTTPS_PORT') }}"
+backend_setting_max_hierarchy_depth: "{{ lookup('env', 'BACKEND_SETTING_MAX_HIERARCHY_DEPTH') }}"
+frontend_setting_express_port: "{{ lookup('env', 'FRONTEND_SETTING_EXPRESS_PORT') }}"
+
+node_version: "{{ lookup('env', 'NODE_VERSION') }}"
+node_distro: "{{ lookup('env', 'NODE_DISTRO') }}"
+
+node_download_url: "https://nodejs.org/dist/{{ node_version }}/node-{{ node_version }}-{{ node_distro }}.tar.xz"
+node_download_path: "~/node-{{ node_version }}-{{ node_distro }}.tar.xz"
+node_installation_path: /usr/local/lib/nodejs   # Must be absolute
+node_installation_bin_path: "{{ node_installation_path }}/node-{{ node_version }}-{{ node_distro }}/bin"
+
+frontend_folder: "{{ lookup('env', 'SERVER_FRONTEND_FOLDER') }}"
+frontend_repository: https://github.com/gsoldatov/site_frontend.git
+
+site_user: "{{ lookup('env', 'SITE_USER') }}"

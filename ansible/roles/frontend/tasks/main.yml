@@ -1,0 +1,81 @@
+# Verify Node installation | Install Node
+- name: Check if Node is installed
+  stat:
+    path: "{{ node_installation_bin_path }}/node"
+  register: node_binary
+
+- name: Download Node distribution
+  get_url:
+    url: "{{ node_download_url }}"
+    dest: "{{ node_download_path }}"
+  when: not node_binary.stat.exists
+
+- name: Create Node folder
+  command: "mkdir -p '{{ node_installation_path }}'"
+  when: not node_binary.stat.exists
+
+- name: Extract Node distribution
+  command: "tar -xJvf '{{ node_download_path }}' -C '{{ node_installation_path }}'"
+  when: not node_binary.stat.exists
+
+- name: Check if symlinks exist
+  stat:
+    path: "{{ node_installation_bin_path }}/node"
+  register: node_symlink
+
+- name: Create symlinks for Node binaries, if they don't exist
+  file:
+    src: "{{ item.path }}"
+    dest: "/usr/bin/{{ item.name }}"
+    state: link
+  # when: node_symlink.stat.lnk_source != "{{ node_installation_bin_path }}/node"   # Jinja templates can't be used inside when statements, but can be passed via loops
+  when: not node_symlink.stat.islnk or (node_symlink.stat.islnk and node_symlink.stat.lnk_source != item.path)
+  with_items: 
+    - { name: "node", path: "{{ node_installation_bin_path }}/node" }
+    - { name: "npm", path: "{{ node_installation_bin_path }}/npm" }
+    - { name: "npx", path: "{{ node_installation_bin_path }}/npx" }
+
+- name: Delete Node distribution
+  file:
+    path: "{{ node_download_path }}"
+    state: absent
+
+# Create site user
+- name: Create site user
+  user:
+    name: "{{ site_user }}"
+    system: yes   # system account without home dir
+    shell: /sbin/nologin # forbid logging in
+    state: present
+
+
+# Setup frontend repository
+- name: Clone | update repository
+  git:
+    repo: "{{ frontend_repository }}"
+    dest: "{{ frontend_folder }}"
+    force: yes
+    clone: yes
+    update: yes
+    version: master
+
+- name: Install dependencies
+  command: npm install
+  args:
+    chdir: "{{ frontend_folder }}"
+
+- name: Build & copy frontend config
+  template:
+    src: templates/frontend-config.json
+    dest: "{{ frontend_folder }}/src/config.json"
+
+- name: Build frontend
+  command: npm run build
+  args:
+    chdir: "{{ frontend_folder }}"
+
+- name: Set folder ownership
+  command: "chown -R root:{{ site_user }} {{ frontend_folder }}"
+
+- name: Set folder permissions
+  command: "chmod -R 775 {{ frontend_folder }}"

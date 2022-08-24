@@ -1,0 +1,40 @@
+server_addr: "{{ lookup('env', 'SERVER_ADDR') }}"
+site_user: "{{ lookup('env', 'SITE_USER') }}"
+site_backend_service_name: "{{ lookup('env', 'SITE_BACKEND_SERVICE_NAME') }}"
+
+python_version: "{{ lookup('env', 'PYTHON_VERSION') }}"
+postgresql_version: "{{ lookup('env', 'POSTGRESQL_VERSION') }}"
+
+backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"
+backend_repository: https://github.com/gsoldatov/site_backend.git
+
+backend_setting_app_host: "{{ lookup('env', 'BACKEND_SETTING_APP_HOST') }}"
+backend_setting_app_port: "{{ lookup('env', 'BACKEND_SETTING_APP_PORT') }}"
+backend_setting_use_forwarded: "{{ lookup('env', 'BACKEND_SETTING_USE_FORWARDED') }}"
+backend_setting_debug: "{{ lookup('env', 'BACKEND_SETTING_DEBUG') }}"
+backend_setting_default_user_login: "{{ lookup('env', 'BACKEND_SETTING_DEFAULT_USER_LOGIN') }}"
+backend_setting_default_user_password: "{{ lookup('env', 'BACKEND_SETTING_DEFAULT_USER_PASSWORD') }}"
+backend_setting_default_user_username: "{{ lookup('env', 'BACKEND_SETTING_DEFAULT_USER_USERNAME') }}"
+backend_setting_token_lifetime: "{{ lookup('env', 'BACKEND_SETTING_TOKEN_LIFETIME') }}"
+backend_setting_max_hierarchy_depth: "{{ lookup('env', 'BACKEND_SETTING_MAX_HIERARCHY_DEPTH') }}"
+
+backend_setting_db_database_host: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE_HOST') }}"
+backend_setting_db_database_port: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE_PORT') }}"
+backend_setting_db_init_database: "{{ lookup('env', 'BACKEND_SETTING_DB_INIT_DATABASE') }}"
+backend_setting_db_init_username: "{{ lookup('env', 'BACKEND_SETTING_DB_INIT_USERNAME') }}"
+backend_setting_db_init_password: "{{ lookup('env', 'BACKEND_SETTING_DB_INIT_PASSWORD') }}"
+backend_setting_db_database: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE') }}"
+backend_setting_db_username: "{{ lookup('env', 'BACKEND_SETTING_DB_USERNAME') }}"
+backend_setting_db_password: "{{ lookup('env', 'BACKEND_SETTING_DB_PASSWORD') }}"
+
+backend_setting_enable_searchable_updates: "{{ lookup('env', 'BACKEND_SETTING_ENABLE_SEARCHABLE_UPDATES') }}"
+
+backend_setting_logging_folder: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_FOLDER') }}"
+backend_setting_loggine_file_separator: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_FILE_SEPARATOR') }}"
+backend_setting_logging_file_separator_replacement: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_FILE_SEPARATOR_REPLACEMENT') }}"
+backend_setting_logging_app_event_logging_mode: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_APP_EVENT_LOGGING_MODE') }}"
+backend_setting_logging_app_event_logging_file_mode_interval: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_APP_EVENT_LOGGING_FILE_MODE_INTERVAL') }}"
+backend_setting_logging_app_access_logging_mode: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_APP_ACCESS_LOGGING_MODE') }}"
+backend_setting_logging_app_access_logging_file_mode_interval: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_APP_ACCESS_LOGGING_FILE_MODE_INTERVAL') }}"
+backend_setting_logging_db_logging_mode: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_DB_LOGGING_MODE') }}"
+backend_setting_logging_scheduled_logging_mode: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_SCHEDULED_LOGGING_MODE') }}"

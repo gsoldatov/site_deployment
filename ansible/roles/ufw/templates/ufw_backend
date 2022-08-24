@@ -1,0 +1,5 @@
+# UFW rules for site backend
+[Site Backend]
+title=Site backend (HTTP + HTTPS)
+description=Rules for site backend
+ports={{ backend_http_port }},{{ backend_https_port }}/tcp

@@ -1,0 +1,4 @@
+frontend_http_port: "{{ lookup('env', 'SERVER_FRONTEND_HTTP_PORT') }}"
+frontend_https_port: "{{ lookup('env', 'SERVER_FRONTEND_HTTPS_PORT') }}"
+backend_http_port: "{{ lookup('env', 'SERVER_BACKEND_HTTP_PORT') }}"
+backend_https_port: "{{ lookup('env', 'SERVER_BACKEND_HTTPS_PORT') }}"

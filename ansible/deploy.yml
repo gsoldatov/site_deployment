@@ -1,0 +1,9 @@
+# Deploys frontend & backend on a single machine behind Nginx.
+# SSL certificate & key must be placed on the maching separately.
+- hosts: srv
+  roles:
+    - frontend
+    - backend
+    - backend_scheduled
+    - nginx
+    - ufw

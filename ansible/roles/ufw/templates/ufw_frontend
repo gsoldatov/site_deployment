@@ -1,0 +1,5 @@
+# UFW rules for site frontend
+[Site Frontend]
+title=Site frontend (HTTP + HTTPS)
+description=Rules for site frontend
+ports={{ frontend_http_port }},{{ frontend_https_port }}/tcp

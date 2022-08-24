@@ -1,0 +1,48 @@
+# Setup Nginx
+- name: Install Nginx
+  apt:
+    name: nginx
+    update_cache: true
+    state: present
+
+- name: Disable default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Build & copy Nginx configuration templates
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: "templates/nginx.conf", dest: "/etc/nginx/nginx.conf" }
+    - { src: "templates/frontend.conf", dest: "/etc/nginx/sites-available/frontend.conf" }
+    - { src: "templates/backend.conf", dest: "/etc/nginx/sites-available/backend.conf" }
+  
+- name: Copy static Nginx configuration files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+  with_items:
+    - { src: "files/forwarded_header", dest: "/etc/nginx/conf.d/forwarded_header" }
+
+- name: Enable frontend & backend sites
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: "/etc/nginx/sites-available/frontend.conf", dest: "/etc/nginx/sites-enabled/frontend.conf" }
+    - { src: "/etc/nginx/sites-available/backend.conf", dest: "/etc/nginx/sites-enabled/backend.conf" }
+
+- name: Check if SSL certificate is present on the machine
+  stat:
+    path: /etc/ssl/site.crt
+  register: site_crt
+
+- name: Restart & enable Nginx service
+  systemd:
+    name: nginx
+    enabled: yes
+    state: restarted
+  when: site_crt.stat.exists

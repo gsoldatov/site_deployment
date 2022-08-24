@@ -1,0 +1,79 @@
+# Create site user
+- name: Create site user
+  user:
+    name: "{{ site_user }}"
+    system: yes   # system account without home dir
+    shell: /sbin/nologin # forbid logging in
+    state: present
+
+# Install packages
+- name: Install backend packages
+  apt:
+    state: present
+    update_cache: true
+    pkg:
+      - "python{{ python_version }}"
+      - "python{{ python_version }}-venv"
+      - "postgresql-{{ postgresql_version }}"
+
+# Postgresql configuration
+- name: Create temp dir for Ansible # to avoid warning messages
+  file:
+    path: /var/lib/postgresql/.ansible/tmp
+    state: directory
+    owner: root
+    group: postgres
+    mode: 0770
+
+- name: Set superuser password
+  command: "psql -c \"ALTER USER postgres PASSWORD '{{ backend_setting_db_init_password }}';\""
+  args:
+    chdir: /etc/postgresql
+  become: yes
+  become_user: postgres
+
+# Setup backend repository
+- name: Clone | update repository
+  git:
+    repo: "{{ backend_repository }}"
+    dest: "{{ backend_folder }}"
+    force: yes
+    clone: yes
+    update: yes
+    version: master
+
+- name: Setup venv & install dependencies
+  pip:
+    chdir: "{{ backend_folder }}"
+    virtualenv: venv/   # ensure venv exists
+    virtualenv_command: "python3 -m venv"   # executable for creating venv
+    requirements: requirements.txt  # required dependencies
+
+- name: Build & copy backend config
+  template:
+    src: templates/backend-config.json
+    dest: "{{ backend_folder }}/backend_main/config.json"
+
+- name: Set folder ownership
+  command: "chown -R root:{{ site_user }} {{ backend_folder }}"
+
+- name: Set folder permissions
+  command: "chmod -R 775 {{ backend_folder }}"
+
+- name: Run database migrations
+  command: "{{ backend_folder }}/venv/bin/python3 -m backend_main.db"
+  args:
+    chdir: "{{ backend_folder }}"
+
+# Setup backend service
+- name: Build & copy service config
+  template:
+    src: templates/site_backend.service
+    dest: "/etc/systemd/system/{{ site_backend_service_name }}.service"
+
+- name: Start & enable backend service
+  systemd:
+    name: "{{ site_backend_service_name }}"
+    daemon_reload: yes
+    enabled: yes
+    state: started

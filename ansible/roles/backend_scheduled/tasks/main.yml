@@ -1,0 +1,12 @@
+- name: Build & copy crontab file
+  template:
+    src: templates/crontab_site
+    dest: "{{ backend_folder }}/crontab_site"
+
+- name: Install crontab for the site user
+  command: "crontab -u {{ site_user }} {{ backend_folder }}/crontab_site"
+
+- name: Remove temporary crontab file
+  file:
+    name: "{{ backend_folder }}/crontab_site"
+    state: absent
