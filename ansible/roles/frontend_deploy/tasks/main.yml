@@ -18,22 +18,12 @@
   command: "tar -xJvf '{{ node_download_path }}' -C '{{ node_installation_path }}'"
   when: not node_binary.stat.exists
 
-- name: Check if symlinks exist
-  stat:
-    path: "{{ node_installation_bin_path }}/node"
-  register: node_symlink
-
-- name: Create symlinks for Node binaries, if they don't exist
+- name: Ensure CLI shortcuts for Node binaries exist
   file:
-    src: "{{ item.path }}"
-    dest: "/usr/bin/{{ item.name }}"
+    src: "{{ node_installation_bin_path }}/{{ item }}"
+    dest: "/usr/bin/{{ item }}"
     state: link
-  # when: node_symlink.stat.lnk_source != "{{ node_installation_bin_path }}/node"   # Jinja templates can't be used inside when statements, but can be passed via loops
-  when: not node_symlink.stat.islnk or (node_symlink.stat.islnk and node_symlink.stat.lnk_source != item.path)
-  with_items: 
-    - { name: "node", path: "{{ node_installation_bin_path }}/node" }
-    - { name: "npm", path: "{{ node_installation_bin_path }}/npm" }
-    - { name: "npx", path: "{{ node_installation_bin_path }}/npx" }
+  loop: ["node", "npm", "npx"]
 
 - name: Delete Node distribution
   file:
