@@ -1,5 +1,6 @@
 #!/bin/bash
 # Runs a playbook with the name specified as the first argument
+# Additional params for ansible-playbook can be passed after the playbook name
 
 # Check playbook name
 NAME=$1
@@ -29,7 +30,7 @@ source $DIR/production.env
 envsubst < $DIR/hosts.yml.example > $DIR/hosts.yml
 
 # Run playbook
-ansible-playbook -i $DIR/hosts.yml $PLAYBOOK;
+ansible-playbook -i $DIR/hosts.yml $PLAYBOOK "${@:2}";  # pass the the rest of CLI args to ansible-playbook
 
 # Deactivate venv
 deactivate;
