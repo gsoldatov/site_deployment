@@ -1,0 +1,5 @@
+# Stop Nginx
+- name: Stop Nginx
+  systemd:
+    name: nginx
+    state: stopped

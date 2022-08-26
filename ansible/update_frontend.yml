@@ -1,0 +1,6 @@
+# Updates frontend on an existing single machine deployment.
+- hosts: srv
+  roles:
+    - frontend_update_on_start
+    - frontend_deploy
+    - frontend_update_on_finish

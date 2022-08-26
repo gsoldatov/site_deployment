@@ -2,7 +2,7 @@
 # SSL certificate & key must be placed on the maching separately.
 - hosts: srv
   roles:
-    - frontend
+    - frontend_deploy
     - backend
     - backend_scheduled
     - nginx
