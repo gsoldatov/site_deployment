@@ -6,7 +6,7 @@ python_version: "{{ lookup('env', 'PYTHON_VERSION') }}"
 postgresql_version: "{{ lookup('env', 'POSTGRESQL_VERSION') }}"
 
 backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"
-backend_repository: https://github.com/gsoldatov/site_backend.git
+backend_repository: "{{ lookup('env', 'BACKEND_REPOSITORY') }}"
 
 backend_setting_app_host: "{{ lookup('env', 'BACKEND_SETTING_APP_HOST') }}"
 backend_setting_app_port: "{{ lookup('env', 'BACKEND_SETTING_APP_PORT') }}"

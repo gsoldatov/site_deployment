@@ -12,6 +12,6 @@ node_installation_path: /usr/local/lib/nodejs   # Must be absolute
 node_installation_bin_path: "{{ node_installation_path }}/node-{{ node_version }}-{{ node_distro }}/bin"
 
 frontend_folder: "{{ lookup('env', 'SERVER_FRONTEND_FOLDER') }}"
-frontend_repository: https://github.com/gsoldatov/site_frontend.git
+frontend_repository: "{{ lookup('env', 'FRONTEND_REPOSITORY') }}"
 
 site_user: "{{ lookup('env', 'SITE_USER') }}"
