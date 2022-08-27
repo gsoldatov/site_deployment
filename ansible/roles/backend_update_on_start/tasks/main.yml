@@ -1,0 +1,27 @@
+- name: Stop Nginx
+  systemd:
+    name: nginx
+    state: stopped
+
+- name: Remove Crontab for the site user
+  command: "crontab -u {{ site_user }} -r"
+  register: crontab_removal
+  failed_when: crontab_removal.rc != 0 and "no crontab for" not in crontab_removal.stderr
+
+- name: Stop backend service
+  systemd:
+    name: "{{ site_backend_service_name }}"
+    state: stopped
+
+# Ensure scheduled database jobs are not running
+- name: Get Python processes which use site interpreter
+  command: "pgrep -f {{ backend_folder }}/venv/bin/python"
+  register: python_pids
+  failed_when: python_pids.rc != 0 and python_pids.stdout != ""   # Ignore non-zero exit code when no processes are found
+
+- name: Wait for Python processes to finish
+  wait_for:
+    path: "/proc/{{ item }}/status"
+    state: absent
+    timeout: 10
+  with_items: "{{ python_pids.stdout_lines }}"
