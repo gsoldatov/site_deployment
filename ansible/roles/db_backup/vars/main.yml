@@ -1,0 +1,11 @@
+local_backup_folder: "{{ lookup('env', 'LOCAL_BACKUP_FOLDER') }}"
+backup_filename: "{{ lookup('env', 'BACKUP_FILENAME') }}"
+max_backup_copies: "{{ lookup('env', 'MAX_BACKUP_COPIES') }}"
+
+backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"
+
+backend_setting_db_database_host: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE_HOST') }}"
+backend_setting_db_database_port: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE_PORT') }}"
+backend_setting_db_init_username: "{{ lookup('env', 'BACKEND_SETTING_DB_INIT_USERNAME') }}"
+backend_setting_db_init_password: "{{ lookup('env', 'BACKEND_SETTING_DB_INIT_PASSWORD') }}"
+backend_setting_db_database: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE') }}"

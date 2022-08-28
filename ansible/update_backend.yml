@@ -2,6 +2,7 @@
 - hosts: srv
   roles:
     - backend_update_on_start
+    - { role: db_backup, tags: db_backup}
     - backend_deploy
     - backend_scheduled
     - backend_update_on_finish
