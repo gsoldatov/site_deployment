@@ -1,0 +1,32 @@
+# User & SSH configuration
+- name: Change default password of root user
+  user:
+    name: root
+    state: present
+    password: "{{ root_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
+
+- name: Create a deployment user with sudo privileges
+  user:
+    name: "{{ deployment_user_name }}"
+    groups: "sudo"
+    state: present
+    password: "{{ deployment_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
+
+- name: Add authorized key for deployment user
+  authorized_key:
+    user: "{{ deployment_user_name }}"
+    state: present
+    key: "{{ lookup('file', deployment_user_key_path) }}"
+
+- name: Update config of SSH service
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regex: "{{ item.find }}"
+    line: "{{ item.replace }}"
+  loop:
+    - { find: '^(# *)?PermitRootLogin (yes|no)', replace: 'PermitRootLogin no' }
+
+- name: Restart sshd
+  service:
+    name: sshd
+    state: restarted

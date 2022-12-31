@@ -6,4 +6,3 @@
     - { role: backend_deploy, tags: backend_deploy }
     - { role: backend_scheduled, tags: backend_scheduled }
     - { role: nginx, tags: nginx }
-    - { role: ufw, ufw: ufw }

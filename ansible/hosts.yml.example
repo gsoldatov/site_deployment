@@ -1,5 +1,6 @@
 all:
   hosts:
     srv:
-      ansible_host: $SERVER_ADDR
-      ansible_user: $SERVER_USER
+      ansible_host: $ANSIBLE_HOST
+      ansible_user: $ANSIBLE_USER
+      $ANSIBLE_PASSWORD_LINE

@@ -1,4 +1,4 @@
-# UFW configuration
+# UFW installation & configuration
 - name: Ensure UFW is installed
   apt:
     state: present
