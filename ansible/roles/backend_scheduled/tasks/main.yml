@@ -2,11 +2,14 @@
   template:
     src: templates/crontab_site
     dest: "{{ backend_folder }}/crontab_site"
+  become: yes
 
 - name: Install crontab for the site user
   command: "crontab -u {{ site_user }} {{ backend_folder }}/crontab_site"
+  become: yes
 
 - name: Remove temporary crontab file
   file:
     name: "{{ backend_folder }}/crontab_site"
     state: absent
+  become: yes

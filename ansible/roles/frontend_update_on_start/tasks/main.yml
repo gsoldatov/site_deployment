@@ -3,3 +3,4 @@
   systemd:
     name: nginx
     state: stopped
+  become: yes

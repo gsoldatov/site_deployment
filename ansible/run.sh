@@ -56,13 +56,13 @@ case $NAME in
         ANSIBLE_PASSWORD=$DEFAULT_ROOT_PASSWORD;;
     *)
         # Other playbooks are run under deployment user with key authentication
-        export ANSIBLE_USER=$SERVER_USER;;
+        export ANSIBLE_USER=$DEPLOYMENT_USER_NAME;
+        export ANSIBLE_BECOME_PASSWORD=$DEPLOYMENT_USER_PASSWORD;;
 esac
 
 export ANSIBLE_HOST=$SERVER_ADDR;
-if [[ $ANSIBLE_PASSWORD ]]; then
-    export ANSIBLE_PASSWORD_LINE="ansible_password: $ANSIBLE_PASSWORD"
-fi
+if [[ $ANSIBLE_PASSWORD ]]; then export ANSIBLE_PASSWORD_LINE="ansible_password: $ANSIBLE_PASSWORD"; fi
+if [[ $ANSIBLE_BECOME_PASSWORD ]]; then export ANSIBLE_BECOME_PASSWORD_LINE="ansible_become_password: $ANSIBLE_BECOME_PASSWORD"; fi
 
 
 # Build inventory file for Ansible

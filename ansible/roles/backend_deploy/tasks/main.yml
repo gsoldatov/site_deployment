@@ -1,11 +1,3 @@
-# Create site user
-- name: Create site user
-  user:
-    name: "{{ site_user }}"
-    system: yes   # system account without home dir
-    shell: /sbin/nologin # forbid logging in
-    state: present
-
 # Install packages
 - name: Install backend packages
   apt:
@@ -15,6 +7,7 @@
       - "python{{ python_version }}"
       - "python{{ python_version }}-venv"
       - "postgresql-{{ postgresql_version }}"
+  become: yes
 
 # Postgresql configuration
 - name: Create temp dir for Ansible # to avoid warning messages
@@ -24,6 +17,7 @@
     owner: root
     group: postgres
     mode: 0770
+  become: yes
 
 - name: Set superuser password
   command: "psql -c \"ALTER USER postgres PASSWORD '{{ backend_setting_db_init_password }}';\""
@@ -41,6 +35,7 @@
     clone: yes
     update: yes
     version: master
+  become: yes
 
 - name: Setup venv & install dependencies
   pip:
@@ -48,32 +43,39 @@
     virtualenv: venv/   # ensure venv exists
     virtualenv_command: "python3 -m venv"   # executable for creating venv
     requirements: requirements.txt  # required dependencies
+  become: yes
 
 - name: Build & copy backend config
   template:
     src: templates/backend-config.json
     dest: "{{ backend_folder }}/backend_main/config.json"
+  become: yes
 
 - name: Set folder ownership
   command: "chown -R root:{{ site_user }} {{ backend_folder }}"
+  become: yes
 
 - name: Set folder permissions
   command: "chmod -R 775 {{ backend_folder }}"
+  become: yes
 
 - name: Run database migrations
   command: "{{ backend_folder }}/venv/bin/python3 -m backend_main.db"
   args:
     chdir: "{{ backend_folder }}"
+  become: yes
 
 # Setup backend service
 - name: Build & copy service config
   template:
     src: templates/site_backend.service
     dest: "/etc/systemd/system/{{ site_backend_service_name }}.service"
+  become: yes
 
 - name: Start & enable backend service
   systemd:
     name: "{{ site_backend_service_name }}"
     daemon_reload: yes
     enabled: yes
-    state: started
+    state: restarted
+  become: yes

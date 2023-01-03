@@ -1,4 +1,5 @@
 server_addr: "{{ lookup('env', 'SERVER_ADDR') }}"
+server_urls: "{{ lookup('env', 'SERVER_URLS') }}"
 site_user: "{{ lookup('env', 'SITE_USER') }}"
 site_backend_service_name: "{{ lookup('env', 'SITE_BACKEND_SERVICE_NAME') }}"
 

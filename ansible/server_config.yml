@@ -1,8 +1,8 @@
 # Initial configuration & security setup of the deployment server:
-# - changes default password of root user;
-# - sets up SSH configuration & bruteforce prevention via SSH;
-# - configures UFW;
-# - creates deployment user for running other playbooks & adds his public key for SSH authenticaton;
+# - installs & configures UFW;
+# - installs & configures fail2ban for SSH bruteforce prevention;
+# - installs miscellaneous packages;
+# - configures root, deployment and site users and SSH service.
 #
 # NOTE: when running playbook against a known host after it was reset to a clean state, it's SSH key must be updated in known hosts file:
 # 1) Remove known host info:
@@ -14,4 +14,5 @@
   roles:
     - server_config_ufw
     - server_config_fail2ban
+    - server_config_misc
     - server_config_users_and_ssh

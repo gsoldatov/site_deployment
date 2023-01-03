@@ -4,11 +4,13 @@
     name: nginx
     update_cache: true
     state: present
+  become: yes
 
 - name: Disable default site
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
+  become: yes
 
 - name: Build & copy Nginx configuration templates
   template:
@@ -18,6 +20,7 @@
     - { src: "templates/nginx.conf", dest: "/etc/nginx/nginx.conf" }
     - { src: "templates/frontend.conf", dest: "/etc/nginx/sites-available/frontend.conf" }
     - { src: "templates/backend.conf", dest: "/etc/nginx/sites-available/backend.conf" }
+  become: yes
   
 - name: Copy static Nginx configuration files
   copy:
@@ -25,6 +28,7 @@
     dest: "{{ item.dest }}"
   with_items:
     - { src: "files/forwarded_header", dest: "/etc/nginx/conf.d/forwarded_header" }
+  become: yes
 
 - name: Enable frontend & backend sites
   file:
@@ -34,11 +38,13 @@
   with_items:
     - { src: "/etc/nginx/sites-available/frontend.conf", dest: "/etc/nginx/sites-enabled/frontend.conf" }
     - { src: "/etc/nginx/sites-available/backend.conf", dest: "/etc/nginx/sites-enabled/backend.conf" }
+  become: yes
 
 - name: Check if SSL certificate is present on the machine
   stat:
     path: /etc/ssl/site.crt
   register: site_crt
+  become: yes
 
 - name: Restart & enable Nginx service
   systemd:
@@ -46,3 +52,4 @@
     enabled: yes
     state: restarted
   when: site_crt.stat.exists
+  become: yes

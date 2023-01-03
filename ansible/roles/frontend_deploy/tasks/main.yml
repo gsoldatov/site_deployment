@@ -13,10 +13,12 @@
 - name: Create Node folder
   command: "mkdir -p '{{ node_installation_path }}'"
   when: not node_binary.stat.exists
+  become: yes
 
 - name: Extract Node distribution
   command: "tar -xJvf '{{ node_download_path }}' -C '{{ node_installation_path }}'"
   when: not node_binary.stat.exists
+  become: yes
 
 - name: Ensure CLI shortcuts for Node binaries exist
   file:
@@ -24,20 +26,12 @@
     dest: "/usr/bin/{{ item }}"
     state: link
   loop: ["node", "npm", "npx"]
+  become: yes
 
 - name: Delete Node distribution
   file:
     path: "{{ node_download_path }}"
     state: absent
-
-# Create site user
-- name: Create site user
-  user:
-    name: "{{ site_user }}"
-    system: yes   # system account without home dir
-    shell: /sbin/nologin # forbid logging in
-    state: present
-
 
 # Setup frontend repository
 - name: Clone | update repository
@@ -48,24 +42,30 @@
     clone: yes
     update: yes
     version: master
+  become: yes
 
 - name: Install dependencies
   command: npm install
   args:
     chdir: "{{ frontend_folder }}"
+  become: yes
 
 - name: Build & copy frontend config
   template:
     src: templates/frontend-config.json
     dest: "{{ frontend_folder }}/src/config.json"
+  become: yes
 
 - name: Build frontend
   command: npm run build
   args:
     chdir: "{{ frontend_folder }}"
+  become: yes
 
 - name: Set folder ownership
   command: "chown -R root:{{ site_user }} {{ frontend_folder }}"
+  become: yes
 
 - name: Set folder permissions
   command: "chmod -R 775 {{ frontend_folder }}"
+  become: yes

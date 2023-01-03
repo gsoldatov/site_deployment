@@ -1,17 +1,4 @@
-# Generates self-signed SSL certificate & key on the remote machine & restarts Nginx, if it's present
+# Installs self-signed certificate for frontend & backend
 - hosts: srv
-  tasks:
-    - name: Generate SSL cert & key
-      command: "openssl req -x509 -noenc -newkey rsa:2048 -days 3650 -keyout /etc/ssl/site.key -out /etc/ssl/site.crt -subj '/'"
-
-    - name: Check if Nginx is installed
-      command: systemctl status nginx
-      register: nginx_status
-      failed_when: "nginx_status.rc != 0 and 'could not be found' not in nginx_status.stderr"   # Ignore errors from service not existing
-
-    - name: Restar Nginx if it's installed
-      systemd:
-        name: nginx
-        state: restarted
-        enabled: yes
-      when: "'could not be found' not in nginx_status.stderr"   # Don't restart if Nginx is not installed
+  roles:
+    - ssl_self_signed

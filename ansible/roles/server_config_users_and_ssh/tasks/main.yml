@@ -18,6 +18,13 @@
     state: present
     key: "{{ lookup('file', deployment_user_key_path) }}"
 
+- name: Create site user
+  user:
+    name: "{{ site_user }}"
+    system: yes   # system account without home dir
+    shell: /sbin/nologin # forbid logging in
+    state: present
+
 - name: Update config of SSH service
   lineinfile:
     path: /etc/ssh/sshd_config

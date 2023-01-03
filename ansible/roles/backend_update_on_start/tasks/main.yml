@@ -2,16 +2,19 @@
   systemd:
     name: nginx
     state: stopped
+  become: yes
 
 - name: Remove Crontab for the site user
   command: "crontab -u {{ site_user }} -r"
   register: crontab_removal
   failed_when: crontab_removal.rc != 0 and "no crontab for" not in crontab_removal.stderr
+  become: yes
 
 - name: Stop backend service
   systemd:
     name: "{{ site_backend_service_name }}"
     state: stopped
+  become: yes
 
 # Ensure scheduled database jobs are not running
 - name: Get Python processes which use site interpreter

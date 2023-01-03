@@ -1,59 +1,67 @@
-- name: Exit if backups are disabled
-  meta: end_host
-  when: max_backup_copies | int <= 0
+- name: Make a database backup, if it's enabled
+  block:
+    # Backup existing .pgpass file
+    - name: Check if .pgpass exists
+      stat:
+        path: "~/.pgpass"
+      register: existing_pgpass
+      become: yes
 
-# Backup existing .pgpass file
-- name: Check if .pgpass exists
-  stat:
-    path: "~/.pgpass"
-  register: existing_pgpass
+    - name: Backup existing .pgpass file
+      copy:
+        src: "~/.pgpass"
+        dest: "~/.pgpass.backup"
+        remote_src: yes
+      when: existing_pgpass.stat.exists
+      become: yes
 
-- name: Backup existing .pgpass file
-  copy:
-    src: "~/.pgpass"
-    dest: "~/.pgpass.backup"
-    remote_src: yes
-  when: existing_pgpass.stat.exists
+    # Create database dump on the remote machine
+    - name: Create temporary .pgpass file
+      copy:
+        content: "{{ backend_setting_db_database_host }}:{{ backend_setting_db_database_port }}:{{ backend_setting_db_database }}:{{ backend_setting_db_init_username }}:{{ backend_setting_db_init_password }}"
+        dest: "~/.pgpass"
+        mode: "0600"  # permissions are required for the file to be properly used by pg_dump
+      become: yes
 
-# Create database dump on the remote machine
-- name: Create temporary .pgpass file
-  copy:
-    content: "{{ backend_setting_db_database_host }}:{{ backend_setting_db_database_port }}:{{ backend_setting_db_database }}:{{ backend_setting_db_init_username }}:{{ backend_setting_db_init_password }}"
-    dest: "~/.pgpass"
-    mode: "0600"  # permissions are required for the file to be properly used by pg_dump
+    - name: Make backup on remote machine
+      # "host" arg is required to use password authentication (credentials stored in .pgpass)
+      command: "pg_dump --username='{{ backend_setting_db_init_username }}' --host='{{ backend_setting_db_database_host }}' --port={{ backend_setting_db_database_port }} --format=tar --exclude-table='searchables' --dbname='{{ backend_setting_db_database }}' --file='{{ backend_folder }}/{{ backup_filename }}'"
+      become: yes
 
-- name: Make backup on remote machine
-  # "host" arg is required to use password authentication (credentials stored in .pgpass)
-  command: "pg_dump --username='{{ backend_setting_db_init_username }}' --host='{{ backend_setting_db_database_host }}' --port={{ backend_setting_db_database_port }} --format=tar --exclude-table='searchables' --dbname='{{ backend_setting_db_database }}' --file='{{ backend_folder }}/{{ backup_filename }}'"
+    # Restore previously existing .pgpass file or delete temporary file
+    - name: Backup existing .pgpass file
+      command: mv ~/.pgpass.backup ~/.pgpass
+      when: existing_pgpass.stat.exists
+      become: yes
 
-# Restore previously existing .pgpass file or delete temporary file
-- name: Backup existing .pgpass file
-  command: mv ~/.pgpass.backup ~/.pgpass
-  when: existing_pgpass.stat.exists
+    - name: Remove temp .pgpass file
+      file:
+        path: "~/.pgpass"
+        state: absent
+      when: not existing_pgpass.stat.exists
+      become: yes
 
-- name: Remove temp .pgpass file
-  file:
-    path: "~/.pgpass"
-    state: absent
-  when: not existing_pgpass.stat.exists
+    # Rotate backups and fetch new dump
+    - name: Rotate existing local backups
+      local_action: "command bash {{ role_path }}/scripts/rotate_backups.sh"
+      register: backup_rotation
 
-# Rotate backups and fetch new dump
-- name: Rotate existing local backups
-  local_action: "command bash {{ role_path }}/scripts/rotate_backups.sh"
-  register: backup_rotation
+    - name: Print backup rotation log
+      debug:
+        msg: "{{ backup_rotation }}"
 
-- name: Print backup rotation log
-  debug:
-    msg: "{{ backup_rotation }}"
+    - name: Fetch new dump
+      # fetch:
+      synchronize:
+        mode: pull
+        src: "{{ backend_folder }}/{{ backup_filename }}"
+        dest: "{{ local_backup_folder }}/{{ backup_filename }}"
+      # become: yes
 
-- name: Fetch new dump
-  # fetch:
-  synchronize:
-    mode: pull
-    src: "{{ backend_folder }}/{{ backup_filename }}"
-    dest: "{{ local_backup_folder }}/{{ backup_filename }}"
+    - name: Remove dump on remote
+      file:
+        path: "{{ backend_folder }}/{{ backup_filename }}"
+        state: absent
+      become: yes
 
-- name: Remove dump on remote
-  file:
-    path: "{{ backend_folder }}/{{ backup_filename }}"
-    state: absent
+  when: max_backup_copies | int > 0

@@ -14,7 +14,7 @@
         "composite_hierarchy_max_depth": {{ backend_setting_max_hierarchy_depth }}
     },
 
-    "cors_urls": ["http://{{ server_addr }}", "https://{{ server_addr }}"],
+    "cors_urls": ["http://{{ server_addr }}", "https://{{ server_addr }}"{% for url in server_urls.split(" ") %}, "http://{{ url }}", "https://{{ url }}"{% endfor %}],
 
     "db": {
         "db_host": "{{ backend_setting_db_database_host }}",
