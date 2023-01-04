@@ -5,25 +5,53 @@ Additional params for ansible-playbook can be passed after the playbook name.
 
 Installs sshpass on the local machine if it is absent & password authentication is used.
 '
+# Default variable values
+ENV_FILE=production.env
 
 
-# Check playbook name
-NAME=$1
+# Get script options & filter Ansible options
+declare -a ANSIBLE_OPTS
+ANSIBLE_OPTS=()
 
-if [ -z "$NAME" ]; then
+NAME=$1; shift
+
+while (( "$#" )); do    # Loop through input options, filter script options & save rest for Ansible
+    case "$1" in
+        -h|--help) HELP=1; shift;;
+
+        --env-file) ENV_FILE=$2; shift; shift;;
+
+        *) ANSIBLE_OPTS+=("$1"); shift;;
+    esac
+done
+
+
+# Display usage
+if [ -z "$NAME" ] || [[ $NAME == @(-h|--help) ]] || [ ! -z "$HELP" ]; then 
     echo 'Runs a specified Ansible playbook in the script folder.'
+    echo 'Specifies, which user is used to run the playbook (root or deployment user) based on its name.'
     echo
-    echo 'Syntax: run.sh <playbook>'
-    echo 'where <playbook> is the name of one of the playbooks in the directory of this script.'
+    echo 'Syntax: run.sh <playbook> [ansible-playbook opts] [--env-file <custom_path_to_env_file>] [-h|--help] [more ansible-playbook opts]'
+    echo '<playbook> is the name of one of the playbooks in the directory of this script.'
+    echo '-h or --help to display this message and exit'
+    echo '--env-file to override file with environment variables (defaults to $ENV_FILE)'
+    echo 'Additional options can be passed for Ansible after the name of the playbook.'
 
     exit 1
 fi
 
+
+# Check if playbook & env file exist
 DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )    # Script directory
 PLAYBOOK="$DIR/$NAME"
 
 if [[ ! -f $PLAYBOOK ]]; then
-    echo "File '$PLAYBOOK' does not exist."
+    echo "Playbook '$PLAYBOOK' does not exist."
+    exit 1
+fi
+
+if [[ ! -f $DIR/$ENV_FILE ]]; then
+    echo "Env file '$DIR/$ENV_FILE' does not exist."
     exit 1
 fi
 
@@ -45,7 +73,7 @@ fi
 
 # Activate venv & load environment variables
 source $DIR/../venv/bin/activate
-source $DIR/production.env
+source $DIR/$ENV_FILE
 
 
 # Set environment variables for inventory file based on the playbook being run
@@ -70,7 +98,7 @@ envsubst < $DIR/hosts.yml.example > $DIR/hosts.yml
 
 
 # Run playbook
-ansible-playbook -i $DIR/hosts.yml $PLAYBOOK "${@:2}";  # pass the the rest of CLI args to ansible-playbook
+ansible-playbook -i $DIR/hosts.yml $PLAYBOOK "${ANSIBLE_OPTS[@]}";
 
 
 # Deactivate venv
