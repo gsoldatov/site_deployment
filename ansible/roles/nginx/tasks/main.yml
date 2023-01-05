@@ -1,4 +1,5 @@
-# Setup Nginx
+# Installs & configures Nginx in a single-machine deployment.
+
 - name: Install Nginx
   apt:
     name: nginx

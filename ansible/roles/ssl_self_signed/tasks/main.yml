@@ -1,4 +1,5 @@
-# Generates self-signed SSL certificate & key on the remote machine & restarts Nginx, if it's present
+# Generates self-signed SSL certificate & key on the remote machine & restarts Nginx, if it's present.
+
 - name: Generate SSL cert & key
   command: "openssl req -x509 -noenc -newkey rsa:2048 -days 3650 -keyout /etc/ssl/site.key -out /etc/ssl/site.crt -subj '/'"
   become: yes

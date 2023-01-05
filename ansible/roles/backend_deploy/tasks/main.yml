@@ -1,3 +1,9 @@
+# Backend deployment/update role:
+# - installs backend dependencies;
+# - pulls backend from Github repo;
+# - runs database migrations;
+# - configures & starts backend service.
+
 # Install packages
 - name: Install backend packages
   apt:

@@ -1,4 +1,4 @@
-# Miscellaneous configuration & software installation
+# Miscellaneous configuration & software installation.
 
 # Install acl package to elimiminate "Failed to set permissions on the temporary files Ansible needs to create when becoming an unprivileged user" error
 # (occures in backend deploy role when setting Postgresql superuser password)

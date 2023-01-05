@@ -1,4 +1,5 @@
-# Stop Nginx
+# Stops frontend-related services & jobs before frontend update.
+
 - name: Stop Nginx
   systemd:
     name: nginx

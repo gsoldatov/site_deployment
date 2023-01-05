@@ -1,4 +1,5 @@
 # Deploys frontend & backend on a single machine behind Nginx.
+# Should be run after `server_config.yml`.
 # SSL certificate & key must be placed on the maching separately.
 - hosts: srv
   roles:

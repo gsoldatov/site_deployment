@@ -1,3 +1,5 @@
+# Stops backend-related services & jobs before backend update.
+
 - name: Stop Nginx
   systemd:
     name: nginx

@@ -1,3 +1,5 @@
+# Runs cleanup tasks after backend update.
+
 - name: Start Nginx
   systemd:
     name: nginx

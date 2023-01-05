@@ -1,3 +1,5 @@
+# Creates a database backup and fetches it to the local machine.
+
 - name: Make a database backup, if it's enabled
   block:
     # Backup existing .pgpass file

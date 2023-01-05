@@ -1,4 +1,5 @@
-# Start Nginx
+# Runs cleanup tasks after frontend update.
+
 - name: Start Nginx
   systemd:
     name: nginx

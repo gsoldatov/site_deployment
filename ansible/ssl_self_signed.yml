@@ -1,4 +1,4 @@
-# Installs self-signed certificate for frontend & backend
+# Installs self-signed SSL certificate & keys for frontend & backend.
 - hosts: srv
   roles:
     - ssl_self_signed

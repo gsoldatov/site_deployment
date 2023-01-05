@@ -1,4 +1,5 @@
-# User & SSH configuration
+# User & SSH configuration.
+
 - name: Change default password of root user
   user:
     name: root

@@ -1,5 +1,6 @@
 # fail2ban installation & configuration
-# (by default fail2ban monitors SSH logs & bans for 10 minutes IPs with 5 failed login attempts)
+# (by default fail2ban monitors SSH logs & bans for 10 minutes IPs with 5 failed login attempts).
+
 - name: Install fail2ban
   apt:
     state: present

@@ -1,3 +1,7 @@
+# Frontend deployment role:
+# - installs frontend dependencies;
+# - pulls frontend repo from Github & builds frontend.
+
 # Verify Node installation | Install Node
 - name: Check if Node is installed
   stat:
