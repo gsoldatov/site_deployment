@@ -1,5 +1,6 @@
 # Installs & configures Nginx in a single-machine deployment.
 
+# Install Nginx
 - name: Install Nginx
   apt:
     name: nginx
@@ -7,6 +8,20 @@
     state: present
   become: yes
 
+- name: Disable Nginx service
+  systemd:
+    name: nginx
+    state: stopped
+  become: yes
+
+# Set custom log rotation
+- name: Build & copy Nginx configuration templates
+  template:
+    src: "templates/logrotate_nginx"
+    dest: "/etc/logrotate.d/nginx"
+  become: yes
+
+# Configure & enable Nginx
 - name: Disable default site
   file:
     path: /etc/nginx/sites-enabled/default
@@ -41,16 +56,9 @@
     - { src: "/etc/nginx/sites-available/backend.conf", dest: "/etc/nginx/sites-enabled/backend.conf" }
   become: yes
 
-- name: Check if SSL certificate is present on the machine
-  stat:
-    path: /etc/ssl/site.crt
-  register: site_crt
-  become: yes
-
 - name: Restart & enable Nginx service
   systemd:
     name: nginx
     enabled: yes
     state: restarted
-  when: site_crt.stat.exists
   become: yes

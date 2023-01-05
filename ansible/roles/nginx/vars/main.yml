@@ -3,6 +3,11 @@ frontend_https_port: "{{ lookup('env', 'SERVER_FRONTEND_HTTPS_PORT') }}"
 backend_http_port: "{{ lookup('env', 'SERVER_BACKEND_HTTP_PORT') }}"
 backend_https_port: "{{ lookup('env', 'SERVER_BACKEND_HTTPS_PORT') }}"
 
+nginx_access_log_path: "{{ lookup('env', 'NGINX_ACCESS_LOG_PATH') }}"
+nginx_error_log_path: "{{ lookup('env', 'NGINX_ERROR_LOG_PATH') }}"
+nginx_ssl_certificate_path: "{{ lookup('env', 'NGINX_SSL_CERTIFICATE_PATH') }}"
+nginx_ssl_certificate_key_path: "{{ lookup('env', 'NGINX_SSL_CERTIFICATE_KEY_PATH') }}"
+
 backend_setting_app_port: "{{ lookup('env', 'BACKEND_SETTING_APP_PORT') }}"
 
 server_frontend_folder: "{{ lookup('env', 'SERVER_FRONTEND_FOLDER') }}"
