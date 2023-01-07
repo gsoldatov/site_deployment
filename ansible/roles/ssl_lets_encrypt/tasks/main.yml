@@ -1,0 +1,118 @@
+# Let's Encrypt SSL certificate & key generation role:
+# - expects Nginx to be installed & configured;
+# - installs certbot;
+# - backs up existing Nginx configuration;
+# - runs certbot & sets automatic certificate update;
+# - restores Nginx configuration;
+
+# Check if Nginx is installed
+- name: Check if Nginx is installed
+  command: /usr/bin/dpkg-query --show --showformat='${db:Status-Status}\n' 'nginx'
+  register: nginx_status
+
+- name: Fail if Nginx is not installed
+  fail:
+    msg: "Playbook must be run against a host with an installed & configured Nginx."
+  when: nginx_status == 'not-installed'
+
+# Install certbot
+- name: Install certbot
+  apt:
+    state: present
+    update_cache: true
+    pkg: 
+      - certbot
+      - python3-certbot-nginx
+  become: yes
+
+# Backup files & place temp Nginx config
+- name: Backup Nginx config
+  copy:
+    src: "/etc/nginx/nginx.conf"
+    dest: "/etc/nginx/nginx.conf.temp"
+    remote_src: yes
+  become: yes
+
+- name: Set default config for Nginx
+  template:
+    src: "templates/default_nginx.conf"
+    dest: "/etc/nginx/nginx.conf"
+  become: yes
+
+- name: Remove enabled sites
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/etc/nginx/sites-enabled/backend.conf"
+    - "/etc/nginx/sites-enabled/frontend.conf"
+  become: yes
+    
+
+# Run certbot (-n = non-interactive, --nginx (or other plugin), --agree-tos & --email are required when -n is provided)
+- name: Run certbot
+  command: certbot certonly --nginx -n --agree-tos --email {{ certbot_registration_email }} {{ certbot_domain_options }}
+  become: yes
+
+# Create symlinks to cert & key files & make them available to Nginx
+# NOTE: --cert-path and --key-path certbot options do not place files in the specified locations
+- name: Make cert & key symlinks
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: "/etc/letsencrypt/live/{{ server_urls.split(' ')[0] }}/fullchain.pem", dest: "{{ nginx_ssl_certificate_path }}" }
+    - { src: "/etc/letsencrypt/live/{{ server_urls.split(' ')[0] }}/privkey.pem", dest: "{{ nginx_ssl_certificate_key_path }}" }
+  become: yes
+
+- name: Set certbot folder permissions
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - { path: "/etc/letsencrypt/live" }
+    - { path: "/etc/letsencrypt/archive" }
+  become: yes
+
+
+# Restore Nginx config for site & start Nginx
+- name: Restore Nginx config
+  copy:
+    src: "/etc/nginx/nginx.conf.temp"
+    dest: "/etc/nginx/nginx.conf"
+    remote_src: yes
+  become: yes
+
+- name: Remove config backup
+  file:
+    name: "/etc/nginx/nginx.conf.temp"
+    state: absent
+  become: yes
+
+- name: Enable frontend & backend sites
+  file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+  with_items:
+    - { src: "/etc/nginx/sites-available/frontend.conf", dest: "/etc/nginx/sites-enabled/frontend.conf" }
+    - { src: "/etc/nginx/sites-available/backend.conf", dest: "/etc/nginx/sites-enabled/backend.conf" }
+  become: yes
+
+# NOTE: Nginx service isn't properly reset after certbot run, so it's processes are killed manually as a workaround
+- name: Ensure tcp ports used by Nginx are free
+  command: fuser -n tcp -k {{ item }}
+  loop:
+    - "80"
+    - "443"
+  ignore_errors: yes  # Ignore non-zero exit codes when ports are free
+  become: yes
+
+- name: Restart Nginx
+  systemd:
+    name: nginx
+    state: restarted
+    enabled: yes
+  become: yes

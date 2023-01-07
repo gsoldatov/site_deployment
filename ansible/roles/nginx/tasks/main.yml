@@ -8,9 +8,10 @@
     state: present
   become: yes
 
-- name: Disable Nginx service
+- name: Stop Nginx service and ensure it's enabled
   systemd:
     name: nginx
+    enabled: yes
     state: stopped
   become: yes
 
@@ -56,9 +57,17 @@
     - { src: "/etc/nginx/sites-available/backend.conf", dest: "/etc/nginx/sites-enabled/backend.conf" }
   become: yes
 
-- name: Restart & enable Nginx service
+# Start Nginx if SSL certificate & key exist, otherwise this will trigger an error
+- name: Check if SSL certificate is present on the machine
+  stat:
+    path: /etc/ssl/site.crt
+  register: site_crt
+  become: yes
+
+- name: Start Nginx
   systemd:
     name: nginx
     enabled: yes
     state: restarted
+  when: site_crt.stat.exists
   become: yes

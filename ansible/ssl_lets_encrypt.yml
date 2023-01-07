@@ -1,0 +1,4 @@
+# Installs a Let's Encrypt SSL certificate & key and scheduled automatic updates.
+- hosts: srv
+  roles:
+    - ssl_lets_encrypt

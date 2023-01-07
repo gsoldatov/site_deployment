@@ -1,0 +1,11 @@
+nginx_ssl_certificate_path: "{{ lookup('env', 'NGINX_SSL_CERTIFICATE_PATH') }}"
+nginx_ssl_certificate_key_path: "{{ lookup('env', 'NGINX_SSL_CERTIFICATE_KEY_PATH') }}"
+
+server_urls: "{{ lookup('env', 'SERVER_URLS') }}"
+server_backend_https_port: "{{ lookup('env', 'SERVER_BACKEND_HTTPS_PORT') }}"
+
+# A list of domain options for certbot command with frontend & backend URLs for each domain name
+# Template lookup is a workaround to enable looping over server urls (which can't be done directly in a variable)
+certbot_domain_options: "{{ lookup('template', 'templates/certbot_domain_options.j2') }}"
+
+certbot_registration_email: "{{ lookup('env', 'CERTBOT_REGISTRATION_EMAIL') }}"
