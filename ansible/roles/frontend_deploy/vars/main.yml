@@ -2,8 +2,11 @@ server_addr: "{{ lookup('env', 'SERVER_ADDR') }}"
 server_url: "{{ lookup('env', 'SERVER_URLS').split(' ')[0] }}"
 deployment_user_name: "{{ lookup('env', 'DEPLOYMENT_USER_NAME') }}"
 server_backend_https_port: "{{ lookup('env', 'SERVER_BACKEND_HTTPS_PORT') }}"
+
 backend_setting_max_hierarchy_depth: "{{ lookup('env', 'BACKEND_SETTING_MAX_HIERARCHY_DEPTH') }}"
 frontend_setting_express_port: "{{ lookup('env', 'FRONTEND_SETTING_EXPRESS_PORT') }}"
+frontend_setting_use_local_storage: "{{ lookup('env', 'FRONTEND_SETTING_USE_LOCAL_STORAGE') }}"
+frontend_setting_enable_debug_logging: "{{ lookup('env', 'FRONTEND_SETTING_ENABLE_DEBUG_LOGGING') }}"
 
 node_version: "{{ lookup('env', 'NODE_VERSION') }}"
 node_distro: "{{ lookup('env', 'NODE_DISTRO') }}"
