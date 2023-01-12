@@ -62,7 +62,7 @@
   become: yes
 
 - name: Set folder permissions
-  command: "chmod -R 775 {{ backend_folder }}"
+  command: "chmod -R 770 {{ backend_folder }}"
   become: yes
 
 - name: Run database migrations
