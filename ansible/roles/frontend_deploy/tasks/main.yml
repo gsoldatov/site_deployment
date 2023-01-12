@@ -49,6 +49,7 @@
   become: yes
 
 - name: Install dependencies
+
   command: npm install
   args:
     chdir: "{{ frontend_folder }}"
@@ -71,5 +72,5 @@
   become: yes
 
 - name: Set folder permissions
-  command: "chmod -R 775 {{ frontend_folder }}"
+  command: "chmod -R 775 {{ frontend_folder }}"   # r+x required for Nginx to be able to return files inside the folder
   become: yes
