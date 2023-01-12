@@ -1,5 +1,6 @@
 # Creates a database backup and fetches it to the local machine.
 
+
 - name: Make a database backup, if it's enabled
   block:
     # Backup existing .pgpass file
@@ -27,7 +28,7 @@
 
     - name: Make backup on remote machine
       # "host" arg is required to use password authentication (credentials stored in .pgpass)
-      command: "pg_dump --username='{{ backend_setting_db_init_username }}' --host='{{ backend_setting_db_database_host }}' --port={{ backend_setting_db_database_port }} --format=tar --exclude-table='searchables' --dbname='{{ backend_setting_db_database }}' --file='{{ backend_folder }}/{{ backup_filename }}'"
+      command: "pg_dump --username='{{ backend_setting_db_init_username }}' --host='{{ backend_setting_db_database_host }}' --port={{ backend_setting_db_database_port }} --format=tar --exclude-table='searchables' --dbname='{{ backend_setting_db_database }}' --file='{{ backend_folder }}/{{ backup_db_dump_filename }}'"
       become: yes
 
     # Restore previously existing .pgpass file or delete temporary file
@@ -56,14 +57,14 @@
       # fetch:
       synchronize:
         mode: pull
-        src: "{{ backend_folder }}/{{ backup_filename }}"
-        dest: "{{ local_backup_folder }}/{{ backup_filename }}"
+        src: "{{ backend_folder }}/{{ backup_db_dump_filename }}"
+        dest: "{{ backup_local_folder }}/{{ backup_db_dump_filename }}"
       # become: yes
 
     - name: Remove dump on remote
       file:
-        path: "{{ backend_folder }}/{{ backup_filename }}"
+        path: "{{ backend_folder }}/{{ backup_db_dump_filename }}"
         state: absent
       become: yes
 
-  when: max_backup_copies | int > 0
+  when: backup_db_max_backup_count | int > 0

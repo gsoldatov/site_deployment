@@ -1,5 +1,6 @@
 venv/
 build/
+logs/
 *.env
 
 hosts.yml

@@ -1,0 +1,11 @@
+backup_log_folder: "{{ lookup('env', 'BACKUP_LOG_FOLDER') }}"
+backup_script_log_filename: "{{ lookup('env', 'BACKUP_SCRIPT_LOG_FILENAME') }}"
+backup_script_log_max_size: "{{ lookup('env', 'BACKUP_SCRIPT_LOG_MAX_SIZE') }}"
+backup_script_keep_log_files: "{{ lookup('env', 'BACKUP_SCRIPT_KEEP_LOG_FILES') }}"
+
+backup_db_ansible_log_filename: "{{ lookup('env', 'BACKUP_DB_ANSIBLE_LOG_FILENAME') }}"
+backup_db_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_DB_ANSIBLE_KEEP_LOG_FILES') }}"
+
+env_file: "{{ lookup('env', 'ENV_FILE') }}"
+current_username: "{{ lookup('env', 'USER') }}"
+local_site_folder: "{{ lookup('env', 'LOCAL_SITE_FOLDER') }}"

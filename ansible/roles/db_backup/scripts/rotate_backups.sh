@@ -1,21 +1,21 @@
 # Rotates existing backup copies before the fetch of a new backup
-FILEPATH_TEMPLATE="$LOCAL_BACKUP_FOLDER/$BACKUP_FILENAME"
+FILEPATH_TEMPLATE="$BACKUP_LOCAL_FOLDER/$BACKUP_DB_DUMP_FILENAME"
 
 # Do nothing if a single copy is kept
-if (($MAX_BACKUP_COPIES <= 1)); then
-    echo "\$MAX_BACKUP_COPIES <= 1, exiting."
+if (($BACKUP_DB_MAX_BACKUP_COUNT <= 1)); then
+    echo "\$BACKUP_DB_MAX_BACKUP_COUNT <= 1, exiting."
     exit 0
 fi
 
 # Delete the backup with the maximum number
-FILEPATH="$FILEPATH_TEMPLATE.$(($MAX_BACKUP_COPIES - 1))"
+FILEPATH="$FILEPATH_TEMPLATE.$(($BACKUP_DB_MAX_BACKUP_COUNT - 1))"
 if [[ -f "$FILEPATH" ]]; then
     echo "REMOVING $FILEPATH"
     rm -f "$FILEPATH"
 fi
 
 # Increase backup numbers
-for ((i = $MAX_BACKUP_COPIES - 1; i > 1; i--))
+for ((i = $BACKUP_DB_MAX_BACKUP_COUNT - 1; i > 1; i--))
 do
     FROM="$FILEPATH_TEMPLATE.$(($i - 1))"
     TO="$FILEPATH_TEMPLATE.$i"

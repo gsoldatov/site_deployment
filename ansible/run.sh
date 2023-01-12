@@ -6,7 +6,7 @@ Additional params for ansible-playbook can be passed after the playbook name.
 Installs sshpass on the local machine if it is absent & password authentication is used.
 '
 # Default variable values
-ENV_FILE=production.env
+export ENV_FILE=production.env
 
 
 # Get script options & filter Ansible options
@@ -50,8 +50,9 @@ if [[ ! -f $PLAYBOOK ]]; then
     exit 1
 fi
 
-if [[ ! -f $DIR/$ENV_FILE ]]; then
-    echo "Env file '$DIR/$ENV_FILE' does not exist."
+ENV_FILE_FULLPATH=$DIR/$ENV_FILE;
+if [[ ! -f $ENV_FILE_FULLPATH ]]; then
+    echo "Env file '$ENV_FILE_FULLPATH' does not exist."
     exit 1
 fi
 
@@ -73,7 +74,7 @@ fi
 
 # Activate venv & load environment variables
 source $DIR/../venv/bin/activate
-source $DIR/$ENV_FILE
+source $ENV_FILE_FULLPATH
 
 
 # Set environment variables for inventory file based on the playbook being run
@@ -99,7 +100,10 @@ envsubst < $DIR/hosts.yml.example > $DIR/hosts.yml
 
 # Run playbook
 ansible-playbook -i $DIR/hosts.yml $PLAYBOOK "${ANSIBLE_OPTS[@]}";
+EXIT_CODE=$?;
 
 
 # Deactivate venv
 deactivate;
+
+exit $EXIT_CODE;

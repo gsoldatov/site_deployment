@@ -1,6 +1,6 @@
-local_backup_folder: "{{ lookup('env', 'LOCAL_BACKUP_FOLDER') }}"
-backup_filename: "{{ lookup('env', 'BACKUP_FILENAME') }}"
-max_backup_copies: "{{ lookup('env', 'MAX_BACKUP_COPIES') }}"
+backup_local_folder: "{{ lookup('env', 'BACKUP_LOCAL_FOLDER') }}"
+backup_db_dump_filename: "{{ lookup('env', 'BACKUP_DB_DUMP_FILENAME') }}"
+backup_db_max_backup_count: "{{ lookup('env', 'BACKUP_DB_MAX_BACKUP_COUNT') }}"
 
 backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"
 
