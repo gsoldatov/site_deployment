@@ -2,4 +2,4 @@
 # Mainly used by a local cronjob running backup script.
 - hosts: srv
   roles:
-    - { role: db_backup, tags: [db_backup] }
+    - { role: backup_db, tags: [backup_db] }

@@ -2,7 +2,7 @@
 - hosts: srv
   roles:
     - backend_update_on_start
-    - db_backup
+    - backup_db
     - backend_deploy
     - backend_scheduled
     - backend_update_on_finish
