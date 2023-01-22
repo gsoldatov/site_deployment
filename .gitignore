@@ -1,6 +1,9 @@
 venv/
 build/
 logs/
-*.env
 
+__pycache__/
+
+*.env
+*config.json
 hosts.yml
