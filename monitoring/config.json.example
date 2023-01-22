@@ -1,0 +1,17 @@
+{
+    "server_addr": "192.168.1.68",
+    "ssh_port": 22,
+
+    "db": {
+        "db_host": "localhost",
+        "db_port": 5432,
+        
+        "db_init_database": "postgres",
+        "db_init_username": "postgres",
+        "db_init_password": "password",
+        
+        "db_database": "site_logs",
+        "db_username": "site_logs_user",
+        "db_password": "password"
+    }
+}
