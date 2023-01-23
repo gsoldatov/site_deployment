@@ -2,26 +2,13 @@
 A script for creating log database & user on a Postgresql server with the specified configuration.
 """
 import argparse
-import psycopg2
 
 if __name__ == "__main__":
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
 from monitoring.util.config import get_config
-
-
-def connect(config):
-    host = config["db"]["db_host"]
-    port = config["db"]["db_port"]
-    database = config["db"]["db_init_database"]
-    user = config["db"]["db_init_username"]
-    password = config["db"]["db_init_password"]
-    
-    connection = psycopg2.connect(host=host, port=port, database=database, \
-                            user=user, password=password)
-    connection.set_session(autocommit=True)
-    return connection
+from monitoring.db.util import connect
 
 
 def setup_database(config):
@@ -29,7 +16,7 @@ def setup_database(config):
     db_username = config["db"]["db_username"]
     db_password = config["db"]["db_password"]
 
-    connection = connect(config)
+    connection = connect(config, db="initial")
     try:
         cursor = connection.cursor()
         cursor.execute(f"SELECT 1 FROM pg_user WHERE usename = '{db_username}'")
