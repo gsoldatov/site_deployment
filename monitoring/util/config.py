@@ -13,4 +13,10 @@ def get_config(config_file = None):
         config_file = os.path.join(os.path.dirname(__file__), "..", config_file)
     
     with open(config_file, "r") as read_stream:
-        return json.load(read_stream)
+        config = json.load(read_stream)
+
+    # Expand user directory in the ssh key, if present
+    config["ssh_key_path"] = os.path.expanduser(config["ssh_key_path"])
+
+    # Return config
+    return config
