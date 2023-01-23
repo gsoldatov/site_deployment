@@ -16,8 +16,8 @@ def get_tables():
     })
 
     return {
-        "app_access_log": Table(
-            "app_access_log",
+        "app_access_logs": Table(
+            "app_access_logs",
             meta,
             Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
             Column("record_time", DateTime(timezone=True), nullable=False, index=True),
@@ -32,8 +32,8 @@ def get_tables():
             Column("referer", Text)
         ),
 
-        "app_event_log": Table(
-            "app_event_log",
+        "app_event_logs": Table(
+            "app_event_logs",
             meta,
             Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
             Column("record_time", DateTime(timezone=True), nullable=False, index=True),
@@ -44,8 +44,8 @@ def get_tables():
             Column("details", Text)
         ),
 
-        "database_scheduled_jobs": Table(
-            "database_scheduled_jobs",
+        "database_scheduled_jobs_logs": Table(
+            "database_scheduled_jobs_logs",
             meta,
             Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
             Column("job_type", String(64), primary_key=True, server_default=FetchedValue()),
