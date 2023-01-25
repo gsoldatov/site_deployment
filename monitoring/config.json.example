@@ -1,6 +1,9 @@
 {
     "server_addr": "192.168.1.68",
     "ssh_port": 22,
+    "server_user": "user",
+    "server_user_password": "password",
+    "ssh_key_path": "/path/to/key",
 
     "db": {
         "db_host": "localhost",
@@ -13,5 +16,15 @@
         "db_database": "site_logs",
         "db_username": "site_logs_user",
         "db_password": "password"
+    },
+
+    "temp_folder": "temp",
+
+    "fetched_logs_settings": {
+        "backend_log_folder": "/site/backend/logs",
+        "backend_log_separator": ";",
+        "app_access_log_name_template": "app_access_log*",
+        "app_event_log_name_template": "app_event_log*",
+        "database_scheduled_jobs_log_name_template": "(clear_expired_login_limits|clear_expired_sessions|update_searchables)*"
     }
 }
