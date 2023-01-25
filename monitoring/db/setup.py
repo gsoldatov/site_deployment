@@ -7,8 +7,12 @@ if __name__ == "__main__":
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../.."))
 
-from monitoring.util.config import get_config
 from monitoring.db.util import connect
+from monitoring.util.config import get_config
+from monitoring.util.logging import get_logger
+
+
+log = get_logger()
 
 
 def setup_database(config):
@@ -22,9 +26,9 @@ def setup_database(config):
         cursor.execute(f"SELECT 1 FROM pg_user WHERE usename = '{db_username}'")
         if not cursor.fetchone():
             cursor.execute(f"""CREATE ROLE {db_username} PASSWORD '{db_password}' LOGIN;""")
-            print("Created user.")
+            log("Created user.")
         else:
-            print("User already exists.")
+            log("User already exists.")
         
         cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_database}'")
         if not cursor.fetchone():
@@ -32,9 +36,9 @@ def setup_database(config):
                 CREATE DATABASE {db_database} ENCODING 'UTF-8' 
                 OWNER {db_username} TEMPLATE template0;
             """)
-            print("Created database.")
+            log("Created database.")
         else:
-            print("Database already exists.")
+            log("Database already exists.")
     finally:
         connection.close()
 
