@@ -40,6 +40,7 @@ class FetchRemoteLogs(BaseJob):
         self.ssh_connection = None
         self.temp_folder = None
 
+        self.number_of_matching_files = 0
         self.number_of_read_records = 0
         self.number_of_inserted_records = 0
     
@@ -125,9 +126,10 @@ class FetchRemoteLogs(BaseJob):
         result = self.ssh_connection.sudo(cmd)
 
         # Exit if no matching files found
-        if not len(result.stdout.strip()):
+        self.number_of_matching_files = len(result.stdout.strip())
+        if self.number_of_matching_files == 0:
             self.log("Found no matching files.")
-            exit(0)
+            return
         
         remote_files = result.stdout.strip().split("\n")
         remote_filenames = " ".join((os.path.basename(f) for f in remote_files))
@@ -241,6 +243,8 @@ class FetchRemoteLogs(BaseJob):
             finally:
                 # Close ssh connection
                 self.ssh_connection.close()
+
+            if self.number_of_matching_files == 0: return
 
             # Update database
             try:
