@@ -130,12 +130,11 @@ class FetchRemoteLogs(BaseJob):
             exit(0)
         
         remote_files = result.stdout.strip().split("\n")
-        # remote_files_as_str = " ".join(("'" + file + "'" for file in remote_files))
         remote_filenames = " ".join((os.path.basename(f) for f in remote_files))
         self.log(f"Found {len(remote_files)} matching files.")
 
-        # Fetch matching files (make temp file copies with different owner to allow sftp transfer)
         try:
+            # Archive and fetch matching files
             archive_filename = f"/tmp_{str(uuid4())[:8]}.tar.gz"
             local_archive_filename = os.path.join(self.temp_folder, os.path.basename(archive_filename))
 
@@ -149,15 +148,20 @@ class FetchRemoteLogs(BaseJob):
             self.ssh_connection.sudo(f"chown {self.config['server_user']} {archive_filename}")
             
             self.ssh_connection.get(archive_filename, local=local_archive_filename)
+            self.log(f"Fetched matching files to the local machine.")
 
+            # Unarchive tarball with fetched files and remove it
             os.system(f"tar -xzf '{local_archive_filename}' -C {self.temp_folder}")
+            os.remove(local_archive_filename)
+
+            # Unarchive fetched gzip archives
+            archived_fetched_files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if f.endswith(".gz")]
+            for file in archived_fetched_files:
+                os.system(f"gunzip {file}") # Replace gzipped `file` with unarchived file in the same directory
+            self.log(f"Unarchived {len(archived_fetched_files)} files.")
         finally:
             # Remove archived files
             self.ssh_connection.sudo(f"rm -f {archive_filename}")
-            if os.path.exists(local_archive_filename):
-                os.remove(local_archive_filename)
-        
-        self.log(f"Fetched matching files to the local machine.")
 
 
     def remove_existing_data(self, cursor):
