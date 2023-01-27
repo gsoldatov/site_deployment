@@ -142,7 +142,7 @@ class JobRunner:
             for job_name in self.args.jobs:
                 now = get_current_time()
                 Cls = job_list[job_name]
-                job = Cls(job_name, self.args, self.config, self.log)
+                job = Cls(job_name, self.args, self.config, self.db_connection, self.log)
                 job.run()
                 last_successful_full_fetch_time = now if job.full_fetch else None
                 self.update_fetch_job_status(job_name, "success", now, last_successful_full_fetch_time=last_successful_full_fetch_time)
