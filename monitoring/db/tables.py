@@ -16,6 +16,18 @@ def get_tables():
     })
 
     return {
+        # Fetch script staus & logs
+        "fetch_jobs_status": Table(
+            "fetch_jobs_status",
+            meta,
+            Column("job_name", String(32), primary_key=True),
+            Column("last_execution_id", String(8), nullable=False),
+            Column("last_execution_status", String(32), nullable=False),
+            Column("last_execution_time", DateTime(timezone=True), nullable=False),
+            Column("last_successful_full_fetch_time", DateTime(timezone=True))
+        ),
+
+        # Log storage tables
         "app_access_logs": Table(
             "app_access_logs",
             meta,
