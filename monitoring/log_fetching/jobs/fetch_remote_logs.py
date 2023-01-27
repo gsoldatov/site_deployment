@@ -8,7 +8,7 @@ from psycopg2.extensions import AsIs
 
 from monitoring.db.util import connect
 from monitoring.log_fetching.jobs.base_job import BaseJob
-from monitoring.util.util import get_local_tz
+from monitoring.util.util import get_current_time
 
 
 class FetchRemoteLogs(BaseJob):
@@ -16,9 +16,11 @@ class FetchRemoteLogs(BaseJob):
     Basic job for fetching remote logs.
     Job algorithm:
     - prepare local folder for file fetching;
-    - get `min_time` & `max_time` based on script args (if provided) or last execution time;
+    - enable or disable full fetch mode based on script arg or
+    - if not running full fetch mode, get `min_time` & `max_time` based on script args (if provided) or last full fetch mode execution time;
     - connects to prod server & fetches all files, which match the pattern and were modified after `min_time`;
     - unarchives fetched files if required;
+    - if running full fetch mode, scan files and set fetch period based on data inside them;
     - deletes existing data for the specified period;
     - reads each fetched file:
         - filters lines by timestamp in the first field being between `min_time` and `max_time` (timestamp is considered to be in the timezone of the prod server);
@@ -32,6 +34,7 @@ class FetchRemoteLogs(BaseJob):
         self.filename_pattern = filename_pattern
         self.separator = separator
 
+        self.full_fetch = True
         self.min_time = None
         self.max_time = None
         self.server_timezone = None
@@ -70,29 +73,52 @@ class FetchRemoteLogs(BaseJob):
             elif os.path.isdir(filepath): rmtree(filepath)
     
 
+    def set_full_fetch(self):
+        """ 
+        Sets full fetch mode of the job to:
+        1) True if --full-fetch script flag is passed;
+        2) True if full fetch was never performed or performed more than a day ago;
+        3) False, otherwise.
+        """
+        if not self.args.full_fetch:
+            with self.db_connection: # Use connection as a context managaer to automatically commit/rollback transaction upon exit
+                with self.db_connection.cursor() as cursor:
+                    cursor.execute("SELECT last_successful_full_fetch_time FROM fetch_jobs_status WHERE job_name = %s", [self.name])
+                    row = cursor.fetchone()
+                    if row:
+                        if get_current_time() - row[0] < timedelta(days=1):
+                            self.full_fetch = False
+        self.log(f"Full fetch mode is {'enabled' if self.full_fetch else 'disabled'}.")
+    
+
     def set_fetch_period(self):
         """ Sets min and max time of data to be fetched. """
+        # Set with temp values if running in full fetch mode (values will be later set based on fetched file values)
+        if self.full_fetch:
+            self.min_time = get_current_time()
+            self.max_time = get_current_time() - timedelta(days=365 * 10)
+            return
+
         # Max time (from args or end of next day)
-        now = datetime.now()
+        now = get_current_time()
         self.max_time = self.args.max_time or \
-            now.replace(hour=23, minute=59, second=59, microsecond=0, tzinfo=get_local_tz()) + timedelta(days=1)
+            now.replace(hour=23, minute=59, second=59, microsecond=0) + timedelta(days=1)
         
         # Min time (from args, or based on max record_time)
         if self.args.min_time:
             self.min_time = self.args.min_time
         else:
-            with self.db_connection.cursor() as cursor:
-                cursor.execute(f"SELECT MAX(record_time) FROM {self.name}")
-                row = cursor.fetchone() or []
-                if row[0]:
-                    self.min_time = row[0].replace(microsecond=0) + timedelta(seconds=1)
-                else:
-                    self.min_time = now.replace(year=now.year - 1, month=1, day=1, hour=0, 
-                                                minute=0, second=0, microsecond=0, tzinfo=get_local_tz())
-            
-            self.db_connection.commit() # Close transaction
+            with self.db_connection: # Use connection as a context managaer to automatically commit/rollback transaction upon exit
+                with self.db_connection.cursor() as cursor:
+                    cursor.execute("SELECT MAX(record_time) FROM %s", [AsIs(self.name)])
+                    row = cursor.fetchone() or []
+                    if row[0]:
+                        self.min_time = row[0].replace(microsecond=0) + timedelta(seconds=1)
+                    else:
+                        self.min_time = now.replace(year=now.year - 1, month=1, day=1, hour=0, 
+                                                    minute=0, second=0, microsecond=0)
         
-        self.log(f"Fetching data from {self.min_time.isoformat()} to {self.max_time.isoformat()}")
+        self.log(f"Fetching data from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
 
     
     def start_ssh_connection(self):
@@ -121,8 +147,11 @@ class FetchRemoteLogs(BaseJob):
     def fetch_files(self):
         """ Fetch files with matching pattern and modification time into temp folder. """
         # Get matching files
-        t = self.min_time.isoformat()
-        cmd = f'find "{self.remote_log_folder}" -name "{self.filename_pattern}" -newermt "{t}"' # NOTE: remove -newermt if time filter should not be used
+        cmd = f'find "{self.remote_log_folder}" -name "{self.filename_pattern}"'
+        if not self.full_fetch:  # Filter files by time if not running full fetch
+            t = self.min_time.isoformat()
+            cmd +=  f' -newermt "{t}"'
+        # cmd = f'find "{self.remote_log_folder}" -name "{self.filename_pattern}" -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
         # Exit if no matching files found
@@ -170,11 +199,26 @@ class FetchRemoteLogs(BaseJob):
         """ Delete existing data for the fetch period in the database. """
         cursor.execute("DELETE FROM %s WHERE record_time BETWEEN %s AND %s", 
             (AsIs(self.name), self.min_time, self.max_time))
+    
+
+    def scan_files(self):
+        """ Sets `min_time` and `max_time` based on data in fetched files, when running in full fetch mode. """
+        if self.full_fetch:
+            files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if not f.endswith(".gz")]
+
+            for file in files:
+                with open(file, "r") as f:
+                    for line in f.readlines():
+                        record_time = self.parse_timestamp(line.split(self.separator)[0])
+                        self.min_time = min(self.min_time, record_time)
+                        self.max_time = max(self.max_time, record_time)
+            
+            self.log(f"Set fetch period based on data in files from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
 
 
     def process_files(self, cursor):
         """ Read fetched files, transform and insert matching lines into the database. """
-        files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if not f.endswith(".tar.gz")]
+        files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if not f.endswith(".gz")]
 
         for file in files:
             new_records = []
@@ -233,6 +277,7 @@ class FetchRemoteLogs(BaseJob):
             # Setup
             self.log(f"Starting job {self.name}.")
             self.prepare_folder()
+            self.set_full_fetch()
             self.set_fetch_period()
 
             # Get files
@@ -245,6 +290,9 @@ class FetchRemoteLogs(BaseJob):
                 self.ssh_connection.close()
 
             if self.number_of_matching_files == 0: return
+
+            # Scan files
+            self.scan_files()
 
             # Update database
             try:
