@@ -6,7 +6,6 @@ from uuid import uuid4
 from fabric import Connection, Config
 from psycopg2.extensions import AsIs
 
-from monitoring.db.util import connect
 from monitoring.log_fetching.jobs.base_job import BaseJob
 from monitoring.util.util import get_current_time
 
@@ -27,8 +26,8 @@ class FetchRemoteLogs(BaseJob):
         - transforms matching lines (specific line transformations are provided by subclasses);
         - inserts matching lines into the database.
     """
-    def __init__(self, name, args, config, log, remote_log_folder, filename_pattern, separator):
-        super().__init__(name, args, config, log)
+    def __init__(self, name, args, config, db_connection, log, remote_log_folder, filename_pattern, separator):
+        super().__init__(name, args, config, db_connection, log)
 
         self.remote_log_folder = remote_log_folder
         self.filename_pattern = filename_pattern
@@ -39,20 +38,12 @@ class FetchRemoteLogs(BaseJob):
         self.max_time = None
         self.server_timezone = None
 
-        self._db_connection = None
         self.ssh_connection = None
         self.temp_folder = None
 
         self.number_of_matching_files = 0
         self.number_of_read_records = 0
         self.number_of_inserted_records = 0
-    
-    
-    @property
-    def db_connection(self):
-        if not self._db_connection:
-            self._db_connection = connect(self.config, db="logs")
-        return self._db_connection
     
     
     def prepare_folder(self):
@@ -273,46 +264,38 @@ class FetchRemoteLogs(BaseJob):
 
 
     def run(self):
+        # Setup
+        self.log(f"Starting job {self.name}.")
+        self.prepare_folder()
+        self.set_full_fetch()
+        self.set_fetch_period()
+
+        # Get files
         try:
-            # Setup
-            self.log(f"Starting job {self.name}.")
-            self.prepare_folder()
-            self.set_full_fetch()
-            self.set_fetch_period()
-
-            # Get files
-            try:
-                self.start_ssh_connection()
-                self.get_server_timezone()
-                self.fetch_files()
-            finally:
-                # Close ssh connection
-                self.ssh_connection.close()
-
-            if self.number_of_matching_files == 0: return
-
-            # Scan files
-            self.scan_files()
-
-            # Update database
-            try:
-                with self.db_connection.cursor() as cursor:
-                    self.remove_existing_data(cursor)
-                    self.process_files(cursor)
-                
-                if self.number_of_inserted_records > 0:
-                    self.db_connection.commit()
-                else:
-                    self.db_connection.rollback()
-            except:
-                self.db_connection.rollback()
-                raise
-            
-            self.log(f"Read {self.number_of_read_records} records, inserted {self.number_of_inserted_records}.")                
-
+            self.start_ssh_connection()
+            self.get_server_timezone()
+            self.fetch_files()
         finally:
-            # Close conneciton
-            if self.db_connection:
-                if not self.db_connection.closed:
-                    self.db_connection.close()
-    
+            # Close ssh connection
+            self.ssh_connection.close()
+
+        if self.number_of_matching_files == 0: return
+
+        # Scan files
+        self.scan_files()
+
+        # Update database
+        try:
+            with self.db_connection.cursor() as cursor:
+                self.remove_existing_data(cursor)
+                self.process_files(cursor)
+            
+            if self.number_of_inserted_records > 0:
+                self.db_connection.commit()
+            else:
+                self.db_connection.rollback()
+        except:
+            self.db_connection.rollback()
+            raise
+        
+        self.log(f"Read {self.number_of_read_records} records, inserted {self.number_of_inserted_records}.")                
