@@ -19,6 +19,7 @@
     },
 
     "temp_folder": "temp",
+    "logging_mode": "db",
 
     "fetched_logs_settings": {
         "backend_log_folder": "/site/backend/logs",

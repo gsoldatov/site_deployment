@@ -79,7 +79,7 @@ class FetchRemoteLogs(BaseJob):
                     if row:
                         if get_current_time() - row[0] < timedelta(days=1):
                             self.full_fetch = False
-        self.log(f"Full fetch mode is {'enabled' if self.full_fetch else 'disabled'}.")
+        self.log(self.name, "DEBUG", f"Full fetch mode is {'enabled' if self.full_fetch else 'disabled'}.")
     
 
     def set_fetch_period(self):
@@ -109,7 +109,7 @@ class FetchRemoteLogs(BaseJob):
                         self.min_time = now.replace(year=now.year - 1, month=1, day=1, hour=0, 
                                                     minute=0, second=0, microsecond=0)
         
-        self.log(f"Fetching data from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
+        self.log(self.name, "DEBUG", f"Fetching data from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
 
     
     def start_ssh_connection(self):
@@ -148,12 +148,12 @@ class FetchRemoteLogs(BaseJob):
         # Exit if no matching files found
         self.number_of_matching_files = len(result.stdout.strip())
         if self.number_of_matching_files == 0:
-            self.log("Found no matching files.")
+            self.log(self.name, "INFO", "Found no matching files.")
             return
         
         remote_files = result.stdout.strip().split("\n")
         remote_filenames = " ".join((os.path.basename(f) for f in remote_files))
-        self.log(f"Found {len(remote_files)} matching files.")
+        self.log(self.name, "DEBUG", f"Found {len(remote_files)} matching files.")
 
         try:
             # Archive and fetch matching files
@@ -170,7 +170,7 @@ class FetchRemoteLogs(BaseJob):
             self.ssh_connection.sudo(f"chown {self.config['server_user']} {archive_filename}")
             
             self.ssh_connection.get(archive_filename, local=local_archive_filename)
-            self.log(f"Fetched matching files to the local machine.")
+            self.log(self.name, "DEBUG", f"Fetched matching files to the local machine.")
 
             # Unarchive tarball with fetched files and remove it
             os.system(f"tar -xzf '{local_archive_filename}' -C {self.temp_folder}")
@@ -180,7 +180,7 @@ class FetchRemoteLogs(BaseJob):
             archived_fetched_files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if f.endswith(".gz")]
             for file in archived_fetched_files:
                 os.system(f"gunzip {file}") # Replace gzipped `file` with unarchived file in the same directory
-            self.log(f"Unarchived {len(archived_fetched_files)} files.")
+            self.log(self.name, "DEBUG", f"Unarchived {len(archived_fetched_files)} files.")
         finally:
             # Remove archived files
             self.ssh_connection.sudo(f"rm -f {archive_filename}")
@@ -204,7 +204,7 @@ class FetchRemoteLogs(BaseJob):
                         self.min_time = min(self.min_time, record_time)
                         self.max_time = max(self.max_time, record_time)
             
-            self.log(f"Set fetch period based on data in files from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
+            self.log(self.name, "DEBUG", f"Set fetch period based on data in files from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
 
 
     def process_files(self, cursor):
@@ -265,7 +265,7 @@ class FetchRemoteLogs(BaseJob):
 
     def run(self):
         # Setup
-        self.log(f"Starting job {self.name}.")
+        self.log(self.name, "INFO", f"Starting job {self.name}.")
         self.prepare_folder()
         self.set_full_fetch()
         self.set_fetch_period()
@@ -298,4 +298,4 @@ class FetchRemoteLogs(BaseJob):
             self.db_connection.rollback()
             raise
         
-        self.log(f"Read {self.number_of_read_records} records, inserted {self.number_of_inserted_records}.")                
+        self.log(self.name, "INFO", f"Read {self.number_of_read_records} records, inserted {self.number_of_inserted_records}.")                

@@ -1,5 +1,5 @@
 from sqlalchemy import (
-    MetaData, Table, Column, DateTime, Integer, 
+    MetaData, Table, Column, ForeignKey, DateTime, Integer, 
     SmallInteger, Float, String, Text
 )
 from sqlalchemy.schema import FetchedValue
@@ -21,10 +21,21 @@ def get_tables():
             "fetch_jobs_status",
             meta,
             Column("job_name", String(32), primary_key=True),
-            Column("last_execution_id", String(8), nullable=False),
+            Column("last_execution_id", String(8)),
             Column("last_execution_status", String(32), nullable=False),
             Column("last_execution_time", DateTime(timezone=True), nullable=False),
             Column("last_successful_full_fetch_time", DateTime(timezone=True))
+        ),
+
+        "fetch_jobs_logs": Table(
+            "fetch_jobs_logs",
+            meta,
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("record_time", DateTime(timezone=True), nullable=False, index=True),
+            Column("execution_id", String(8)),
+            Column("job_name", String(32)),
+            Column("level", String(8)),
+            Column("message", Text)
         ),
 
         # Log storage tables
