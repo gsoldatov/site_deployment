@@ -9,10 +9,10 @@ if __name__ == "__main__":
 
 from monitoring.db.util import connect
 from monitoring.util.config import get_config
-from monitoring.util.logging import get_logger
+from monitoring.util.logging import PrintLogger
 
 
-log = get_logger()
+logger = PrintLogger()
 
 
 def setup_database(config):
@@ -26,9 +26,9 @@ def setup_database(config):
         cursor.execute(f"SELECT 1 FROM pg_user WHERE usename = '{db_username}'")
         if not cursor.fetchone():
             cursor.execute(f"""CREATE ROLE {db_username} PASSWORD '{db_password}' LOGIN;""")
-            log("Created user.")
+            logger.log(message="Created user.")
         else:
-            log("User already exists.")
+            logger.log(message="User already exists.")
         
         cursor.execute(f"SELECT 1 FROM pg_database WHERE datname = '{db_database}'")
         if not cursor.fetchone():
@@ -36,9 +36,9 @@ def setup_database(config):
                 CREATE DATABASE {db_database} ENCODING 'UTF-8' 
                 OWNER {db_username} TEMPLATE template0;
             """)
-            log("Created database.")
+            logger.log(message="Created database.")
         else:
-            log("Database already exists.")
+            logger.log(message="Database already exists.")
     finally:
         connection.close()
 

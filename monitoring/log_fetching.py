@@ -4,6 +4,7 @@ Script for fetching production server logs and inserting the into the local data
 import argparse
 from datetime import datetime
 import subprocess
+import traceback
 from uuid import uuid4
 
 if __name__ == "__main__":
@@ -12,7 +13,7 @@ if __name__ == "__main__":
 
 from monitoring.log_fetching.jobs import job_list
 from monitoring.util.config import get_config
-from monitoring.util.logging import get_logger
+from monitoring.util.logging import PrintLogger, DatabaseLogger
 from monitoring.util.util import get_current_time, get_local_tz
 from monitoring.db.util import connect
 
@@ -75,15 +76,17 @@ class JobRunner:
         self.config = get_config(self.args.config)
         self.execution_id = str(uuid4())[:8]
 
-        self.log = get_logger()
-        self._db_connection = None
+        self.db_connection = connect(self.config, db="logs")
+        
+        if self.config["logging_mode"] == "stdout":
+            self._logger = PrintLogger()
+        elif self.config["logging_mode"] == "db":
+            self._logger = DatabaseLogger(self.db_connection)
     
 
-    @property
-    def db_connection(self):
-        if not self._db_connection:
-            self._db_connection = connect(self.config, db="logs")
-        return self._db_connection
+    def log(self, job_name, level, message):
+        self._logger.log(record_time=get_current_time(), execution_id=self.execution_id,
+            job_name=job_name, level=level, message=message)
     
 
     def is_internet_connection_available(self):
@@ -97,8 +100,8 @@ class JobRunner:
         proc = subprocess.Popen(cmd, shell=True)
         proc.communicate()
 
-        if proc.returncode == 2: self.log("No internet connection available."); return False
-        elif proc.returncode == 1 and not self.args.force: self.log("Internet connection is metered."); return False
+        if proc.returncode == 2: self.log("main", "WARNING", "No internet connection available."); return False
+        elif proc.returncode == 1 and not self.args.force: self.log("main", "WARNING", "Internet connection is metered."); return False
         return True
     
 
@@ -140,19 +143,25 @@ class JobRunner:
         # Run jobs
         try:
             for job_name in self.args.jobs:
-                now = get_current_time()
-                Cls = job_list[job_name]
-                job = Cls(job_name, self.args, self.config, self.db_connection, self.log)
-                job.run()
-                last_successful_full_fetch_time = now if job.full_fetch else None
-                self.update_fetch_job_status(job_name, "success", now, last_successful_full_fetch_time=last_successful_full_fetch_time)
+                try:
+                    now = get_current_time()
+                    Cls = job_list[job_name]
+                    job = Cls(job_name, self.args, self.config, self.db_connection, self.log)
+                    job.run()
+                    last_successful_full_fetch_time = now if job.full_fetch else None
+                    self.update_fetch_job_status(job_name, "success", now, last_successful_full_fetch_time=last_successful_full_fetch_time)
+                except Exception as e:
+                    self.log(job_name, "ERROR", traceback.format_exc())
+                    raise
         
         except:
             self.update_fetch_job_status(job_name, "failed", now)
             raise
         
         finally:
-            if self._db_connection: self._db_connection.close()
+            self._logger.flush()
+            self.db_connection.close()
+
 
 
 def main():
