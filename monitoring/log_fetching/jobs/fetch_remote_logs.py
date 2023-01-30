@@ -149,7 +149,6 @@ class FetchRemoteLogs(BaseJob):
         if not self.full_fetch:  # Filter files by time if not running full fetch
             t = self.min_time.isoformat()
             cmd +=  f' -newermt "{t}"'
-        print(cmd)
         result = self.ssh_connection.sudo(cmd)
 
         # # Get matching files (works for a signle pattern only; TODO delete)
@@ -214,7 +213,8 @@ class FetchRemoteLogs(BaseJob):
             for file in files:
                 with open(file, "r") as f:
                     for line in f.readlines():
-                        record_time = self.parse_timestamp(line.split(self.separator)[0])
+                        fields = self.get_line_fields(line)
+                        record_time = self.parse_timestamp(fields[0])
                         self.min_time = min(self.min_time, record_time)
                         self.max_time = max(self.max_time, record_time)
             
@@ -231,11 +231,17 @@ class FetchRemoteLogs(BaseJob):
             with open(file, "r") as f:
                 for line in f.readlines():
                     self.number_of_read_records += 1
-                    if self.filter_line(line):
+                    fields = self.get_line_fields(line)
+                    if self.filter_record(fields):
                         self.number_of_inserted_records += 1
-                        new_records.append(self.transform_line(line=line, file=file))
+                        new_records.append(self.transform_record(fields=fields, file=file))
             
             self.insert_data(new_records, cursor)
+    
+
+    def get_line_fields(self, line):
+        """ Splits a string `line` into a list of separate fields. """
+        return line.split(self.separator)
     
 
     def parse_timestamp(self, timestamp):
@@ -246,19 +252,19 @@ class FetchRemoteLogs(BaseJob):
         return datetime.strptime(timestamp + "000", "%Y-%m-%d %H:%M:%S,%f").replace(tzinfo=self.server_timezone)
     
 
-    def filter_line(self, line):
+    def filter_record(self, fields):
         """ 
-        Filters line based on the timestamp in the first column of the line.
+        Filters a record based on the timestamp in its first field.
         Returns true if timestamp is inside the fetch period.
         Raises ValueError if timestamp could not be parsed.
         Expects timestamp in a 'YYYY-MM-DD hh:mm:ss,fff' format, consideres it to be in the timezone of the server.
         """
-        record_time = self.parse_timestamp(line.split(self.separator)[0])
+        record_time = self.parse_timestamp(fields[0])
         return self.min_time <= record_time <= self.max_time
 
 
-    def transform_line(self, **kwrags):
-        """ Interface method, which transforms a valid log line into a tuple, which can be inserted into the database. """
+    def transform_record(self, **kwrags):
+        """ Interface for a method, which transforms fields of a valid log record into a tuple, which can be inserted into the database. """
         raise NotImplementedError
     
 
