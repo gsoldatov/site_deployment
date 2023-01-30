@@ -90,6 +90,15 @@ def get_tables():
             Column("user_agent", Text),
             Column("referer", Text),
             Column("request", Text)
+        ),
+
+        "nginx_error_logs": Table(
+            "nginx_error_logs",
+            meta,
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("record_time", DateTime(timezone=True), nullable=False, index=True),
+            Column("level", String(8)),
+            Column("message", Text)
         )
     } \
     , meta

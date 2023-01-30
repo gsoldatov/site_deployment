@@ -53,14 +53,8 @@ class FetchNginxAccessLogs(FetchRemoteLogs):
     
 
     def parse_timestamp(self, timestamp):
-        """ Parses string `timestamp` in the access log format. """
+        """ Parses string `timestamp` in the Nginx's access log format. """
         return datetime.strptime(timestamp, "%d/%b/%Y:%H:%M:%S %z") # e.g.: "30/Jan/2023:00:54:38 +0300"
-
-    
-    # def filter_record(self, fields):
-    #     """ Filters an access log record based on its timestamp. """
-    #     record_time = self.parse_timestamp(fields[3])
-    #     return self.min_time <= record_time <= self.max_time
 
     
     def transform_record(self, **kwargs):

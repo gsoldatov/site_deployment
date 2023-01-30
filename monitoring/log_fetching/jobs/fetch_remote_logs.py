@@ -152,13 +152,6 @@ class FetchRemoteLogs(BaseJob):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
-        # # Get matching files (works for a signle pattern only; TODO delete)
-        # cmd = f'find "{self.remote_log_folder}" -name "{self.filename_patterns}"'
-        # if not self.full_fetch:  # Filter files by time if not running full fetch
-        #     t = self.min_time.isoformat()
-        #     cmd +=  f' -newermt "{t}"'
-        # result = self.ssh_connection.sudo(cmd)
-
         # Exit if no matching files found
         self.number_of_matching_files = len(result.stdout.strip())
         if self.number_of_matching_files == 0:
