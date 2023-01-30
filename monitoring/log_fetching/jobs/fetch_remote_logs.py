@@ -32,6 +32,7 @@ class FetchRemoteLogs(BaseJob):
         self.remote_log_folder = remote_log_folder
         self.filename_patterns = filename_patterns
         self.separator = separator
+        self.timestamp_field_number = 0
 
         self.full_fetch = True
         self.min_time = None
@@ -214,7 +215,7 @@ class FetchRemoteLogs(BaseJob):
                 with open(file, "r") as f:
                     for line in f.readlines():
                         fields = self.get_line_fields(line)
-                        record_time = self.parse_timestamp(fields[0])
+                        record_time = self.parse_timestamp(fields[self.timestamp_field_number])
                         self.min_time = min(self.min_time, record_time)
                         self.max_time = max(self.max_time, record_time)
             
@@ -254,12 +255,12 @@ class FetchRemoteLogs(BaseJob):
 
     def filter_record(self, fields):
         """ 
-        Filters a record based on the timestamp in its first field.
+        Filters a record based on the timestamp in its `self.timestamp_field_number` field.
         Returns true if timestamp is inside the fetch period.
         Raises ValueError if timestamp could not be parsed.
         Expects timestamp in a 'YYYY-MM-DD hh:mm:ss,fff' format, consideres it to be in the timezone of the server.
         """
-        record_time = self.parse_timestamp(fields[0])
+        record_time = self.parse_timestamp(fields[self.timestamp_field_number])
         return self.min_time <= record_time <= self.max_time
 
 
