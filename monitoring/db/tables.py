@@ -75,6 +75,21 @@ def get_tables():
             Column("record_time", DateTime(timezone=True), nullable=False, index=True),
             Column("level", String(8)),
             Column("message", Text)
+        ),
+
+        "nginx_access_logs": Table(
+            "nginx_access_logs",
+            meta,
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("record_time", DateTime(timezone=True), nullable=False, index=True),
+            Column("path", Text, index=True),
+            Column("method", String(8)),
+            Column("status", SmallInteger, index=True),
+            Column("body_bytes_sent", Integer),
+            Column("remote", Text),
+            Column("user_agent", Text),
+            Column("referer", Text),
+            Column("request", Text)
         )
     } \
     , meta
