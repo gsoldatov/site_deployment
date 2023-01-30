@@ -71,7 +71,7 @@ def get_tables():
             "database_scheduled_jobs_logs",
             meta,
             Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
-            Column("job_type", String(64), primary_key=True, server_default=FetchedValue()),
+            Column("job_type", String(64), index=True, nullable=False),
             Column("record_time", DateTime(timezone=True), nullable=False, index=True),
             Column("level", String(8)),
             Column("message", Text)
