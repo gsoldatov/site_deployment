@@ -18,8 +18,8 @@ class FetchDatabaseScheduledJobsLogs(FetchRemoteLogs):
         super().__init__(name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator)
     
 
-    def transform_line(self, **kwargs):
-        fields = kwargs["line"].split(self.separator)
+    def transform_record(self, **kwargs):
+        fields = kwargs["fields"]
         
         filename = os.path.basename(kwargs["file"])
         job_type = None
