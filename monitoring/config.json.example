@@ -26,6 +26,6 @@
         "backend_log_separator": ";",
         "app_access_log_name_template": "app_access_log*",
         "app_event_log_name_template": "app_event_log*",
-        "database_scheduled_jobs_log_name_template": "(clear_expired_login_limits|clear_expired_sessions|update_searchables)*"
+        "database_scheduled_jobs_log_name_templates": ["clear_expired_login_limits*", "clear_expired_sessions*", "update_searchables*"]
     }
 }

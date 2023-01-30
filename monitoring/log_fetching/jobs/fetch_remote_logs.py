@@ -26,11 +26,11 @@ class FetchRemoteLogs(BaseJob):
         - transforms matching lines (specific line transformations are provided by subclasses);
         - inserts matching lines into the database.
     """
-    def __init__(self, name, args, config, db_connection, log, remote_log_folder, filename_pattern, separator):
+    def __init__(self, name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator):
         super().__init__(name, args, config, db_connection, log)
 
         self.remote_log_folder = remote_log_folder
-        self.filename_pattern = filename_pattern
+        self.filename_patterns = filename_patterns
         self.separator = separator
 
         self.full_fetch = True
@@ -77,8 +77,9 @@ class FetchRemoteLogs(BaseJob):
                     cursor.execute("SELECT last_successful_full_fetch_time FROM fetch_jobs_status WHERE job_name = %s", [self.name])
                     row = cursor.fetchone()
                     if row:
-                        if get_current_time() - row[0] < timedelta(days=1):
-                            self.full_fetch = False
+                        if row[0]:
+                            if get_current_time() - row[0] < timedelta(days=1):
+                                self.full_fetch = False
         self.log(self.name, "DEBUG", f"Full fetch mode is {'enabled' if self.full_fetch else 'disabled'}.")
     
 
@@ -138,12 +139,25 @@ class FetchRemoteLogs(BaseJob):
     def fetch_files(self):
         """ Fetch files with matching pattern and modification time into temp folder. """
         # Get matching files
-        cmd = f'find "{self.remote_log_folder}" -name "{self.filename_pattern}"'
+        cmd = f'find "{self.remote_log_folder}"'
+        if type(self.filename_patterns) == str: cmd += f' -name "{self.filename_patterns}"'
+        if type(self.filename_patterns) == list: # add -name option for each pattern in list, e.g.: '\( -name "p1" -o -name "p2" \)'
+            cmd += ' \\(' + \
+                ' -o'.join((f' -name "{p}"' for p in self.filename_patterns)) + \
+                    ' \\)'
+        
         if not self.full_fetch:  # Filter files by time if not running full fetch
             t = self.min_time.isoformat()
             cmd +=  f' -newermt "{t}"'
-        # cmd = f'find "{self.remote_log_folder}" -name "{self.filename_pattern}" -newermt "{t}"'
+        print(cmd)
         result = self.ssh_connection.sudo(cmd)
+
+        # # Get matching files (works for a signle pattern only; TODO delete)
+        # cmd = f'find "{self.remote_log_folder}" -name "{self.filename_patterns}"'
+        # if not self.full_fetch:  # Filter files by time if not running full fetch
+        #     t = self.min_time.isoformat()
+        #     cmd +=  f' -newermt "{t}"'
+        # result = self.ssh_connection.sudo(cmd)
 
         # Exit if no matching files found
         self.number_of_matching_files = len(result.stdout.strip())
@@ -219,7 +233,7 @@ class FetchRemoteLogs(BaseJob):
                     self.number_of_read_records += 1
                     if self.filter_line(line):
                         self.number_of_inserted_records += 1
-                        new_records.append(self.transform_line(line))
+                        new_records.append(self.transform_line(line=line, file=file))
             
             self.insert_data(new_records, cursor)
     
@@ -243,7 +257,7 @@ class FetchRemoteLogs(BaseJob):
         return self.min_time <= record_time <= self.max_time
 
 
-    def transform_line(self, line):
+    def transform_line(self, **kwrags):
         """ Interface method, which transforms a valid log line into a tuple, which can be inserted into the database. """
         raise NotImplementedError
     
