@@ -30,6 +30,7 @@
 
         "nginx_log_folder": "/var/log/nginx",
         "nginx_access_log_name_template": "access.log*",
+        "nginx_error_log_name_template": "error.log*",
         "nginx_log_separator": " "
     }
 }
