@@ -164,7 +164,7 @@ class FetchRemoteLogs(BaseJob):
 
         try:
             # Archive and fetch matching files
-            archive_filename = f"/tmp_{str(uuid4())[:8]}.tar.gz"
+            archive_filename = f"/home/{self.config['server_user']}/tmp_{str(uuid4())[:8]}.tar.gz"
             local_archive_filename = os.path.join(self.temp_folder, os.path.basename(archive_filename))
 
             # tar params:
