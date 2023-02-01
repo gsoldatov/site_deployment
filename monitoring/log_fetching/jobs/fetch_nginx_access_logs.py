@@ -29,7 +29,6 @@ class FetchNginxAccessLogs(FetchRemoteLogs):
         """
         fields = [""]
         current_quote_char = None
-        line_separator = " "
 
         for c in line:
             # If in inside quotes or brackets, ignore separator character
@@ -44,7 +43,7 @@ class FetchNginxAccessLogs(FetchRemoteLogs):
             else:
                 if c in self.quote_open_close_chars: 
                     current_quote_char = c
-                elif c == line_separator:
+                elif c == self.separator:
                     fields.append("")
                 else:
                     fields[-1] += c
