@@ -3,6 +3,7 @@ from monitoring.log_fetching.jobs.fetch_app_event_logs import FetchAppEventLogs
 from monitoring.log_fetching.jobs.fetch_database_scheduled_jobs_logs import FetchDatabaseScheduledJobsLogs
 from monitoring.log_fetching.jobs.fetch_nginx_access_logs import FetchNginxAccessLogs
 from monitoring.log_fetching.jobs.fetch_nginx_error_logs import FetchNginxErrorLogs
+from monitoring.log_fetching.jobs.fetch_server_auth_logs import FetchServerAuthLogs
 
 
 job_list = {
@@ -11,5 +12,7 @@ job_list = {
     "database_scheduled_jobs_logs": FetchDatabaseScheduledJobsLogs,
     
     "nginx_access_logs": FetchNginxAccessLogs,
-    "nginx_error_logs": FetchNginxErrorLogs
+    "nginx_error_logs": FetchNginxErrorLogs,
+
+    "server_auth_logs": FetchServerAuthLogs
 }

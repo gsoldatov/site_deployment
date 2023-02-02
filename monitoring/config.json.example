@@ -31,6 +31,8 @@
         "nginx_log_folder": "/var/log/nginx",
         "nginx_access_log_name_template": "access.log*",
         "nginx_error_log_name_template": "error.log*",
-        "nginx_log_separator": " "
+        "nginx_log_separator": " ",
+
+        "server_auth_temp_folder_name_template": "/home/user/wtmp_dump"
     }
 }

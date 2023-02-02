@@ -128,6 +128,15 @@ class FetchRemoteLogs(BaseJob):
             connect_kwargs={ "key_filename": self.config["ssh_key_path"] },
             config=config
         )
+    
+
+    def run_remote_commands(self):
+        """ 
+        Wrapper method for running commands on server via SSH.
+        By default, gets server timezone and fetches matching files to the local machine.
+        """
+        self.get_server_timezone()
+        self.fetch_files()
 
 
     def get_server_timezone(self):
@@ -140,7 +149,7 @@ class FetchRemoteLogs(BaseJob):
     def fetch_files(self):
         """ Fetch files with matching pattern and modification time into temp folder. """
         # Get matching files
-        cmd = f'find "{self.remote_log_folder}"'
+        cmd = f'find "{self.remote_log_folder}" -mindepth 1'
         if type(self.filename_patterns) == str: cmd += f' -name "{self.filename_patterns}"'
         if type(self.filename_patterns) == list: # add -name option for each pattern in list, e.g.: '\( -name "p1" -o -name "p2" \)'
             cmd += ' \\(' + \
@@ -284,11 +293,10 @@ class FetchRemoteLogs(BaseJob):
         self.set_full_fetch()
         self.set_fetch_period()
 
-        # Get files
+        # Get files and run other remote commands
         try:
             self.start_ssh_connection()
-            self.get_server_timezone()
-            self.fetch_files()
+            self.run_remote_commands()
         finally:
             # Close ssh connection
             self.ssh_connection.close()
