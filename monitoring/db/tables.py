@@ -1,6 +1,6 @@
 from sqlalchemy import (
-    MetaData, Table, Column, ForeignKey, DateTime, Integer, 
-    SmallInteger, Float, String, Text
+    MetaData, Table, Column, Index, ForeignKey, DateTime, Integer, 
+    Date, SmallInteger, Float, String, Text
 )
 from sqlalchemy.schema import FetchedValue
 
@@ -99,6 +99,25 @@ def get_tables():
             Column("record_time", DateTime(timezone=True), nullable=False, index=True),
             Column("level", String(8)),
             Column("message", Text)
+        ),
+
+        "server_auth_logs": Table(
+            "server_auth_logs",
+            meta,
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("record_time", DateTime(timezone=True), nullable=False, index=True),
+            Column("ut_type", SmallInteger),
+            Column("user", Text),
+            Column("remote", Text)
+        ),
+
+        "known_ips": Table(
+            "known_ips",
+            meta,
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("login_date", Date, nullable=False, index=True),
+            Column("remote", Text),
+            Index("ix_known_ips_remote_login_date", "remote", "login_date", unique=True)
         )
     } \
     , meta
