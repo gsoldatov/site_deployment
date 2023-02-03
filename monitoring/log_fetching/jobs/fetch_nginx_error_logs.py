@@ -42,6 +42,7 @@ class FetchNginxErrorLogs(FetchRemoteLogs):
         
         # Message
         fields.append(l[pos + 1:])
+        if fields[-1][-1]: fields[-1] = fields[-1].rstrip() # remove newline char at the end, it it's present
 
         return fields
    

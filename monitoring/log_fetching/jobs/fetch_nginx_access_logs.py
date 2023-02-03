@@ -45,7 +45,7 @@ class FetchNginxAccessLogs(FetchRemoteLogs):
                     current_quote_char = c
                 elif c == self.separator:
                     fields.append("")
-                else:
+                elif c != "\n":
                     fields[-1] += c
 
         return fields
