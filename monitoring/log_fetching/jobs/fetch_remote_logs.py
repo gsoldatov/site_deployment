@@ -3,7 +3,6 @@ from shutil import rmtree
 from datetime import datetime, timedelta
 from uuid import uuid4
 
-from fabric import Connection, Config
 from psycopg2.extensions import AsIs
 
 from monitoring.log_fetching.jobs.base_job import BaseJob
@@ -39,7 +38,6 @@ class FetchRemoteLogs(BaseJob):
         self.max_time = None
         self.server_timezone = None
 
-        self.ssh_connection = None
         self.temp_folder = None
 
         self.number_of_matching_files = 0
@@ -112,22 +110,6 @@ class FetchRemoteLogs(BaseJob):
                                                     minute=0, second=0, microsecond=0)
         
         self.log(self.name, "DEBUG", f"Fetching data from {self.min_time.isoformat()} to {self.max_time.isoformat()}.")
-
-    
-    def start_ssh_connection(self):
-        """ Starts SSH connection to the production server. """
-        config = Config(overrides={
-            # Don't write command output in stdout & setup password for automatic sudo entering
-            "run": {"hide": True},
-            "sudo": {"password": self.config["server_user_password"], "hide": True}
-        })
-        self.ssh_connection = Connection(
-            host=self.config["server_addr"],
-            port=self.config["ssh_port"], 
-            user=self.config["server_user"],
-            connect_kwargs={ "key_filename": self.config["ssh_key_path"] },
-            config=config
-        )
     
 
     def run_remote_commands(self):
@@ -293,13 +275,8 @@ class FetchRemoteLogs(BaseJob):
         self.set_full_fetch()
         self.set_fetch_period()
 
-        # Get files and run other remote commands
-        try:
-            self.start_ssh_connection()
-            self.run_remote_commands()
-        finally:
-            # Close ssh connection
-            self.ssh_connection.close()
+        # Find and fetch matching files from server and get its timezone
+        self.connect_and_run_remote_commands()
 
         if self.number_of_matching_files == 0: return
 

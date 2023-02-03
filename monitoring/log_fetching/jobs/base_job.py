@@ -1,3 +1,6 @@
+from fabric import Connection, Config
+
+
 class BaseJob:
     """
     Base class for all jobs run by the log_fetching script.
@@ -8,7 +11,39 @@ class BaseJob:
         self.config = config
         self.db_connection = db_connection
         self.log = log
+
+        self.ssh_connection = None
+    
     
     def run(self):
-        """ Interface for executing a job. """
+        """ Abstract method which is called to trigger job execution. """
+        raise NotImplementedError
+    
+
+    def connect_and_run_remote_commands(self):
+        """ Establish a temporary SSH connection to the server & run commands specified in `run_remote_commands` method. """
+        try:
+            config = Config(overrides={
+                # Don't write command output in stdout & setup password for automatic sudo entering
+                "run": {"hide": True},
+                "sudo": {"password": self.config["server_user_password"], "hide": True}
+            })
+            self.ssh_connection = Connection(
+                host=self.config["server_addr"],
+                port=self.config["ssh_port"], 
+                user=self.config["server_user"],
+                connect_kwargs={ "key_filename": self.config["ssh_key_path"] },
+                config=config
+            )
+
+            self.run_remote_commands()
+        finally:
+            # Close ssh connection
+            if self.ssh_connection:
+                if self.ssh_connection.is_connected:
+                    self.ssh_connection.close()
+
+
+    def run_remote_commands(self):
+        """ Abstract method which should contain specific tasks to be run while connected to the server via SSH. """
         raise NotImplementedError
