@@ -4,6 +4,7 @@ from monitoring.log_fetching.jobs.fetch_database_scheduled_jobs_logs import Fetc
 from monitoring.log_fetching.jobs.fetch_nginx_access_logs import FetchNginxAccessLogs
 from monitoring.log_fetching.jobs.fetch_nginx_error_logs import FetchNginxErrorLogs
 from monitoring.log_fetching.jobs.fetch_server_auth_logs import FetchServerAuthLogs
+from monitoring.log_fetching.jobs.fetch_fail2ban_logs import FetchFail2banLogs
 
 
 job_list = {
@@ -14,5 +15,6 @@ job_list = {
     "nginx_access_logs": FetchNginxAccessLogs,
     "nginx_error_logs": FetchNginxErrorLogs,
 
-    "server_auth_logs": FetchServerAuthLogs
+    "server_auth_logs": FetchServerAuthLogs,
+    "fail2ban_logs": FetchFail2banLogs
 }

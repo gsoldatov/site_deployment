@@ -118,6 +118,15 @@ def get_tables():
             Column("login_date", Date, nullable=False, index=True),
             Column("remote", Text),
             Index("ix_known_ips_remote_login_date", "remote", "login_date", unique=True)
+        ),
+
+        "fail2ban_logs": Table(
+            "fail2ban_logs",
+            meta,
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("record_time", DateTime(timezone=True), nullable=False, index=True),
+            Column("event_type", String(8)),
+            Column("remote", Text)
         )
     } \
     , meta

@@ -33,6 +33,9 @@
         "nginx_error_log_name_template": "error.log*",
         "nginx_log_separator": " ",
 
-        "server_auth_temp_folder_name_template": "/home/user/wtmp_dump"
+        "server_auth_temp_folder_name_template": "/home/user/wtmp_dump",
+
+        "fail2ban_log_folder": "/var/log",
+        "fail2ban_log_name_template": "fail2ban.log*"
     }
 }
