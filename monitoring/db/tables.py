@@ -1,6 +1,6 @@
 from sqlalchemy import (
-    MetaData, Table, Column, Index, ForeignKey, DateTime, Integer, 
-    Date, SmallInteger, Float, String, Text
+    MetaData, Table, Column, Index, DateTime, Integer, BigInteger,
+    Date, SmallInteger, Float, String, Text, Boolean
 )
 from sqlalchemy.schema import FetchedValue
 
@@ -127,6 +127,23 @@ def get_tables():
             Column("record_time", DateTime(timezone=True), nullable=False, index=True),
             Column("event_type", String(8)),
             Column("remote", Text)
+        ),
+
+        "healthcheck": Table(
+            "healthcheck",
+            meta,
+            Column("execution_time", DateTime(timezone=True)),
+            Column("server_reachable", Boolean),
+            Column("nginx_status", Text),
+            Column("backend_status", Text),
+            Column("postgresql_status", Text),
+            Column("cpu_usage", Float),
+            Column("memory_used", BigInteger),
+            Column("memory_available", BigInteger),
+            Column("memory_swap", BigInteger),
+            Column("memory_total", BigInteger),
+            Column("disk_used", BigInteger),
+            Column("disk_total", BigInteger)
         )
     } \
     , meta

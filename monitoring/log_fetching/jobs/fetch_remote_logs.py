@@ -297,4 +297,4 @@ class FetchRemoteLogs(BaseJob):
             self.db_connection.rollback()
             raise
         
-        self.log(self.name, "INFO", f"Read {self.number_of_read_records} records, inserted {self.number_of_inserted_records}.")                
+        self.log(self.name, "INFO", f"Read {self.number_of_read_records} records, inserted {self.number_of_inserted_records}.")
