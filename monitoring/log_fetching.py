@@ -148,7 +148,11 @@ class JobRunner:
                     Cls = job_list[job_name]
                     job = Cls(job_name, self.args, self.config, self.db_connection, self.log)
                     job.run()
-                    last_successful_full_fetch_time = now if job.full_fetch else None
+
+                    if getattr(job, "full_fetch", None):
+                        last_successful_full_fetch_time = now if job.full_fetch else None
+                    else:
+                        last_successful_full_fetch_time = now
                     self.update_fetch_job_status(job_name, "success", now, last_successful_full_fetch_time=last_successful_full_fetch_time)
                 except Exception as e:
                     self.log(job_name, "ERROR", traceback.format_exc())
