@@ -38,7 +38,25 @@ def get_tables():
             Column("message", Text)
         ),
 
-        # Log storage tables
+        # Healthcheck table
+        "healthcheck": Table(
+            "healthcheck",
+            meta,
+            Column("execution_time", DateTime(timezone=True)),
+            Column("server_reachable", Boolean),
+            Column("nginx_status", Text),
+            Column("backend_status", Text),
+            Column("postgresql_status", Text),
+            Column("cpu_usage", Float),
+            Column("memory_used", BigInteger),
+            Column("memory_available", BigInteger),
+            Column("memory_swap", BigInteger),
+            Column("memory_total", BigInteger),
+            Column("disk_used", BigInteger),
+            Column("disk_total", BigInteger)
+        ),
+
+        # Remote log tables
         "app_access_logs": Table(
             "app_access_logs",
             meta,
@@ -129,21 +147,15 @@ def get_tables():
             Column("remote", Text)
         ),
 
-        "healthcheck": Table(
-            "healthcheck",
+        # Local log tables
+        "backup_script_logs": Table(
+            "backup_script_logs",
             meta,
-            Column("execution_time", DateTime(timezone=True)),
-            Column("server_reachable", Boolean),
-            Column("nginx_status", Text),
-            Column("backend_status", Text),
-            Column("postgresql_status", Text),
-            Column("cpu_usage", Float),
-            Column("memory_used", BigInteger),
-            Column("memory_available", BigInteger),
-            Column("memory_swap", BigInteger),
-            Column("memory_total", BigInteger),
-            Column("disk_used", BigInteger),
-            Column("disk_total", BigInteger)
+            Column("record_id", Integer, primary_key=True, server_default=FetchedValue()),
+            Column("record_time", DateTime(timezone=True), nullable=False, index=True),
+            Column("level", String(8)),
+            Column("event_source", String(32)),
+            Column("message", Text)
         )
     } \
     , meta

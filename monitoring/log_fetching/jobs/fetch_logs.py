@@ -173,7 +173,7 @@ class FetchLogs(BaseJob):
         return self.min_time <= record_time <= self.max_time
 
 
-    def transform_record(self, **kwrags):
+    def transform_record(self, **kwargs):
         """ Interface for a method, which transforms fields of a valid log record into a tuple, which can be inserted into the database. """
         raise NotImplementedError
     

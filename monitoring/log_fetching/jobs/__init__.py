@@ -6,6 +6,7 @@ from monitoring.log_fetching.jobs.fetch_nginx_error_logs import FetchNginxErrorL
 from monitoring.log_fetching.jobs.fetch_server_auth_logs import FetchServerAuthLogs
 from monitoring.log_fetching.jobs.fetch_fail2ban_logs import FetchFail2banLogs
 from monitoring.log_fetching.jobs.healthcheck import Healthcheck
+from monitoring.log_fetching.jobs.fetch_backup_script_logs import FetchBackupScriptLogs
 
 
 job_list = {
@@ -19,5 +20,7 @@ job_list = {
     "server_auth_logs": FetchServerAuthLogs,
     "fail2ban_logs": FetchFail2banLogs,
 
-    "healthcheck": Healthcheck
+    "healthcheck": Healthcheck,
+
+    "backup_script_logs": FetchBackupScriptLogs
 }

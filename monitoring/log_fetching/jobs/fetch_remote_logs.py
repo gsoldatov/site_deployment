@@ -50,7 +50,6 @@ class FetchRemoteLogs(FetchLogs):
 
         # Exit if no matching files found
         if len(result.stdout.strip()) == 0:
-            self.number_of_matching_files = 0
             self.log(self.name, "INFO", "Found no matching files.")
             return
         
