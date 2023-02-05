@@ -17,12 +17,12 @@ class FetchServerAuthLogs(FetchRemoteLogs):
     https://www.linkedin.com/pulse/using-linux-utmpdump-forensics-detecting-log-file-craig-rowland (ut_type description & notes on security)
     """
     def __init__(self, name, args, config, db_connection, log):
-        remote_log_folder = config["fetched_logs_settings"]["server_auth_temp_folder_name_template"] + f"_{str(uuid4())[:8]}"
+        log_folder = config["fetched_logs_settings"]["server_auth_temp_folder_name_template"] + f"_{str(uuid4())[:8]}"
         filename_patterns = "wtmp*"
         
         separator = " "
         
-        super().__init__(name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator)
+        super().__init__(name, args, config, db_connection, log, log_folder, filename_patterns, separator)
 
         self.timestamp_field_number = 7
         self.current_ip_address = None
@@ -55,11 +55,11 @@ class FetchServerAuthLogs(FetchRemoteLogs):
 
         try:
             # Dump wtmp files into temp folder
-            self.ssh_connection.sudo(f'mkdir "{self.remote_log_folder}"')
+            self.ssh_connection.sudo(f'mkdir "{self.log_folder}"')
             # Output redirect is performed by current user instead of root, even when running as sudo, so folder ownership must be updated
-            self.ssh_connection.sudo(f'chown -R {self.config["server_user"]} "{self.remote_log_folder}"')
+            self.ssh_connection.sudo(f'chown -R {self.config["server_user"]} "{self.log_folder}"')
             for file in wtmp_files:
-                temp_filename = os.path.join(self.remote_log_folder, os.path.basename(file))
+                temp_filename = os.path.join(self.log_folder, os.path.basename(file))
                 self.ssh_connection.sudo(f"utmpdump {file} > '{temp_filename}'")
             
             # Fetch dumps as regular log files
@@ -67,7 +67,7 @@ class FetchServerAuthLogs(FetchRemoteLogs):
         
         finally:
             # Remove temp folder & wtmp dumps
-            self.ssh_connection.sudo(f"rm -rf '{self.remote_log_folder}'")
+            self.ssh_connection.sudo(f"rm -rf '{self.log_folder}'")
     
 
     def get_line_fields(self, line):

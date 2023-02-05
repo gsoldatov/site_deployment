@@ -10,12 +10,12 @@ _job_types = ("clear_expired_login_limits", "clear_expired_sessions", "update_se
 
 class FetchDatabaseScheduledJobsLogs(FetchRemoteLogs):
     def __init__(self, name, args, config, db_connection, log):
-        remote_log_folder = config["fetched_logs_settings"]["backend_log_folder"]
+        log_folder = config["fetched_logs_settings"]["backend_log_folder"]
         filename_patterns = config["fetched_logs_settings"]["database_scheduled_jobs_log_name_templates"]
         
         separator = config["fetched_logs_settings"]["backend_log_separator"]
         
-        super().__init__(name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator)
+        super().__init__(name, args, config, db_connection, log, log_folder, filename_patterns, separator)
     
 
     def transform_record(self, **kwargs):

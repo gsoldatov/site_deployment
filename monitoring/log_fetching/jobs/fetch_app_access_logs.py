@@ -5,12 +5,12 @@ from monitoring.log_fetching.jobs.fetch_remote_logs import FetchRemoteLogs
 
 class FetchAppAccessLogs(FetchRemoteLogs):
     def __init__(self, name, args, config, db_connection, log):
-        remote_log_folder = config["fetched_logs_settings"]["backend_log_folder"]
+        log_folder = config["fetched_logs_settings"]["backend_log_folder"]
         filename_patterns = config["fetched_logs_settings"]["app_access_log_name_template"]
         
         separator = config["fetched_logs_settings"]["backend_log_separator"]
         
-        super().__init__(name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator)
+        super().__init__(name, args, config, db_connection, log, log_folder, filename_patterns, separator)
     
 
     def transform_record(self, **kwargs):
