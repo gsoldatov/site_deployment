@@ -20,10 +20,10 @@ class FetchLogs(BaseJob):
     - file processing, log line filtering;
     - data upserting into the database.
     """
-    def __init__(self, name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator):
+    def __init__(self, name, args, config, db_connection, log, log_folder, filename_patterns, separator):
         super().__init__(name, args, config, db_connection, log)
 
-        self.remote_log_folder = remote_log_folder
+        self.log_folder = log_folder
         self.filename_patterns = filename_patterns
         self.separator = separator
         self.timestamp_field_number = 0

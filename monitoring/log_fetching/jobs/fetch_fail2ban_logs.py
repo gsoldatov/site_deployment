@@ -7,12 +7,12 @@ from monitoring.log_fetching.jobs.fetch_remote_logs import FetchRemoteLogs
 
 class FetchFail2banLogs(FetchRemoteLogs):
     def __init__(self, name, args, config, db_connection, log):
-        remote_log_folder = config["fetched_logs_settings"]["fail2ban_log_folder"]
+        log_folder = config["fetched_logs_settings"]["fail2ban_log_folder"]
         filename_patterns = config["fetched_logs_settings"]["fail2ban_log_name_template"]
         
         separator = " "
         
-        super().__init__(name, args, config, db_connection, log, remote_log_folder, filename_patterns, separator)
+        super().__init__(name, args, config, db_connection, log, log_folder, filename_patterns, separator)
 
         self.timestamp_field_number = 0
     

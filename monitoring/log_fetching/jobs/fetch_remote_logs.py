@@ -36,7 +36,7 @@ class FetchRemoteLogs(FetchLogs):
     def fetch_files(self):
         """ Fetch files with matching pattern and modification time into temp folder. """
         # Get matching files
-        cmd = f'find "{self.remote_log_folder}" -mindepth 1'
+        cmd = f'find "{self.log_folder}" -mindepth 1'
         if type(self.filename_patterns) == str: cmd += f' -name "{self.filename_patterns}"'
         if type(self.filename_patterns) == list: # add -name option for each pattern in list, e.g.: '\( -name "p1" -o -name "p2" \)'
             cmd += ' \\(' + \
@@ -69,7 +69,7 @@ class FetchRemoteLogs(FetchLogs):
             # -f = archive filename;
             # -C = current working directory (required to create flat archive without recreating parent folders for archived files);
             # remote_filenames = list of space-separated files to archive, relative to directory specified in `-C` option.
-            self.ssh_connection.sudo(f"tar -C '{self.remote_log_folder}' -czf {archive_filename} {remote_filenames}")
+            self.ssh_connection.sudo(f"tar -C '{self.log_folder}' -czf {archive_filename} {remote_filenames}")
             self.ssh_connection.sudo(f"chown {self.config['server_user']} {archive_filename}")
             
             self.ssh_connection.get(archive_filename, local=local_archive_filename)
