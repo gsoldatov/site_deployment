@@ -1,5 +1,6 @@
 {
     "server_addr": "192.168.1.68",
+    "server_domain": "domain.without.https.prefix",
     "ssh_port": 22,
     "server_user": "user",
     "server_user_password": "password",

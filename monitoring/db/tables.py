@@ -53,7 +53,8 @@ def get_tables():
             Column("memory_swap", BigInteger),
             Column("memory_total", BigInteger),
             Column("disk_used", BigInteger),
-            Column("disk_total", BigInteger)
+            Column("disk_total", BigInteger),
+            Column("ssl_expiry_time", DateTime(timezone=True))
         ),
 
         # Remote log tables
