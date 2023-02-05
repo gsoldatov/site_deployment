@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from monitoring.log_fetching.jobs.base_job import BaseJob
 from monitoring.util.util import get_current_time
@@ -26,7 +27,8 @@ class Healthcheck(BaseJob):
             None,       # memory_total
 
             None,       # disk_used
-            None        # disk_total
+            None,       # disk_total
+            None        # ssl_expiry_time
         ]
     
 
@@ -63,6 +65,14 @@ class Healthcheck(BaseJob):
         data = result.stdout.split(" ")
         self.healthcheck_data[10] = int(data[1])
         self.healthcheck_data[11] = int(data[0])
+
+        # SSL expiry time
+        # get certificates' status | get info for server_domain (lines between Certificate name and ------ (not included))
+        # | trim leading & trailing spaces | get expiry time
+        cmd = f"certbot certificates | awk '/Certificate Name: {self.config['server_domain']}/" + "{flag=1}/- - - - - -/{flag=0}flag' " + \
+            "| awk '{$1=$1};1' | awk '/Expiry Date/ { print $3, $4 }'"
+        result = self.ssh_connection.sudo(cmd)
+        self.healthcheck_data[12] = datetime.strptime(result.stdout.strip(), "%Y-%m-%d %H:%M:%S%z")    # "2021-01-01 12:34:56+00:00"
 
 
     def run(self):
