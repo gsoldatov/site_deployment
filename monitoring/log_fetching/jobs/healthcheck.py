@@ -36,7 +36,7 @@ class Healthcheck(BaseJob):
         """ Get server healthcheck data. """
         # Nginx, backend and db status
         for i, service in [(2, "nginx"), (3, "site_backend"), (4, "postgresql")]:
-            self.healthcheck_data[i] = self.ssh_connection.run(f"systemctl is-active {service}").stdout
+            self.healthcheck_data[i] = self.ssh_connection.run(f"systemctl is-active {service}").stdout.strip()
         
         # CPU usage
         result = self.ssh_connection.run("top -b -n 1")
