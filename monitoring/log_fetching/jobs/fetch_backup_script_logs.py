@@ -28,5 +28,5 @@ class FetchBackupScriptLogs(FetchLocalLogs):
             self.parse_timestamp(fields[0]),    # record_time
             fields[1],  # level
             fields[2],  # event_source
-            fields[3]   # message
+            fields[3].strip()   # message
         )
