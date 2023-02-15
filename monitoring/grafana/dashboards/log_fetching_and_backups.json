@@ -1,0 +1,848 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 9,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 0
+        },
+        "id": 8,
+        "panels": [],
+        "title": "Job Status",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "${logs_db}"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto",
+              "inspect": false,
+              "minWidth": 100
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Last Execution Status"
+              },
+              "properties": [
+                {
+                  "id": "custom.displayMode",
+                  "value": "color-text"
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "red",
+                    "mode": "fixed"
+                  }
+                },
+                {
+                  "id": "mappings",
+                  "value": [
+                    {
+                      "options": {
+                        "no connection": {
+                          "color": "yellow",
+                          "index": 1
+                        },
+                        "success": {
+                          "color": "green",
+                          "index": 0
+                        }
+                      },
+                      "type": "value"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Time Since Last Execution"
+              },
+              "properties": [
+                {
+                  "id": "custom.displayMode",
+                  "value": "color-text"
+                },
+                {
+                  "id": "unit",
+                  "value": "m"
+                },
+                {
+                  "id": "color"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "text",
+                        "value": null
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 60
+                      },
+                      {
+                        "color": "red",
+                        "value": 120
+                      }
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "Time Since Last Full Fetch"
+              },
+              "properties": [
+                {
+                  "id": "custom.displayMode",
+                  "value": "color-text"
+                },
+                {
+                  "id": "unit",
+                  "value": "m"
+                },
+                {
+                  "id": "color"
+                },
+                {
+                  "id": "thresholds",
+                  "value": {
+                    "mode": "absolute",
+                    "steps": [
+                      {
+                        "color": "text",
+                        "value": null
+                      },
+                      {
+                        "color": "#EAB839",
+                        "value": 2880
+                      },
+                      {
+                        "color": "red",
+                        "value": 5760
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 24,
+          "x": 0,
+          "y": 1
+        },
+        "id": 6,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": false,
+              "displayName": "Job Name"
+            }
+          ]
+        },
+        "pluginVersion": "9.3.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "${logs_db}"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  job_name as \"Job Name\",\n  last_execution_id as \"Last Execution ID\",\n  last_execution_status as \"Last Execution Status\",\n  (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_execution_time)) / 60)::INTEGER AS \"Time Since Last Execution\",\n  (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_successful_full_fetch_time)) / 60)::INTEGER AS \"Time Since Last Full Fetch\"\nFROM fetch_jobs_status ",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "type": "table"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 11
+        },
+        "id": 20,
+        "panels": [],
+        "title": "Site Backup",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "${logs_db}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 1440
+                }
+              ]
+            },
+            "unit": "m"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 3,
+          "x": 0,
+          "y": 12
+        },
+        "id": 14,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "value"
+        },
+        "pluginVersion": "9.3.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "${logs_db}"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Last Execution\"\nFROM backup_script_logs \nWHERE event_source = 'main' AND message = 'Finished script execution.'",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Time Since Last Execution",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "${logs_db}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 20160
+                }
+              ]
+            },
+            "unit": "m"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 3,
+          "x": 3,
+          "y": 12
+        },
+        "id": 16,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "value"
+        },
+        "pluginVersion": "9.3.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "${logs_db}"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Database Backup\"\nFROM backup_script_logs \nWHERE event_source = 'backup_db' AND message = 'Finished database backup.'",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Time Since DB Backup",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "${logs_db}"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "text",
+              "mode": "fixed"
+            },
+            "mappings": [
+              {
+                "options": {
+                  "Error": {
+                    "color": "red",
+                    "index": 4
+                  },
+                  "Metered connection": {
+                    "color": "yellow",
+                    "index": 2
+                  },
+                  "No data": {
+                    "color": "red",
+                    "index": 0
+                  },
+                  "No internet": {
+                    "color": "yellow",
+                    "index": 1
+                  },
+                  "Server unreachable": {
+                    "color": "red",
+                    "index": 3
+                  },
+                  "Unknown": {
+                    "color": "red",
+                    "index": 5
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "string"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 2,
+          "w": 3,
+          "x": 6,
+          "y": 12
+        },
+        "id": 18,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^status$/",
+            "values": false
+          },
+          "textMode": "value"
+        },
+        "pluginVersion": "9.3.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "${logs_db}"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\n  CASE\n    WHEN message = 'Existing backup with recent modify time found, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Database backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished database backup.' THEN 'Success'\n\tWHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_db'\n  AND record_time IN (\n    SELECT\n      MAX(record_time) as record_time\n    FROM backup_script_logs \n    WHERE event_source = 'backup_db'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Last DB Backup Status",
+        "type": "stat"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 14
+        },
+        "id": 10,
+        "panels": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "${logs_db}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "displayMode": "auto",
+                  "inspect": true
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 24,
+              "x": 0,
+              "y": 15
+            },
+            "id": 12,
+            "options": {
+              "footer": {
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "Time"
+                }
+              ]
+            },
+            "pluginVersion": "9.3.2",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "postgres",
+                  "uid": "${logs_db}"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT\n  record_time as \"Time\",\n  execution_id as \"Execution ID\",\n  job_name as \"Job Name\",\n  level as Level,\n  message as Message\nFROM fetch_jobs_logs\nWHERE\n  record_time >= '${__from:date}' AND record_time <= '${__to:date}'\n  AND (\n    '_ALL' in ($execution_id) -- Don't filter by execution_id field, if all IDs are selected\n    OR execution_id IN ($execution_id)\n  )\n",
+                "refId": "A",
+                "sql": {
+                  "columns": [
+                    {
+                      "parameters": [],
+                      "type": "function"
+                    }
+                  ],
+                  "groupBy": [
+                    {
+                      "property": {
+                        "type": "string"
+                      },
+                      "type": "groupBy"
+                    }
+                  ],
+                  "limit": 50
+                }
+              }
+            ],
+            "type": "table"
+          }
+        ],
+        "title": "Fetch Jobs Logs",
+        "type": "row"
+      },
+      {
+        "collapsed": true,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 15
+        },
+        "id": 22,
+        "panels": [
+          {
+            "datasource": {
+              "type": "postgres",
+              "uid": "${logs_db}"
+            },
+            "fieldConfig": {
+              "defaults": {
+                "color": {
+                  "mode": "thresholds"
+                },
+                "custom": {
+                  "align": "auto",
+                  "displayMode": "auto",
+                  "inspect": true
+                },
+                "mappings": [],
+                "thresholds": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green"
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              "overrides": []
+            },
+            "gridPos": {
+              "h": 8,
+              "w": 24,
+              "x": 0,
+              "y": 16
+            },
+            "id": 23,
+            "options": {
+              "footer": {
+                "fields": "",
+                "reducer": [
+                  "sum"
+                ],
+                "show": false
+              },
+              "showHeader": true,
+              "sortBy": [
+                {
+                  "desc": true,
+                  "displayName": "Time"
+                }
+              ]
+            },
+            "pluginVersion": "9.3.2",
+            "targets": [
+              {
+                "datasource": {
+                  "type": "postgres",
+                  "uid": "${logs_db}"
+                },
+                "editorMode": "code",
+                "format": "table",
+                "rawQuery": true,
+                "rawSql": "SELECT\n  record_time as \"Time\",\n  event_source as \"Event Source\",\n  level as Level,\n  message as Message\nFROM backup_script_logs \nWHERE\n  record_time >= '${__from:date}' AND record_time <= '${__to:date}'\n",
+                "refId": "A",
+                "sql": {
+                  "columns": [
+                    {
+                      "parameters": [],
+                      "type": "function"
+                    }
+                  ],
+                  "groupBy": [
+                    {
+                      "property": {
+                        "type": "string"
+                      },
+                      "type": "groupBy"
+                    }
+                  ],
+                  "limit": 50
+                }
+              }
+            ],
+            "type": "table"
+          }
+        ],
+        "title": "Site Backup Logs",
+        "type": "row"
+      },
+      {
+        "collapsed": false,
+        "gridPos": {
+          "h": 1,
+          "w": 24,
+          "x": 0,
+          "y": 16
+        },
+        "id": 4,
+        "panels": [],
+        "title": "Nagivation",
+        "type": "row"
+      },
+      {
+        "datasource": {
+          "type": "postgres",
+          "uid": "e2UmDj24z"
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 24,
+          "x": 0,
+          "y": 17
+        },
+        "id": 2,
+        "options": {
+          "maxItems": 10,
+          "query": "",
+          "showHeadings": false,
+          "showRecentlyViewed": false,
+          "showSearch": true,
+          "showStarred": false,
+          "tags": [
+            "Site Monitoring"
+          ]
+        },
+        "pluginVersion": "9.3.2",
+        "type": "dashlist"
+      }
+    ],
+    "refresh": "1m",
+    "schemaVersion": 37,
+    "style": "dark",
+    "tags": [
+      "Site Monitoring"
+    ],
+    "templating": {
+      "list": [
+        {
+          "allValue": "'_ALL'",
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "definition": "SELECT DISTINCT execution_id FROM fetch_jobs_logs\nWHERE record_time >= '${__from:date}' AND record_time <= '${__to:date}'",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Execution ID",
+          "multi": true,
+          "name": "execution_id",
+          "options": [],
+          "query": "SELECT DISTINCT execution_id FROM fetch_jobs_logs\nWHERE record_time >= '${__from:date}' AND record_time <= '${__to:date}'",
+          "refresh": 2,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "Site Logs",
+            "value": "Site Logs"
+          },
+          "description": "Logs database",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Logs DB",
+          "multi": false,
+          "name": "logs_db",
+          "options": [],
+          "query": "postgres",
+          "queryValue": "",
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "type": "datasource"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-60d/d",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "04. Log Fetching & Backups",
+    "uid": "NvoVB7JVk",
+    "version": 13,
+    "weekStart": ""
+  }
