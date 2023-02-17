@@ -16,7 +16,7 @@ Playbooks include:
     - `update_backend.yml`: updates backend on an existing single machine deployment;
     - `update_frontend.yml`: updates frontend on an existing single machine deployment;
 - backups:
-    - `backend_execute.yml`: runs site backup operations (manually or when scheduled);
+    - `backup_execute.yml`: runs site backup operations (manually or when scheduled);
     - `backup_schedule.yml`: schedules automatic site backup on local machine;
     - `backup_unschedule.yml`: removes scheduled automatic site backup on local machine.
 

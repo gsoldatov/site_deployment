@@ -1,8 +1,11 @@
+deployment_user_name: "{{ lookup('env', 'DEPLOYMENT_USER_NAME') }}"
+hex_chars: '0123456789ABCDEF'
+
 backup_local_folder: "{{ lookup('env', 'BACKUP_LOCAL_FOLDER') }}"
 backup_db_dump_filename: "{{ lookup('env', 'BACKUP_DB_DUMP_FILENAME') }}"
+backup_db_dump_filename_suffix: "{{ query('community.general.random_string', upper=false, lower=false, override_special=hex_chars, numbers=false)[0] }}"
+# backup_db_dump_filepath: "/{{ backup_db_dump_filename }}_{{ backup_db_dump_filename_suffix }}"  # variable is set as a fact in the tasks.yml to avoid multiple evalutations of `backup_db_dump_filename_suffix`
 backup_db_max_backup_count: "{{ lookup('env', 'BACKUP_DB_MAX_BACKUP_COUNT') }}"
-
-backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"
 
 backend_setting_db_database_host: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE_HOST') }}"
 backend_setting_db_database_port: "{{ lookup('env', 'BACKEND_SETTING_DB_DATABASE_PORT') }}"

@@ -1,8 +1,12 @@
 # Creates a database backup and fetches it to the local machine.
 
 
-- name: Make a database backup, if it's enabled
+- name: Make a database backup, if it's enabled  
   block:
+    - name: Set constant dump filepath
+      set_fact:
+        backup_db_dump_filepath: "/{{ backup_db_dump_filename }}_{{ backup_db_dump_filename_suffix }}"
+    
     # Backup existing .pgpass file
     - name: Check if .pgpass exists
       stat:
@@ -28,7 +32,11 @@
 
     - name: Make backup on remote machine
       # "host" arg is required to use password authentication (credentials stored in .pgpass)
-      command: "pg_dump --username='{{ backend_setting_db_init_username }}' --host='{{ backend_setting_db_database_host }}' --port={{ backend_setting_db_database_port }} --format=tar --exclude-table='searchables' --dbname='{{ backend_setting_db_database }}' --file='{{ backend_folder }}/{{ backup_db_dump_filename }}'"
+      command: "pg_dump --username='{{ backend_setting_db_init_username }}' --host='{{ backend_setting_db_database_host }}' --port={{ backend_setting_db_database_port }} --format=tar --exclude-table='searchables' --dbname='{{ backend_setting_db_database }}' --file='{{ backup_db_dump_filepath }}'"
+      become: yes
+    
+    - name: Change dump ownership
+      command: chown {{ deployment_user_name }} '{{ backup_db_dump_filepath }}'
       become: yes
 
     # Restore previously existing .pgpass file or delete temporary file
@@ -49,21 +57,21 @@
       local_action: "command bash {{ role_path }}/scripts/rotate_backups.sh"
       register: backup_rotation
 
-    - name: Print backup rotation log
-      debug:
-        msg: "{{ backup_rotation }}"
+    # - name: Print backup rotation log
+    #   debug:
+    #     msg: "{{ backup_rotation }}"
 
     - name: Fetch new dump
       # fetch:
       synchronize:
         mode: pull
-        src: "{{ backend_folder }}/{{ backup_db_dump_filename }}"
+        src: "{{ backup_db_dump_filepath }}"
         dest: "{{ backup_local_folder }}/{{ backup_db_dump_filename }}"
       # become: yes
 
     - name: Remove dump on remote
       file:
-        path: "{{ backend_folder }}/{{ backup_db_dump_filename }}"
+        path: "{{ backup_db_dump_filepath }}"
         state: absent
       become: yes
 
