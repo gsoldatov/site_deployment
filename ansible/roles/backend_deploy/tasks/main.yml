@@ -85,3 +85,10 @@
     enabled: yes
     state: restarted
   become: yes
+
+# Setup app log cleanup
+- name: Build & copy backend log cleanup crontab
+  template:
+    src: templates/backend_log_cleanup_crontab
+    dest: /etc/cron.d/site_backend_log_cleanup
+  become: yes

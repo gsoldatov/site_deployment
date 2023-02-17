@@ -1,2 +1,5 @@
 site_user: "{{ lookup('env', 'SITE_USER') }}"
 backend_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}"
+backend_setting_logging_folder: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_FOLDER') }}"
+backend_setting_logging_folder_fullpath: "{{ backend_folder }}/{{ backend_setting_logging_folder }}"
+backend_setting_logging_scheduled_logging_max_file_count: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_SCHEDULED_LOGGING_MAX_FILE_COUNT') }}"

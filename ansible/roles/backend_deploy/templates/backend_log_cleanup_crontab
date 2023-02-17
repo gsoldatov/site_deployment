@@ -1,0 +1,5 @@
+# Site backend access log file cleanup (keep recent files only)
+* */6 * * * {{ site_user }} bash ls -tr "{{ backend_setting_logging_folder_fullpath }}/app_access_log*" | head -n -{{ backend_setting_logging_app_access_logging_max_file_count }} | xargs --no-run-if-empty rm
+
+# Site backend event log file cleanup (keep recent files only)
+* */6 * * * {{ site_user }} bash ls -tr "{{ backend_setting_logging_folder_fullpath }}/app_event_log*" | head -n -{{ backend_setting_logging_app_event_logging_max_file_count }} | xargs --no-run-if-empty rm
