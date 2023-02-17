@@ -1,5 +1,11 @@
 root_password: "{{ lookup('env', 'ROOT_PASSWORD') }}"
+
+admin_user_name: "{{ lookup('env', 'ADMIN_USER_NAME') }}"
+admin_password: "{{ lookup('env', 'ADMIN_USER_PASSWORD') }}"
+admin_user_key_path: "{{ lookup('env', 'ADMIN_USER_KEY_PATH') }}"
+
 deployment_user_name: "{{ lookup('env', 'DEPLOYMENT_USER_NAME') }}"
 deployment_password: "{{ lookup('env', 'DEPLOYMENT_USER_PASSWORD') }}"
 deployment_user_key_path: "{{ lookup('env', 'DEPLOYMENT_USER_KEY_PATH') }}"
+
 site_user: "{{ lookup('env', 'SITE_USER') }}"

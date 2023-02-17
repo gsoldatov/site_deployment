@@ -1,17 +1,35 @@
 # User & SSH configuration.
 
+## Root
 - name: Change default password of root user
   user:
     name: root
     state: present
     password: "{{ root_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
+  
+## Admin user
+- name: Create an admin user with sudo privileges
+  user:
+    name: "{{ admin_user_name }}"
+    groups: "sudo"
+    state: present
+    password: "{{ admin_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
+    shell: "/bin/bash"
 
+- name: Add authorized key for admin user
+  authorized_key:
+    user: "{{ admin_user_name }}"
+    state: present
+    key: "{{ lookup('file', admin_user_key_path) }}"
+
+## Deployment user
 - name: Create a deployment user with sudo privileges
   user:
     name: "{{ deployment_user_name }}"
     groups: "sudo"
     state: present
     password: "{{ deployment_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
+    shell: "/bin/bash"
 
 - name: Add authorized key for deployment user
   authorized_key:
@@ -19,6 +37,7 @@
     state: present
     key: "{{ lookup('file', deployment_user_key_path) }}"
 
+## Site user
 - name: Create site user
   user:
     name: "{{ site_user }}"
@@ -26,6 +45,7 @@
     shell: /sbin/nologin # forbid logging in
     state: present
 
+## SSH configuration
 - name: Update config of SSH service
   lineinfile:
     path: /etc/ssh/sshd_config
