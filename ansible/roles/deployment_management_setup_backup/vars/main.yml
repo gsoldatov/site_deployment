@@ -1,3 +1,4 @@
+backup_local_folder: "{{ lookup('env', 'BACKUP_LOCAL_FOLDER') }}"
 backup_log_folder: "{{ lookup('env', 'BACKUP_LOG_FOLDER') }}"
 deployment_repository_folder: "{{ lookup('env', 'DEPLOYMENT_REPOSITORY_FOLDER') }}"
 deployment_management_repository_folder: "{{ lookup('env', 'DEPLOYMENT_MANAGEMENT_REPOSITORY_FOLDER') }}"

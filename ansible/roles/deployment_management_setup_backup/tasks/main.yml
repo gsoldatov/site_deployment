@@ -8,6 +8,11 @@
                 # (or to set `su` option for running rotation as owning user/group; the former is used)
   become: yes
 
+- name: Create backup folder
+  file:
+    path: "{{ backup_local_folder }}"
+    state: directory
+
 - name: Add backup script logrotate config
   template:
     src: templates/site_backup_logrotate
