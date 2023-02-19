@@ -1,0 +1,6 @@
+deployment_repository_folder: "{{ lookup('env', 'DEPLOYMENT_REPOSITORY_FOLDER') }}"
+deployment_management_repository_folder: "{{ lookup('env', 'DEPLOYMENT_MANAGEMENT_REPOSITORY_FOLDER') }}"
+
+env_file: "{{ lookup('env', 'ENV_FILE') }}"
+env_file_source_path: "{{ deployment_repository_folder }}/ansible/{{ env_file }}"
+env_file_dest_path: "{{ deployment_management_repository_folder }}/ansible/production.env"

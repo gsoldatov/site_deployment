@@ -1,0 +1,13 @@
+# Sets up a copy of deployment repository on local machine, then sets up backup and monitoring tasks' execution from it.
+# NOTE: Grafana configuration is not handled by the playbook and must be performed manually.
+- hosts: localhost
+  connection: local
+  vars_prompt:
+    - name: "ansible_become_pass"
+      prompt: "Sudo password"
+      private: yes
+      unsafe: yes
+  roles:
+    - { role: deployment_management_setup_repository, tags: [repository] }
+    - { role: deployment_management_setup_backup, tags: [backup] }
+    - { role: deployment_management_setup_monitoring, tags: [monitoring] }

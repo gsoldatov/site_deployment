@@ -1,0 +1,22 @@
+server_addr: "{{ lookup('env', 'SERVER_ADDR') }}"
+server_domain: "{{ lookup('env', 'SERVER_URLS').split(' ')[0].replace('https://', '') }}"
+server_user: "{{ lookup('env', 'DEPLOYMENT_USER_NAME') }}"
+server_user_password: "{{ lookup('env', 'DEPLOYMENT_USER_PASSWORD') }}"
+ssh_key_path: "{{ lookup('env', 'DEPLOYMENT_USER_KEY_PATH') }}"
+current_username: "{{ lookup('env', 'USER') }}"
+
+deployment_management_repository_folder: "{{ lookup('env', 'DEPLOYMENT_MANAGEMENT_REPOSITORY_FOLDER') }}"
+deployment_management_repository_python_path: "{{ deployment_management_repository_folder }}/venv/bin/python"
+
+monitoring_init_db_name: "{{ lookup('env', 'MONITORING_INIT_DB_NAME') }}"
+monitoring_init_db_username: "{{ lookup('env', 'MONITORING_INIT_DB_USERNAME') }}"
+monitoring_init_db_password: "{{ lookup('env', 'MONITORING_INIT_DB_PASSWORD') }}"
+monitoring_db_name: "{{ lookup('env', 'MONITORING_DB_NAME') }}"
+monitoring_db_username: "{{ lookup('env', 'MONITORING_DB_USERNAME') }}"
+monitoring_db_password: "{{ lookup('env', 'MONITORING_DB_PASSWORD') }}"
+
+backend_log_folder: "{{ lookup('env', 'SERVER_BACKEND_FOLDER') }}/logs"
+backend_log_separator: "{{ lookup('env', 'BACKEND_SETTING_LOGGING_FILE_SEPARATOR') }}"
+
+backup_log_folder: "{{ lookup('env', 'BACKUP_LOG_FOLDER') }}"
+backup_log_name_template: "{{ lookup('env', 'BACKUP_SCRIPT_LOG_FILENAME') }}*"

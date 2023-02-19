@@ -1,0 +1,26 @@
+# Schedules automatic site backup on local machine.
+- name: Create log folder
+  file:
+    path: "{{ backup_log_folder }}"
+    state: directory
+    owner: "{{ current_username }}"
+    group: root # Logrotate requires rotation folder to be owned by user root group 
+                # (or to set `su` option for running rotation as owning user/group; the former is used)
+  become: yes
+
+- name: Add backup script logrotate config
+  template:
+    src: templates/site_backup_logrotate
+    dest: /etc/logrotate.d/site_backup
+  become: yes
+
+- name: Build cron file for automatic backup execution & related jobs
+  template:
+    src: templates/site_backup_crontab
+    dest: /etc/cron.d/site_backup
+  become: yes
+
+- name: Copy env file   # Ensure .env file is copied, if the role is run separately (file is also copied in the repo role)
+  copy:
+    src: "{{ env_file_source_path }}"
+    dest: "{{ env_file_dest_path }}"

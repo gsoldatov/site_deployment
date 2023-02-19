@@ -1,0 +1,21 @@
+# Sets up a copy of deployment repository for running backup & monitoring data fetch jobs
+- name: Clone | update repository
+  git:
+    repo: "{{ deployment_repository_folder }}"
+    dest: "{{ deployment_management_repository_folder }}"
+    force: yes
+    clone: yes
+    update: yes
+    version: master
+
+- name: Copy env file
+  copy:
+    src: "{{ env_file_source_path }}"
+    dest: "{{ env_file_dest_path }}"
+
+- name: Setup venv & install dependencies
+  pip:
+    chdir: "{{ deployment_management_repository_folder }}"
+    virtualenv: venv/   # ensure venv exists
+    virtualenv_command: "python3 -m venv"   # executable for creating venv
+    requirements: requirements.txt  # required dependencies
