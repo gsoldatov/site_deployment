@@ -1,5 +1,5 @@
 # Site backup script execution
-1 */1 * * * {{ current_username }} bash "{{ deployment_management_repository_folder }}/ansible/roles/deployment_management_setup_backup/scripts/backup.sh"
+1 */1 * * * {{ current_username }} bash "{{ deployment_management_repository_folder }}/ansible/roles/deployment_management_setup_backup/scripts/backup.sh" --env-file production.env
 
 # Log clean up for Ansible playbook executed during automatic database backup (keep recent files only)
 * */1 * * * {{ current_username }} bash ls -tr "{{ backup_log_folder }}/{{ backup_db_ansible_log_filename}}*" | head -n -{{ backup_db_ansible_keep_log_files }} | xargs --no-run-if-empty rm
