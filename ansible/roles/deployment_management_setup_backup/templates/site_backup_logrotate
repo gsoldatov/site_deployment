@@ -1,0 +1,6 @@
+"{{ backup_log_folder }}/{{ backup_script_log_filename }}" {
+    size {{ backup_script_log_max_size }}
+    rotate {{ backup_script_keep_log_files }}
+    compress
+    missingok
+}

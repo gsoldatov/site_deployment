@@ -1,0 +1,21 @@
+# Sets up database and monitoring data fetch jobs
+- name: Build monitoring config
+  template:
+    src: templates/monitoring_config
+    dest: "{{ deployment_management_repository_folder }}/monitoring/config.json"
+
+- name: Create monitoring database & user
+  command: "{{ deployment_management_repository_python_path }} monitoring/db/setup.py"
+  args:
+    chdir: "{{ deployment_management_repository_folder }}"
+
+- name: Run database migrations
+  command: "bash -c \"source venv/bin/activate; cd monitoring/db; alembic upgrade head\""
+  args:
+    chdir: "{{ deployment_management_repository_folder }}"
+
+- name: Build monitoring crontab
+  template:
+    src: templates/site_monitoring_crontab
+    dest: /etc/cron.d/site_monitoring
+  become: yes

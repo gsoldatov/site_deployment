@@ -1,0 +1,46 @@
+{
+    "server_addr": "{{ server_addr }}",
+    "server_domain": "{{ server_domain }}",
+    "ssh_port": 22,
+    "server_user": "{{ server_user }}",
+    "server_user_password": "{{ server_user_password }}",
+    "ssh_key_path": "{{ ssh_key_path }}",
+
+    "db": {
+        "db_host": "localhost",
+        "db_port": 5432,
+        
+        "db_init_database": "{{ monitoring_init_db_name }}",
+        "db_init_username": "{{ monitoring_init_db_username }}",
+        "db_init_password": "{{ monitoring_init_db_password }}",
+        
+        "db_database": "{{ monitoring_db_name }}",
+        "db_username": "{{ monitoring_db_username }}",
+        "db_password": "{{ monitoring_db_password }}"
+    },
+
+    "temp_folder": "temp",
+    "logging_mode": "db",
+
+    "fetched_logs_settings": {
+        "backend_log_folder": "{{ backend_log_folder }}",
+        "backend_log_separator": "{{ backend_log_separator }}",
+        "app_access_log_name_template": "app_access_log*",
+        "app_event_log_name_template": "app_event_log*",
+        "database_scheduled_jobs_log_name_templates": ["clear_expired_login_limits*", "clear_expired_sessions*", "update_searchables*"],
+
+        "nginx_log_folder": "/var/log/nginx",
+        "nginx_access_log_name_template": "access.log*",
+        "nginx_error_log_name_template": "error.log*",
+        "nginx_log_separator": " ",
+
+        "server_auth_temp_folder_name_template": "/home/user/wtmp_dump",
+
+        "fail2ban_log_folder": "/var/log",
+        "fail2ban_log_name_template": "fail2ban.log*",
+
+        "backup_script_log_folder": "{{ backup_log_folder }}",
+        "backup_script_log_name_template": "{{ backup_log_name_template }}",
+        "backup_script_separator": ";"
+    }
+}
