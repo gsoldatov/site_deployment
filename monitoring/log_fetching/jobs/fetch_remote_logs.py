@@ -48,7 +48,7 @@ class FetchRemoteLogs(FetchLogs):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
-        print('-----------')
+        print('-----------') 
         self.log(self.name, "INFO", f"FIND FILES STDOUT:\n{result.stdout}")
         print(result.stdout)
         print('-----------')
