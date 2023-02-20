@@ -66,13 +66,22 @@ class Healthcheck(BaseJob):
         self.healthcheck_data[10] = int(data[1])
         self.healthcheck_data[11] = int(data[0])
 
-        # SSL expiry time
+        # SSL expiry time (process, using patched sudo method)
         # get certificates' status | get info for server_domain (lines between Certificate name and ------ (not included))
         # | trim leading & trailing spaces | get expiry time
         cmd = f"certbot certificates | awk '/Certificate Name: {self.config['server_domain']}/" + "{flag=1}/- - - - - -/{flag=0}flag' " + \
             "| awk '{$1=$1};1' | awk '/Expiry Date/ { print $3, $4 }'"
         result = self.ssh_connection.sudo(cmd)
-        self.healthcheck_data[12] = datetime.strptime(result.stdout.strip(), "%Y-%m-%d %H:%M:%S%z")    # "2021-01-01 12:34:56+00:00"
+        timestamp_str = result.stdout.strip().split("\n")[-1]   # patched version returns more than one line (password prompt + letsenctypt msg)
+        self.healthcheck_data[12] = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S%z")    # "2021-01-01 12:34:56+00:00"
+
+        # # SSL expiry time (process, using original Fabric's Connnection.sudo method)
+        # # get certificates' status | get info for server_domain (lines between Certificate name and ------ (not included))
+        # # | trim leading & trailing spaces | get expiry time
+        # cmd = f"certbot certificates | awk '/Certificate Name: {self.config['server_domain']}/" + "{flag=1}/- - - - - -/{flag=0}flag' " + \
+        #     "| awk '{$1=$1};1' | awk '/Expiry Date/ { print $3, $4 }'"
+        # result = self.ssh_connection.sudo(cmd)
+        # self.healthcheck_data[12] = datetime.strptime(result.stdout.strip(), "%Y-%m-%d %H:%M:%S%z")    # "2021-01-01 12:34:56+00:00"
 
 
     def run(self):
