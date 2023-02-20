@@ -45,13 +45,30 @@ class FetchServerAuthLogs(FetchRemoteLogs):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
+        #################################################################################################################
+        # Process stdout returned by patched `sudo` method
+        stdout = result.stdout
+        newline_index = stdout.find("\n")   # remove sudo password prompt line
+        stdout = stdout[newline_index + 1:].strip()
+
         # Exit if no matching files found
-        self.number_of_matching_files = len(result.stdout.strip())
-        if self.number_of_matching_files == 0:
+        if len(stdout) == 0:
             self.log(self.name, "INFO", "Found no matching files.")
             return
+
+        wtmp_files = stdout.split("\n")
+        wtmp_files = [f.strip() for f in wtmp_files]    # Additional stripping for the case of CR+LF line separation
+        #################################################################################################################
+        #################################################################################################################
+        # # Process stdout returned by default Connection.sudo method
+        # # Exit if no matching files found
+        # self.number_of_matching_files = len(result.stdout.strip())
+        # if self.number_of_matching_files == 0:
+        #     self.log(self.name, "INFO", "Found no matching files.")
+        #     return
         
-        wtmp_files = result.stdout.strip().split("\n")
+        # wtmp_files = result.stdout.strip().split("\n")
+        #################################################################################################################
 
         try:
             # Dump wtmp files into temp folder

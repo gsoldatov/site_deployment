@@ -29,15 +29,14 @@ class BaseJob:
                 "run": {"hide": True},
                 "sudo": {"password": self.config["server_user_password"], "hide": True}
             })
-            self.ssh_connection = Connection(
+            # self.ssh_connection = Connection(
+            self.ssh_connection = PatchedConnection(    # Used patched sudo method to allow calling it when running as a Cron job
                 host=self.config["server_addr"],
                 port=self.config["ssh_port"], 
                 user=self.config["server_user"],
                 connect_kwargs={ "key_filename": self.config["ssh_key_path"] },
                 config=config
             )
-
-            self.ssh_connection.sudo = connection_sudo_monkeypatch  # Patch sudo method to allow calling it when running as a Cron job
 
             self.run_remote_commands()
         finally:
@@ -52,18 +51,19 @@ class BaseJob:
         raise NotImplementedError
 
 
-def connection_sudo_monkeypatch(self, cmd, *args, **kwargs):
-    """
-    A workaround for avoiding `Socket is closed` error when Fabric's connection.sudo method.
-    Error occures only for `sudo` (not `run`) method and when running as a Cron job (probably due do some shell environment difference).
+class PatchedConnection(Connection):
+    def sudo(self, cmd, *args, **kwargs):
+        """
+        A workaround for avoiding `Socket is closed` error when Fabric's connection.sudo method.
+        Error occures only for `sudo` (not `run`) method and when running as a Cron job (probably due do some shell environment difference).
 
-    This method uses `run` method with auto response for password prompt, as suggested in docs (with a slight regex difference):
-    https://docs.fabfile.org/en/stable/getting-started.html#superuser-privileges-via-auto-response
+        This method uses `run` method with auto response for password prompt, as suggested in docs (with a slight regex difference):
+        https://docs.fabfile.org/en/stable/getting-started.html#superuser-privileges-via-auto-response
 
-    Also, using this function requires a different approach in processing stdout, as it contains more text
-    (password prompt + potentially, other lines).
-    """
-    sudopass = Responder(pattern=r"\[sudo\] password for", response=f'{self.config["server_user_password"]}\n')
-    cmd = "sudo " + cmd
+        Also, using this function requires a different approach in processing stdout, as it contains more text
+        (password prompt + potentially, other lines).
+        """
+        sudopass = Responder(pattern=r"\[sudo\] password for", response=f'{self.config.sudo.password}\n')
+        cmd = "sudo " + cmd
 
-    return self.ssh_connection.run(cmd, pty=True, watchers=[sudopass], *args, **kwargs)
+        return self.run(cmd, pty=True, watchers=[sudopass], *args, **kwargs)

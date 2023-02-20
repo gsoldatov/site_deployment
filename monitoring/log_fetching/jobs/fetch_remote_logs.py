@@ -48,17 +48,27 @@ class FetchRemoteLogs(FetchLogs):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
-        print('-----------') 
-        self.log(self.name, "INFO", f"FIND FILES STDOUT:\n{result.stdout}")
-        print(result.stdout)
-        print('-----------')
+        #################################################################################################################
+        stdout = result.stdout # Process stdout from patched sudo method
+        newline_index = stdout.find("\n")   # remove sudo password prompt line
+        stdout = stdout[newline_index + 1:].strip()
 
         # Exit if no matching files found
-        if len(result.stdout.strip()) == 0:
+        if len(stdout) == 0:
             self.log(self.name, "INFO", "Found no matching files.")
             return
+
+        remote_files = stdout.split("\n")
+        remote_files = [f.strip() for f in remote_files]    # Additional stripping for the case of CR+LF line separation
+        #################################################################################################################
+        #################################################################################################################
+        # # Exit if no matching files found     # Process stdout from original Connection.sudo method
+        # if len(result.stdout.strip()) == 0:
+        #     self.log(self.name, "INFO", "Found no matching files.")
+        #     return
         
-        remote_files = result.stdout.strip().split("\n")
+        # remote_files = result.stdout.strip().split("\n")
+        #################################################################################################################
         self.number_of_matching_files = len(remote_files)
         remote_filenames = " ".join((os.path.basename(f) for f in remote_files))
         self.log(self.name, "DEBUG", f"Found {len(remote_files)} matching files.")
