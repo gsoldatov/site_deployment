@@ -48,6 +48,11 @@ class FetchRemoteLogs(FetchLogs):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
+        print('-----------')
+        self.log(self.name, "INFO", f"FIND FILES STDOUT:\n{result.stdout}")
+        print(result.stdout)
+        print('-----------')
+
         # Exit if no matching files found
         if len(result.stdout.strip()) == 0:
             self.log(self.name, "INFO", "Found no matching files.")

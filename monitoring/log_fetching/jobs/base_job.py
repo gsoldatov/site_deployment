@@ -1,4 +1,5 @@
 from fabric import Connection, Config
+from invoke import Responder
 
 
 class BaseJob:
@@ -36,6 +37,8 @@ class BaseJob:
                 config=config
             )
 
+            self.ssh_connection.sudo = connection_sudo_monkeypatch  # Patch sudo method to allow calling it when running as a Cron job
+
             self.run_remote_commands()
         finally:
             # Close ssh connection
@@ -47,3 +50,20 @@ class BaseJob:
     def run_remote_commands(self):
         """ Abstract method which should contain specific tasks to be run while connected to the server via SSH. """
         raise NotImplementedError
+
+
+def connection_sudo_monkeypatch(self, cmd, *args, **kwargs):
+    """
+    A workaround for avoiding `Socket is closed` error when Fabric's connection.sudo method.
+    Error occures only for `sudo` (not `run`) method and when running as a Cron job (probably due do some shell environment difference).
+
+    This method uses `run` method with auto response for password prompt, as suggested in docs (with a slight regex difference):
+    https://docs.fabfile.org/en/stable/getting-started.html#superuser-privileges-via-auto-response
+
+    Also, using this function requires a different approach in processing stdout, as it contains more text
+    (password prompt + potentially, other lines).
+    """
+    sudopass = Responder(pattern=r"\[sudo\] password for", response=f'{self.config["server_user_password"]}\n')
+    cmd = "sudo " + cmd
+
+    return self.ssh_connection.run(cmd, pty=True, watchers=[sudopass], *args, **kwargs)
