@@ -1,4 +1,5 @@
 # Sets up a copy of deployment repository on local machine, then sets up backup and monitoring tasks' execution from it.
+# Requires sudo privileges on local machine and prompts for password when started.
 # NOTE: Grafana configuration is not handled by the playbook and must be performed manually.
 - hosts: localhost
   connection: local
