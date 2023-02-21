@@ -1,0 +1,12 @@
+# Removes automatic site backup on local machine.
+- name: Remove backup script logrotate config
+  file:
+    path: /etc/logrotate.d/site_backup
+    state: absent
+  become: yes
+
+- name: Remove crontab for automatic backup execution & related jobs
+  file:
+    path: /etc/cron.d/site_backup
+    state: absent
+  become: yes

@@ -1,0 +1,13 @@
+# Removes scheduduled site backup and monitoring data fetch jobs on the local machine. 
+# Does NOT remove `deployment_management` repository or alter Grafana configuration.
+# Requires sudo privileges on local machine and prompts for password when started.
+- hosts: localhost
+  connection: local
+  vars_prompt:
+    - name: "ansible_become_pass"
+      prompt: "Sudo password"
+      private: yes
+      unsafe: yes
+  roles:
+    - { role: deployment_management_uninstall_backup, tags: [backup] }
+    - { role: deployment_management_uninstall_monitoring, tags: [monitoring] }

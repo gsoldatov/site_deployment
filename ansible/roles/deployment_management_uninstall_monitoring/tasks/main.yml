@@ -1,0 +1,6 @@
+# Removes site monitoring data fetching on the local machine.
+- name: Remove crontab for automatic backup execution & related jobs
+  file:
+    path: /etc/cron.d/site_monitoring
+    state: absent
+  become: yes
