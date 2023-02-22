@@ -8,6 +8,6 @@
 0 */12 * * * {{ backend_folder }}/venv/bin/python3 {{ backend_folder }}/backend_main/db_operations/scheduled/update_searchables.py
 
 #  Scheduled jobs log file cleanup cleanup (keep recent files only)
-3 */6 * * * bash ls -tr "{{ backend_setting_logging_folder_fullpath }}/clear_expired_login_limits*" | head -n -{{ backend_setting_logging_scheduled_logging_max_file_count }} | xargs --no-run-if-empty rm
-3 */6 * * * bash ls -tr "{{ backend_setting_logging_folder_fullpath }}/clear_expired_sessions*" | head -n -{{ backend_setting_logging_scheduled_logging_max_file_count }} | xargs --no-run-if-empty rm
-3 */6 * * * bash ls -tr "{{ backend_setting_logging_folder_fullpath }}/update_searchables*" | head -n -{{ backend_setting_logging_scheduled_logging_max_file_count }} | xargs --no-run-if-empty rm
+3 */6 * * * ls -tr "{{ backend_setting_logging_folder_fullpath }}" | awk '$1 ~ "clear_expired_login_limits*" { print "{{ backend_setting_logging_folder_fullpath }}/"$1 }' | head -n -{{ backend_setting_logging_app_access_logging_max_file_count }} | xargs --no-run-if-empty rm
+3 */6 * * * ls -tr "{{ backend_setting_logging_folder_fullpath }}" | awk '$1 ~ "clear_expired_sessions*" { print "{{ backend_setting_logging_folder_fullpath }}/"$1 }' | head -n -{{ backend_setting_logging_app_access_logging_max_file_count }} | xargs --no-run-if-empty rm
+3 */6 * * * ls -tr "{{ backend_setting_logging_folder_fullpath }}" | awk '$1 ~ "update_searchables*" { print "{{ backend_setting_logging_folder_fullpath }}/"$1 }' | head -n -{{ backend_setting_logging_app_access_logging_max_file_count }} | xargs --no-run-if-empty rm
