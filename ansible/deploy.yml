@@ -6,4 +6,4 @@
     - frontend_deploy
     - backend_deploy
     - backend_scheduled
-    - nginx
+    - { role: nginx, tags: [nginx] }
