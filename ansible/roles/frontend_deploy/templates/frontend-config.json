@@ -5,8 +5,9 @@
             "maxHierarchyDepth": {{ backend_setting_max_hierarchy_depth }}
         },
 
-        "useLocalStorage": {{ frontend_setting_use_local_storage }},
-        "enableDebugLogging": {{ frontend_setting_enable_debug_logging }}
+        "useLocalStorage": true,
+        "debugLogging": false,
+        "localStorageSaveTimeout": 1000
     },
 
     "server": {
