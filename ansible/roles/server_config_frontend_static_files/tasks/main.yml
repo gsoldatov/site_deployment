@@ -1,0 +1,26 @@
+# Frontend static folder creation & access configuration
+- name: Create site static files group
+  group: 
+    name: "{{ site_static_files_group }}"
+    state: present
+  become: "{{ become_ }}"
+
+- name: Assign site & admin users to the static files group
+  user:
+    name: "{{ item }}"
+    groups: "{{ site_static_files_group }}"
+    append: yes # don't remove other groups
+  become: "{{ become_ }}"
+  with_items:
+    - "{{ admin_user_name }}"
+    - "{{ deployment_user_name }}"
+    - "{{ site_user }}"
+
+- name: Add static files folder
+  file:
+    path: "{{ static_files_folder }}"
+    state: directory
+    owner: root
+    group: "{{ site_static_files_group }}"
+    mode: "0770"
+  become: "{{ become_ }}"

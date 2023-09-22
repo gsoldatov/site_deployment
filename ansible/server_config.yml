@@ -2,7 +2,8 @@
 # - installs & configures UFW;
 # - installs & configures fail2ban for SSH bruteforce prevention;
 # - installs miscellaneous packages;
-# - configures root, deployment and site users and SSH service.
+# - configures root, deployment and site users and SSH service;
+# - configures static files folder & access to it;
 #
 # NOTE: when running playbook against a known host after it was reset to a clean state, it's SSH key must be updated in known hosts file:
 # 1) Remove known host info:
@@ -16,3 +17,4 @@
     - server_config_fail2ban
     - server_config_misc
     - server_config_users_and_ssh
+    - { role: server_config_frontend_static_files, tags: [static, server_config_frontend_static_files] }

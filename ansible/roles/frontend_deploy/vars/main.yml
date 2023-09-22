@@ -16,5 +16,7 @@ node_installation_bin_path: "{{ node_installation_path }}/node-{{ node_version }
 
 frontend_folder: "{{ lookup('env', 'SERVER_FRONTEND_FOLDER') }}"
 frontend_repository: "{{ lookup('env', 'FRONTEND_REPOSITORY') }}"
+static_files_folder: "{{ lookup('env', 'STATIC_FILES_FOLDER') }}"
+static_files_folder_symlink: "{{ frontend_folder }}/dist/static/files"
 
 site_user: "{{ lookup('env', 'SITE_USER') }}"

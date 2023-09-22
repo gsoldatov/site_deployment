@@ -1,0 +1,9 @@
+admin_user_name: "{{ lookup('env', 'ADMIN_USER_NAME') }}"
+deployment_user_name: "{{ lookup('env', 'DEPLOYMENT_USER_NAME') }}"
+site_user: "{{ lookup('env', 'SITE_USER') }}"
+
+site_static_files_group: "{{ lookup('env', 'SITE_STATIC_FILES_GROUP') }}"
+static_files_folder: "{{ lookup('env', 'STATIC_FILES_FOLDER') }}"
+
+# Use become only if $ANSIBLE_BECOME_PASSWORD is set, i.e. the role is not run under root
+become_: "{{ lookup('env', 'ANSIBLE_BECOME_PASSWORD') | length > 0 }}"

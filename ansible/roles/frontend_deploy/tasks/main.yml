@@ -67,6 +67,13 @@
     chdir: "{{ frontend_folder }}"
   become: yes
 
+- name: Add a symlink to the permanent static files folder
+  file:
+    src: "{{ static_files_folder }}"
+    dest: "{{ static_files_folder_symlink }}"
+    state: link
+  become: yes
+
 - name: Set folder ownership
   command: "chown -R root:{{ site_user }} {{ frontend_folder }}"
   become: yes
@@ -74,3 +81,4 @@
 - name: Set folder permissions
   command: "chmod -R 775 {{ frontend_folder }}"   # r+x required for Nginx to be able to return files inside the folder
   become: yes
+   
