@@ -29,6 +29,10 @@ Playbooks can be run via `run.sh` script, which reads the environment variables,
 
 # Additional Playbook Information
 `server_config.yml` is run as root user with password authentication & creates a deployment user, which runs other playbooks.
+Role for setting up the static folder, however, can be run separately by passing `-U` flag and `static` tag:
+```bash
+./run.sh run.sh server_config.yml -U --tags "static"
+```
 
 Default .env filename is `production.env`. Custom filename can be provided with the `--env-file` option. `deployment_management_setup.yml` playbook copies the specified env file into the repository copy under `production.env` name.
 
