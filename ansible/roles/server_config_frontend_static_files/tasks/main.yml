@@ -22,5 +22,5 @@
     state: directory
     owner: root
     group: "{{ site_static_files_group }}"
-    mode: "0770"
+    mode: "0775"  # r+x required for Nginx to be able to return files inside the folder
   become: "{{ become_ }}"
