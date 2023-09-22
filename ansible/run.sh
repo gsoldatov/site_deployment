@@ -21,6 +21,8 @@ while (( "$#" )); do    # Loop through input options, filter script options & sa
 
         --env-file) ENV_FILE=$2; shift; shift;;
 
+        -U|--disable-ansible-user-override) DISABLE_ANSIBLE_USER_OVERRIDE=1; shift;;
+
         *) ANSIBLE_OPTS+=("$1"); shift;;
     esac
 done
@@ -31,10 +33,11 @@ if [ -z "$NAME" ] || [[ $NAME == @(-h|--help) ]] || [ ! -z "$HELP" ]; then
     echo 'Runs a specified Ansible playbook in the script folder.'
     echo 'Specifies, which user is used to run the playbook (root or deployment user) based on its name.'
     echo
-    echo 'Syntax: run.sh <playbook> [ansible-playbook opts] [--env-file <custom_path_to_env_file>] [-h|--help] [more ansible-playbook opts]'
+    echo 'Syntax: run.sh <playbook> [ansible-playbook opts] [--env-file <custom_path_to_env_file>] [-U|--disable-ansible-user-override] [-h|--help] [more ansible-playbook opts]'
     echo '<playbook> is the name of one of the playbooks in the directory of this script.'
     echo '-h or --help to display this message and exit'
     echo '--env-file to override file with environment variables (defaults to $ENV_FILE)'
+    echo '-U or --disable-ansible-user-override to disable automatic selection of a user, under which a playbook is run'
     echo 'Additional options can be passed for Ansible after the name of the playbook.'
 
     exit 1
@@ -58,7 +61,7 @@ fi
 
 
 # Ensure that sshpass is installed on the local machine, if passowrd authentication is used (required by Ansible)
-if [ $NAME == 'server_config.yml' ]; then
+if [ $NAME == 'server_config.yml' ] && [ -z "$DISABLE_ANSIBLE_USER_OVERRIDE" ]; then
     echo "Using SSH with password auth, ensuring sshpass is installed..."
     if ! [ -x "$(command -v sshpass)" ]; then
         echo "Installing sshpass..."
@@ -80,9 +83,16 @@ source $ENV_FILE_FULLPATH
 # Set environment variables for inventory file based on the playbook being run
 case $NAME in
     server_config.yml)
-        # Server configuration is run under root user with passowrd authentication
-        export ANSIBLE_USER=root;
-        ANSIBLE_PASSWORD=$DEFAULT_ROOT_PASSWORD;;
+        # Server configuration is run under root user with passowrd authentication (unless this is disabled by the CLI flag)
+        if [ -z "$DISABLE_ANSIBLE_USER_OVERRIDE" ]; then 
+            export ANSIBLE_USER=root
+            ANSIBLE_PASSWORD=$DEFAULT_ROOT_PASSWORD
+        else
+            export ANSIBLE_USER=$DEPLOYMENT_USER_NAME
+            export ANSIBLE_BECOME_PASSWORD=$DEPLOYMENT_USER_PASSWORD
+        fi
+        ;;
+        
     *)
         # Other playbooks are run under deployment user with key authentication
         export ANSIBLE_USER=$DEPLOYMENT_USER_NAME;
