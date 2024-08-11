@@ -5,7 +5,7 @@ server_user_password: "{{ lookup('env', 'DEPLOYMENT_USER_PASSWORD') }}"
 ssh_key_path: "{{ lookup('env', 'DEPLOYMENT_USER_KEY_PATH') }}"
 current_username: "{{ lookup('env', 'USER') }}"
 
-base_directory: "{{ playbook_dir }}"   # <deployment_repo_dir>/ansible
+project_root_directory: "{{ playbook_dir | dirname }}"
 python_interpreter_path: "{{ playbook_dir | dirname }}/venv/bin/python"
 
 monitoring_init_db_name: "{{ lookup('env', 'MONITORING_INIT_DB_NAME') }}"

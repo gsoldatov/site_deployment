@@ -2,17 +2,17 @@
 - name: Build monitoring config
   template:
     src: templates/monitoring_config
-    dest: "{{ base_directory }}/monitoring/config.json"
+    dest: "{{ project_root_directory }}/monitoring/config.json"
 
 - name: Create monitoring database & user
   command: "{{ python_interpreter_path }} monitoring/db/setup.py"
   args:
-    chdir: "{{ base_directory }}"
+    chdir: "{{ project_root_directory }}"
 
 - name: Run database migrations
   command: "bash -c \"source venv/bin/activate; cd monitoring/db; alembic upgrade head\""
   args:
-    chdir: "{{ base_directory }}"
+    chdir: "{{ project_root_directory }}"
 
 - name: Build monitoring crontab
   template:
