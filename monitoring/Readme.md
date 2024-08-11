@@ -2,7 +2,7 @@
 Monitoring utilities for site production deployment. Contains data fetching scripts and visualization files for Grafana.
 
 # Monitoring Setup
-Database and scheduled data fetching can be setup by running `ansible/deployment_management_setup.yml` playbook (see `ansible/Readme.md`). 
+Database and scheduled data fetching can be setup by running `ansible/deployment_management_setup.yml` playbook (see `<root_dir>/ansible/Readme.md`). 
 
 Grafana must be installed and configured manually. Configuration includes the following steps:
 0. Run the `deployment_management_setup.yml` playbook.
