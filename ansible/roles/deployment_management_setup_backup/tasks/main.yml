@@ -24,8 +24,3 @@
     src: templates/site_backup_crontab
     dest: /etc/cron.d/site_backup
   become: yes
-
-- name: Copy env file   # Ensure .env file is copied, if the role is run separately (file is also copied in the repo role)
-  copy:
-    src: "{{ env_file_source_path }}"
-    dest: "{{ env_file_dest_path }}"
