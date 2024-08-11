@@ -12,6 +12,7 @@
   user:
     name: "{{ admin_user_name }}"
     groups: "sudo"
+    append: yes # don't remove other groups
     state: present
     password: "{{ admin_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
     shell: "/bin/bash"
@@ -27,6 +28,7 @@
   user:
     name: "{{ deployment_user_name }}"
     groups: "sudo"
+    append: yes # don't remove other groups
     state: present
     password: "{{ deployment_password | password_hash('sha512') }}"  # Password must be encrypted for Linux hosts
     shell: "/bin/bash"
@@ -44,6 +46,15 @@
     system: yes   # system account without home dir
     shell: /sbin/nologin # forbid logging in
     state: present
+
+### Ensure site user is present in his primary group
+### (for some reason, this was not the case after)
+### NOTE: this command needs to be tested
+- name: Ensure site user is added to his primary group
+  user:
+    name: "{{ site_user }}"
+    groups: "{{ site_user }}"
+    append: yes # don't remove other groups
 
 ## SSH configuration
 - name: Update config of SSH service
