@@ -1,17 +1,17 @@
 # Backend access & event logs + scheduled database jobs
-2,32 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ base_directory }}/monitoring/log_fetching.py' --jobs app_access_logs,app_event_logs,database_scheduled_jobs_logs
+2,32 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ project_root_directory }}/monitoring/log_fetching.py' --jobs app_access_logs,app_event_logs,database_scheduled_jobs_logs
 
 # Nginx access & error logs
-3,33 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ base_directory }}/monitoring/log_fetching.py' --jobs nginx_access_logs,nginx_error_logs
+3,33 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ project_root_directory }}/monitoring/log_fetching.py' --jobs nginx_access_logs,nginx_error_logs
 
 # Server auth logs
-3,33 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ base_directory }}/monitoring/log_fetching.py' --jobs server_auth_logs
+3,33 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ project_root_directory }}/monitoring/log_fetching.py' --jobs server_auth_logs
 
 # Fail2ban logs
-2 */2 * * * {{ current_username }} {{ python_interpreter_path }} '{{ base_directory }}/monitoring/log_fetching.py' --jobs fail2ban_logs
+2 */2 * * * {{ current_username }} {{ python_interpreter_path }} '{{ project_root_directory }}/monitoring/log_fetching.py' --jobs fail2ban_logs
 
 # Healthcheck
-*/5 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ base_directory }}/monitoring/log_fetching.py' --jobs healthcheck
+*/5 * * * * {{ current_username }} {{ python_interpreter_path }} '{{ project_root_directory }}/monitoring/log_fetching.py' --jobs healthcheck
 
 # Backup script logs
-4 */2 * * * {{ current_username }} {{ python_interpreter_path }} '{{ base_directory }}/monitoring/log_fetching.py' --jobs backup_script_logs
+4 */2 * * * {{ current_username }} {{ python_interpreter_path }} '{{ project_root_directory }}/monitoring/log_fetching.py' --jobs backup_script_logs
