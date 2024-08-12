@@ -119,7 +119,7 @@ class FetchLogs(BaseJob):
             files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if not f.endswith(".gz")]
 
             for file in files:
-                with open(file, "r") as f:
+                with open(file, "r", errors="replace") as f:
                     for line in f.readlines():
                         fields = self.get_line_fields(line)
                         record_time = self.parse_timestamp(fields[self.timestamp_field_number])
@@ -136,7 +136,7 @@ class FetchLogs(BaseJob):
         for file in files:
             new_records = []
 
-            with open(file, "r") as f:
+            with open(file, "r", errors="replace") as f:
                 for line in f.readlines():
                     self.number_of_read_records += 1
                     fields = self.get_line_fields(line)
