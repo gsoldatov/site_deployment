@@ -1,5 +1,6 @@
 # NOTE: this role is no longer used, backup and monitoring jobs are now run using current repository, instead of creating a new one
 # if the role is used again, its variables should be updated to match the current state of the env file
+# other deployment management playbooks may also require adjustments
 
 # deployment_repository_folder: "{{ lookup('env', 'DEPLOYMENT_REPOSITORY_FOLDER') }}"
 # deployment_management_repository_folder: "{{ lookup('env', 'DEPLOYMENT_MANAGEMENT_REPOSITORY_FOLDER') }}"
