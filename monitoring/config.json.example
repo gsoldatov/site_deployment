@@ -19,7 +19,7 @@
         "db_password": "password"
     },
 
-    "temp_folder": "temp",
+    "local_temp_folder": "temp",
     "logging_mode": "db",
 
     "fetched_logs_settings": {

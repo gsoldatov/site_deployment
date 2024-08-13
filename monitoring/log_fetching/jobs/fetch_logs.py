@@ -33,7 +33,7 @@ class FetchLogs(BaseJob):
         self.max_time = None
         self.server_timezone = None
 
-        self.temp_folder = None
+        self.local_temp_folder = None
 
         self.number_of_matching_files = 0
         self.number_of_read_records = 0
@@ -42,13 +42,13 @@ class FetchLogs(BaseJob):
     
     def prepare_local_temp_folder(self):
         """ Set up & clean temp folder for fetched files. """
-        temp_folder = self.config["temp_folder"]
-        if not os.path.isabs(temp_folder): 
-            temp_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../", temp_folder))
+        local_temp_folder = self.config["local_temp_folder"]
+        if not os.path.isabs(local_temp_folder): 
+            local_temp_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../", local_temp_folder))
         
         # Ensure temp folder & subfolder exist
-        subfolder = os.path.join(temp_folder, self.name)
-        self.temp_folder = subfolder
+        subfolder = os.path.join(local_temp_folder, self.name)
+        self.local_temp_folder = subfolder
         os.makedirs(subfolder, exist_ok=True)
 
         # Clean existing subfolder contents
@@ -116,7 +116,7 @@ class FetchLogs(BaseJob):
     def scan_files(self):
         """ Set `min_time` and `max_time` based on data in fetched files, when running in full fetch mode. """
         if self.full_fetch:
-            files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if not f.endswith(".gz")]
+            files = [os.path.join(self.local_temp_folder, f) for f in os.listdir(self.local_temp_folder) if not f.endswith(".gz")]
 
             for file in files:
                 with open(file, "r", errors="replace") as f:
@@ -131,7 +131,7 @@ class FetchLogs(BaseJob):
 
     def process_files(self, cursor):
         """ Read fetched files, transform and insert matching lines into the database. """
-        files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if not f.endswith(".gz")]
+        files = [os.path.join(self.local_temp_folder, f) for f in os.listdir(self.local_temp_folder) if not f.endswith(".gz")]
 
         for file in files:
             new_records = []

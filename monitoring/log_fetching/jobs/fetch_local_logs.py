@@ -44,7 +44,7 @@ class FetchLocalLogs(FetchLogs):
 
         # Copy files into the temp folder and unarchive
         for file in matching_files:
-            file_copy = shutil.copy(file, self.temp_folder)
+            file_copy = shutil.copy(file, self.local_temp_folder)
             if file_copy.endswith(".gz"):
                 os.system(f"gunzip {file_copy}") # Replace gzipped `file` with unarchived file in the same directory
         

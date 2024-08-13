@@ -76,7 +76,7 @@ class FetchRemoteLogs(FetchLogs):
         try:
             # Archive and fetch matching files
             archive_filename = f"/home/{self.config['server_user']}/tmp_{str(uuid4())[:8]}.tar.gz"
-            local_archive_filename = os.path.join(self.temp_folder, os.path.basename(archive_filename))
+            local_archive_filename = os.path.join(self.local_temp_folder, os.path.basename(archive_filename))
 
             # tar params:
             # -c = create tar archive;
@@ -91,11 +91,11 @@ class FetchRemoteLogs(FetchLogs):
             self.log(self.name, "DEBUG", f"Fetched matching files to the local machine.")
 
             # Unarchive tarball with fetched files and remove it
-            os.system(f"tar -xzf '{local_archive_filename}' -C {self.temp_folder}")
+            os.system(f"tar -xzf '{local_archive_filename}' -C {self.local_temp_folder}")
             os.remove(local_archive_filename)
 
             # Unarchive fetched gzip archives
-            archived_fetched_files = [os.path.join(self.temp_folder, f) for f in os.listdir(self.temp_folder) if f.endswith(".gz")]
+            archived_fetched_files = [os.path.join(self.local_temp_folder, f) for f in os.listdir(self.local_temp_folder) if f.endswith(".gz")]
             for file in archived_fetched_files:
                 os.system(f"gunzip {file}") # Replace gzipped `file` with unarchived file in the same directory
             self.log(self.name, "DEBUG", f"Unarchived {len(archived_fetched_files)} files.")
