@@ -16,11 +16,13 @@ class FetchAppAccessLogs(FetchRemoteLogs):
     def transform_record(self, **kwargs):
         fields = kwargs["fields"]
 
+        path = fields[2][:2048] + ("..." if len(fields[2]) > 2048 else "")    # limit path length to avoid indexing errors
+
         return (
             AsIs("DEFAULT"), # record_id
             self.parse_timestamp(fields[0]),    # record_time
             fields[1],      # request_id
-            fields[2],      # path
+            path,           # path
             fields[3],      # method
             int(fields[4]), # status
             fields[5],      # elapsed_time

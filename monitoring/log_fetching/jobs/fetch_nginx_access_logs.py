@@ -59,8 +59,11 @@ class FetchNginxAccessLogs(FetchRemoteLogs):
     def transform_record(self, **kwargs):
         fields = kwargs["fields"]
 
-        request_fields = fields[4].split(" ")  # method, path, http version
+        # method, path, http version
+        request_fields = fields[4].split(" ")
         path = request_fields[1] if len(request_fields) > 1 else None
+        if path is not None:
+            path = path[:2048] + ("..." if len(path) > 2048 else "")    # limit path length to avoid indexing errors
         method = None if len(request_fields[0]) > 8 else request_fields[0] if len(request_fields) > 1 else None
 
         return(
