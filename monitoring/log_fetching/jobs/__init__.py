@@ -8,6 +8,8 @@ from monitoring.log_fetching.jobs.fetch_fail2ban_logs import FetchFail2banLogs
 from monitoring.log_fetching.jobs.healthcheck import Healthcheck
 from monitoring.log_fetching.jobs.fetch_backup_script_logs import FetchBackupScriptLogs
 
+from monitoring.log_fetching.jobs.base_job import JobAborted
+
 
 job_list = {
     "app_access_logs": FetchAppAccessLogs,

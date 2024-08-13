@@ -1,5 +1,9 @@
+from functools import wraps
+import traceback
+
 from fabric import Connection, Config
 from invoke import Responder
+from paramiko.ssh_exception import SSHException, NoValidConnectionsError
 
 
 class BaseJob:
@@ -35,7 +39,11 @@ class BaseJob:
                 port=self.config["ssh_port"], 
                 user=self.config["server_user"],
                 connect_kwargs={ "key_filename": self.config["ssh_key_path"] },
-                config=config
+                config=config,
+
+                # Custom args used during exception handling
+                job_name=self.name,
+                job_logger=self.log
             )
 
             self.run_remote_commands()
@@ -52,6 +60,14 @@ class BaseJob:
 
 
 class PatchedConnection(Connection):
+    def __init__(self, *args, **kwargs):
+        job_name, job_logger = kwargs.pop("job_name"), kwargs.pop("job_logger")
+        super().__init__(*args, **kwargs)
+
+        # Decorate `run` method with exception catching function
+        exception_handler_decorator = handle_ssh_errors(job_name, job_logger)
+        self.run = exception_handler_decorator(self.run)
+
     def sudo(self, cmd, *args, **kwargs):
         """
         A workaround for avoiding `Socket is closed` error when Fabric's connection.sudo method.
@@ -67,3 +83,37 @@ class PatchedConnection(Connection):
         cmd = "sudo " + cmd
 
         return self.run(cmd, pty=True, watchers=[sudopass], *args, **kwargs)
+
+
+def handle_ssh_errors(job_name, job_logger):
+    """
+    Catches various SSH & connection errors during command execution via SSH.
+    Logs caught errors with `job_logger` function (`log` method of the BaseJob instance), writing the provided `job_name`,
+    and raises `JobAborted` exception instead, which is handled by the job runner.
+    `log` should be set to `log` method of `BaseJob` instance, which creates an instance of this class.
+    """
+    def outer(func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            # Higher-level errors from Fabric's dependencies
+            except (SSHException, NoValidConnectionsError, EOFError):
+                job_logger(job_name, "WARNING", f"Failed to execute a command over SSH\n\n{traceback.format_exc()}")
+                raise JobAborted
+
+            # Low-level socket errors
+            except OSError as e:
+                # Errno 110 appears in TimeoutError instances, which are subclasses of OSError
+                for msg in ("[Errno 101] Network is unreachable", "[Errno 110] Connection timed out"):
+                    if msg in str(e):
+                        job_logger(job_name, "WARNING", f"Failed to execute a command over SSH\n\n{traceback.format_exc()}")
+                        raise JobAborted
+                raise
+
+        return inner
+    return outer
+
+
+class JobAborted(Exception):
+    pass

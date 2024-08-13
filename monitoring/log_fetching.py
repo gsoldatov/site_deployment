@@ -11,7 +11,7 @@ if __name__ == "__main__":
     import sys, os
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from monitoring.log_fetching.jobs import job_list
+from monitoring.log_fetching.jobs import job_list, JobAborted
 from monitoring.util.config import get_config
 from monitoring.util.logging import PrintLogger, DatabaseLogger
 from monitoring.util.util import get_current_time, get_local_tz
@@ -154,6 +154,8 @@ class JobRunner:
                     else:
                         last_successful_full_fetch_time = now
                     self.update_fetch_job_status(job_name, "success", now, last_successful_full_fetch_time=last_successful_full_fetch_time)
+                except JobAborted:
+                    self.update_fetch_job_status(job_name, "failed", now)
                 except Exception as e:
                     self.log(job_name, "ERROR", traceback.format_exc())
                     raise
