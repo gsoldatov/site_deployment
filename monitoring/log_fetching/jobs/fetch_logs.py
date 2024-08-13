@@ -40,7 +40,7 @@ class FetchLogs(BaseJob):
         self.number_of_inserted_records = 0
     
     
-    def prepare_folder(self):
+    def prepare_local_temp_folder(self):
         """ Set up & clean temp folder for fetched files. """
         temp_folder = self.config["temp_folder"]
         if not os.path.isabs(temp_folder): 

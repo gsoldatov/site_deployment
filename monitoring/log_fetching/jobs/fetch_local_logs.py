@@ -54,7 +54,7 @@ class FetchLocalLogs(FetchLogs):
     def run(self):
         # Setup
         self.log(self.name, "INFO", f"Starting job {self.name}.")
-        self.prepare_folder()
+        self.prepare_local_temp_folder()
         self.set_full_fetch()
         self.set_fetch_period()
 
