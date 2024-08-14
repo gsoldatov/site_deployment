@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from datetime import datetime
 from uuid import uuid4
 
@@ -17,7 +18,9 @@ class FetchServerAuthLogs(FetchRemoteLogs):
     https://www.linkedin.com/pulse/using-linux-utmpdump-forensics-detecting-log-file-craig-rowland (ut_type description & notes on security)
     """
     def __init__(self, name, args, config, db_connection, log):
-        log_folder = config["fetched_logs_settings"]["server_auth_temp_folder_name_template"] + f"_{str(uuid4())[:8]}"
+        # Log files are dumped into the remote temp folder before being fetched
+        # (convert to string for the sake of using the same type for this attribute)
+        log_folder = str(Path(config["fetched_logs_settings"]["remote_temp_folder"]) / name)
         filename_patterns = "wtmp*"
         
         separator = " "
@@ -45,8 +48,6 @@ class FetchServerAuthLogs(FetchRemoteLogs):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
-        #################################################################################################################
-        # Process stdout returned by patched `sudo` method
         stdout = result.stdout
         newline_index = stdout.find("\n")   # remove sudo password prompt line
         stdout = stdout[newline_index + 1:].strip()
@@ -58,33 +59,15 @@ class FetchServerAuthLogs(FetchRemoteLogs):
 
         wtmp_files = stdout.split("\n")
         wtmp_files = [f.strip() for f in wtmp_files]    # Additional stripping for the case of CR+LF line separation
-        #################################################################################################################
-        #################################################################################################################
-        # # Process stdout returned by default Connection.sudo method
-        # # Exit if no matching files found
-        # self.number_of_matching_files = len(result.stdout.strip())
-        # if self.number_of_matching_files == 0:
-        #     self.log(self.name, "INFO", "Found no matching files.")
-        #     return
-        
-        # wtmp_files = result.stdout.strip().split("\n")
-        #################################################################################################################
 
-        try:
-            # Dump wtmp files into temp folder
-            self.ssh_connection.sudo(f'mkdir "{self.log_folder}"')
-            # Output redirect is performed by current user instead of root, even when running as sudo, so folder ownership must be updated
-            self.ssh_connection.sudo(f'chown -R {self.config["server_user"]} "{self.log_folder}"')
-            for file in wtmp_files:
-                temp_filename = os.path.join(self.log_folder, os.path.basename(file))
-                self.ssh_connection.sudo(f"utmpdump {file} > '{temp_filename}'")
-            
-            # Fetch dumps as regular log files
-            super().fetch_files()
+        # Dump wtmp files into temp folder
+        for file in wtmp_files:
+            temp_filename = self.remote_temp_folder / Path(file).name
+            self.ssh_connection.sudo(f"utmpdump {file} > '{temp_filename}'")
         
-        finally:
-            # Remove temp folder & wtmp dumps
-            self.ssh_connection.sudo(f"rm -rf '{self.log_folder}'")
+        # Fetch dumps as regular log files
+        # (don't copy them into temp folder, since they're already there)
+        super().fetch_files(copy_log_files_to_temp_dir=False)
     
 
     def get_line_fields(self, line):

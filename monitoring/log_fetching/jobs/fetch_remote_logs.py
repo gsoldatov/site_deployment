@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 from datetime import datetime
 from uuid import uuid4
 
@@ -16,14 +17,28 @@ class FetchRemoteLogs(FetchLogs):
     - filter and transform data from fetched files;
     - upsert data into the database (replace existing data for the fetch period).
     """
+    def __init__(self, name, args, config, db_connection, log, log_folder, filename_patterns, separator):
+        super().__init__(name, args, config, db_connection, log, log_folder, filename_patterns, separator)
+
+        self.remote_temp_folder = Path(self.config["fetched_logs_settings"]["remote_temp_folder"]) / self.name
+
     def run_remote_commands(self):
         """ 
         Wrapper method for commands and functions which need an active SSH connection to the server.
 
         Default implementation gets server timezone and fetches matching files to the local machine.
         """
+        self.prepare_remote_temp_folder()
         self.get_server_timezone()
-        self.fetch_files()
+        self.fetch_files()    
+
+
+    def prepare_remote_temp_folder(self):
+        """ Ensure remote temp folder is present & clean. """
+        self.ssh_connection.run(f"mkdir -p '{self.remote_temp_folder}'")
+        self.ssh_connection.sudo(f"find '{self.remote_temp_folder}' -mindepth 1 -delete")
+        # rm_pattern = self.remote_temp_folder / "*"
+        # self.ssh_connection.sudo(f"rm -rf '{rm_pattern}'")    # shell expansion does not work for quoted paths
 
 
     def get_server_timezone(self):
@@ -33,8 +48,13 @@ class FetchRemoteLogs(FetchLogs):
         self.server_timezone = d.tzinfo
     
 
-    def fetch_files(self):
-        """ Fetch files with matching pattern and modification time into temp folder. """
+    def fetch_files(self, copy_log_files_to_temp_dir = True):
+        """
+        Fetch files with matching pattern and modification time into temp folder.
+        
+        If `copy_log_files_to_temp_dir` is set to true, log files are copied into temp folder
+        before they're archived & fetched to local machine (otherwise, they're expected to be present in the temp folder).
+        """
         # Get matching files
         cmd = f'find "{self.log_folder}" -mindepth 1'
         if type(self.filename_patterns) == str: cmd += f' -name "{self.filename_patterns}"'
@@ -48,8 +68,7 @@ class FetchRemoteLogs(FetchLogs):
             cmd +=  f' -newermt "{t}"'
         result = self.ssh_connection.sudo(cmd)
 
-        #################################################################################################################
-        stdout = result.stdout # Process stdout from patched sudo method
+        stdout = result.stdout
         newline_index = stdout.find("\n")   # remove sudo password prompt line
         stdout = stdout[newline_index + 1:].strip()
 
@@ -60,48 +79,44 @@ class FetchRemoteLogs(FetchLogs):
 
         remote_files = stdout.split("\n")
         remote_files = [f.strip() for f in remote_files]    # Additional stripping for the case of CR+LF line separation
-        #################################################################################################################
-        #################################################################################################################
-        # # Exit if no matching files found     # Process stdout from original Connection.sudo method
-        # if len(result.stdout.strip()) == 0:
-        #     self.log(self.name, "INFO", "Found no matching files.")
-        #     return
         
-        # remote_files = result.stdout.strip().split("\n")
-        #################################################################################################################
         self.number_of_matching_files = len(remote_files)
-        remote_filenames = " ".join((os.path.basename(f) for f in remote_files))
         self.log(self.name, "DEBUG", f"Found {len(remote_files)} matching files.")
 
-        try:
-            # Archive and fetch matching files
-            archive_filename = f"/home/{self.config['server_user']}/tmp_{str(uuid4())[:8]}.tar.gz"
-            local_archive_filename = os.path.join(self.local_temp_folder, os.path.basename(archive_filename))
-
-            # tar params:
-            # -c = create tar archive;
-            # -z = gzip archive;
-            # -f = archive filename;
-            # -C = current working directory (required to create flat archive without recreating parent folders for archived files);
-            # remote_filenames = list of space-separated files to archive, relative to directory specified in `-C` option.
-            self.ssh_connection.sudo(f"tar -C '{self.log_folder}' -czf {archive_filename} {remote_filenames}")
-            self.ssh_connection.sudo(f"chown {self.config['server_user']} {archive_filename}")
+        # Copy files to temp folder
+        if copy_log_files_to_temp_dir:
+            quoted_remote_files = " ".join((f"'{f}'" for f in remote_files))
+            self.ssh_connection.sudo(f"cp {quoted_remote_files} '{self.remote_temp_folder}'")
+            self.log(self.name, "DEBUG", f"Copied matching files into temp folder.")
             
-            self.ssh_connection.get(archive_filename, local=local_archive_filename)
-            self.log(self.name, "DEBUG", f"Fetched matching files to the local machine.")
+        # Archive and fetch matching files
+        archive_file = self.remote_temp_folder / f"tmp_{str(uuid4())[:8]}.tar.gz"
+        local_temp_folder = Path(self.local_temp_folder)
+        local_archive_file = local_temp_folder / archive_file.name
 
-            # Unarchive tarball with fetched files and remove it
-            os.system(f"tar -xzf '{local_archive_filename}' -C {self.local_temp_folder}")
-            os.remove(local_archive_filename)
+        # tar params:
+        # -c = create tar archive;
+        # -z = gzip archive;
+        # -f = archive filename;
+        # -C = current working directory (required to create flat archive without recreating parent folders for archived files);
+        # quoted_remote_filenames = list of space-separated files to archive, relative to directory specified in `-C` option.
+        quoted_remote_filenames = " ".join((f"'{Path(f).name}'" for f in remote_files))
+        self.ssh_connection.sudo(f"tar -C '{self.remote_temp_folder}' -czf '{archive_file}' {quoted_remote_filenames}")
+        self.ssh_connection.sudo(f"chown '{self.config['server_user']}' '{archive_file}'")
+        
+        # Fetch files to the local machine
+        self.ssh_connection.get(str(archive_file), local=str(local_archive_file))
+        self.log(self.name, "DEBUG", f"Fetched matching files to the local machine.")
 
-            # Unarchive fetched gzip archives
-            archived_fetched_files = [os.path.join(self.local_temp_folder, f) for f in os.listdir(self.local_temp_folder) if f.endswith(".gz")]
-            for file in archived_fetched_files:
-                os.system(f"gunzip {file}") # Replace gzipped `file` with unarchived file in the same directory
-            self.log(self.name, "DEBUG", f"Unarchived {len(archived_fetched_files)} files.")
-        finally:
-            # Remove archived files
-            self.ssh_connection.sudo(f"rm -f {archive_filename}")
+        # Unarchive tarball with fetched files and remove it
+        os.system(f"tar -xzf '{local_archive_file}' -C {self.local_temp_folder}")
+        os.remove(local_archive_file)
+
+        # Unarchive fetched gzip archives
+        archived_fetched_files = [f for f in local_temp_folder.glob("*.gz")]
+        for file in archived_fetched_files:
+            os.system(f"gunzip '{file}'") # Replace gzipped `file` with unarchived file in the same directory
+        self.log(self.name, "DEBUG", f"Unarchived {len(archived_fetched_files)} files.")
 
 
     def run(self):

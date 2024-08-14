@@ -23,6 +23,8 @@
     "logging_mode": "db",
 
     "fetched_logs_settings": {
+        "remote_temp_folder": "{{ remote_temp_folder }}",
+
         "backend_log_folder": "{{ backend_log_folder }}",
         "backend_log_separator": "{{ backend_log_separator }}",
         "app_access_log_name_template": "app_access_log*",
@@ -33,8 +35,6 @@
         "nginx_access_log_name_template": "access.log*",
         "nginx_error_log_name_template": "error.log*",
         "nginx_log_separator": " ",
-
-        "server_auth_temp_folder_name_template": "/home/{{ server_user }}/wtmp_dump",
 
         "fail2ban_log_folder": "/var/log",
         "fail2ban_log_name_template": "fail2ban.log*",
