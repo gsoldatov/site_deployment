@@ -100,6 +100,7 @@ case $NAME in
 esac
 
 export ANSIBLE_HOST=$SERVER_ADDR;
+export ANSIBLE_PORT=$SERVER_SSH_PORT;
 if [[ $ANSIBLE_PASSWORD ]]; then export ANSIBLE_PASSWORD_LINE="ansible_password: $ANSIBLE_PASSWORD"; fi
 if [[ $ANSIBLE_BECOME_PASSWORD ]]; then export ANSIBLE_BECOME_PASSWORD_LINE="ansible_become_password: $ANSIBLE_BECOME_PASSWORD"; fi
 

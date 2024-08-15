@@ -33,14 +33,14 @@ def _get_monitoring_config(env_vars):
     return {
         "server_addr": env_vars["SERVER_ADDR"],
         "server_domain": server_domain,
-        "ssh_port": 22,
+        "ssh_port": env_vars["SERVER_SSH_PORT"],
         "server_user": env_vars["DEPLOYMENT_USER_NAME"],
         "server_user_password": env_vars["DEPLOYMENT_USER_PASSWORD"],
         "ssh_key_path": ssh_key_path,
 
         "db": {
-            "db_host": "localhost",
-            "db_port": 5432,
+            "db_host": env_vars["MONITORING_DB_HOST"],
+            "db_port": env_vars["MONITORING_DB_PORT"],
             
             "db_init_database": env_vars["MONITORING_INIT_DB_NAME"],
             "db_init_username": env_vars["MONITORING_INIT_DB_USERNAME"],
@@ -51,8 +51,8 @@ def _get_monitoring_config(env_vars):
             "db_password": env_vars["MONITORING_DB_PASSWORD"],
         },
 
-        "local_temp_folder": "temp",
-        "logging_mode": "db",
+        "local_temp_folder": env_vars["LOCAL_TEMP_FOLDER"],
+        "logging_mode": env_vars["MONITORING_LOGGING_MODE"],
 
         "fetched_logs_settings": {
             "remote_temp_folder": env_vars["REMOTE_TEMP_FOLDER"],

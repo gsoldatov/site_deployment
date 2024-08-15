@@ -2,6 +2,7 @@ all:
   hosts:
     srv:
       ansible_host: $ANSIBLE_HOST
+      ansible_port: $ANSIBLE_PORT
       ansible_user: $ANSIBLE_USER
       $ANSIBLE_PASSWORD_LINE
       $ANSIBLE_BECOME_PASSWORD_LINE
