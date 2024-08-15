@@ -20,8 +20,8 @@ from monitoring.db.util import connect
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config",
-        help="Path to config file, relative to `monitoring` folder or absolute; default filename is `config.json`.")
+    parser.add_argument("-e", "--env-file",
+        help="Path to file with environment variables, relative to `ansible` folder or absolute; default filename is `production.env`.")
     parser.add_argument("-j", "--jobs",
         help="A list of comma-separated job names to be run.")
     parser.add_argument("-f", "--min-time",
@@ -73,7 +73,7 @@ def parse_args():
 class JobRunner:
     def __init__(self):
         self.args = parse_args()
-        self.config = get_config(self.args.config)
+        self.config = get_config(self.args.env_file)
         self.execution_id = str(uuid4())[:8]
 
         self.db_connection = connect(self.config, db="logs")

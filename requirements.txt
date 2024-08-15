@@ -16,6 +16,7 @@ psycopg2-binary==2.9.5
 pycparser==2.21
 PyNaCl==1.5.0
 pyparsing==3.0.9
+python-dotenv==1.0.1
 PyYAML==6.0
 resolvelib==0.8.1
 SQLAlchemy==1.4.46

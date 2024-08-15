@@ -1,11 +1,6 @@
 # Sets up database and monitoring data fetch jobs
-- name: Build monitoring config
-  template:
-    src: templates/monitoring_config
-    dest: "{{ project_root_directory }}/monitoring/config.json"
-
 - name: Create monitoring database & user
-  command: "{{ python_interpreter_path }} monitoring/db/setup.py"
+  command: "{{ python_interpreter_path }} monitoring/db/setup.py --env-file '{{ env_file }}'"
   args:
     chdir: "{{ project_root_directory }}"
 

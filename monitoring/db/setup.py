@@ -45,10 +45,10 @@ def setup_database(config):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--config",
-        help="Path to config file, relative to `monitoring` folder (one level above the folder of this script) or absolute; default filename is `config.json`")
+    parser.add_argument("-e", "--env-file",
+        help="Path to env file, relative to `ansible` folder; default filename is `production.env`")
     args = parser.parse_args()
-    config = get_config(args.config)
+    config = get_config(args.env_file)
 
     setup_database(config)
 
