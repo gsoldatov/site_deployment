@@ -16,8 +16,7 @@ A collection of Ansible playbooks for automated [frontend](https://github.com/gs
     ```
 
 2. Create or update a `production.env` file (in the directory of this file) with valid site settings (see `production.env.example`);
-3. Create or update `hosts.yml` file (see `hosts.yml.example`);
-4. Configure Grafana & import monitoring dashboards (see `<root_dir>/monitoring/Readme.md`).
+3. Configure Grafana & import monitoring dashboards (see `<root_dir>/monitoring/Readme.md`).
 
 
 # Running Playbooks
