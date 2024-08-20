@@ -3,9 +3,18 @@
 
 - name: Make a database backup, if it's enabled  
   block:
+    - name: Ensure remote temp folder exists
+      file:
+        path: "{{ backup_remote_folder }}"
+        state: directory
+        owner: "{{ deployment_user_name }}"
+        group: "{{ deployment_user_name }}"
+        mode: 0774
+      become: yes
+
     - name: Set constant dump filepath
       set_fact:
-        backup_db_dump_filepath: "/{{ backup_db_dump_filename }}_{{ backup_db_dump_filename_suffix }}"
+        backup_db_dump_filepath: "{{ backup_remote_folder }}/{{ backup_db_dump_filename }}_{{ backup_db_dump_filename_suffix }}"
     
     # Backup existing .pgpass file
     - name: Check if .pgpass exists
