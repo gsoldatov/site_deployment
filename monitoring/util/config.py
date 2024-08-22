@@ -73,6 +73,6 @@ def _get_monitoring_config(env_vars):
 
             "backup_script_log_folder": env_vars["BACKUP_LOG_FOLDER"],
             "backup_script_log_name_template": backup_log_name_template,
-            "backup_script_separator": ";"
+            "backup_script_separator": env_vars["BACKUP_LOG_FILE_SEPARATOR"]
         }
     }

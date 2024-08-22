@@ -9,7 +9,7 @@
 "
 log_message () {
     local TIMESTAMP=$(date "+%Y-%m-%dT%H:%M:%S %z")
-    echo "$TIMESTAMP;$1;$2;$3" >> "$BACKUP_LOG_FOLDER/$BACKUP_SCRIPT_LOG_FILENAME"
+    echo $(join_by "$BACKUP_LOG_FILE_SEPARATOR" "$TIMESTAMP" "$1" "$2" "$3") >> "$BACKUP_LOG_FOLDER/$BACKUP_SCRIPT_LOG_FILENAME"
 }
 
 
@@ -31,4 +31,15 @@ is_metered_connection() {
     done
 
     return 0
+}
+
+: "
+    Joins strings (2nd and rest args) separated by a delimiter (1st arg).
+    https://stackoverflow.com/a/17841619
+"
+function join_by {
+  local d=${1-} f=${2-}
+  if shift 2; then
+    printf %s "$f" "${@/#/$d}"
+  fi
 }
