@@ -1,0 +1,3 @@
+backup_static_files_max_backup_count: "{{ lookup('env', 'BACKUP_STATIC_FILES_MAX_BACKUP_COUNT') }}"
+static_files_remote_folder: "{{ lookup('env', 'STATIC_FILES_FOLDER') }}"
+static_files_local_folder: "{{ lookup('env', 'BACKUP_STATIC_FILES_LOCAL_FOLDER') }}"

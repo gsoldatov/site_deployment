@@ -3,3 +3,5 @@
 - hosts: srv
   roles:
     - { role: backup_db, tags: [backup_db] }
+    - { role: backup_static_files, tags: [backup_static_files] }
+

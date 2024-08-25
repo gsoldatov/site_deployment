@@ -1,6 +1,7 @@
 base_directory: "{{ playbook_dir }}"   # <deployment_repo_dir>/ansible
 
 backup_local_folder: "{{ lookup('env', 'BACKUP_LOCAL_FOLDER') }}"
+backup_static_files_local_folder: "{{ lookup('env', 'BACKUP_STATIC_FILES_LOCAL_FOLDER') }}"
 backup_log_folder: "{{ lookup('env', 'BACKUP_LOG_FOLDER') }}"
 current_username: "{{ lookup('env', 'USER') }}"
 

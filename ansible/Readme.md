@@ -45,7 +45,8 @@ Playbooks can be run via `run.sh` script, which reads the environment variables,
 ## Monitoring & Backups
 - `deployment_management_setup.yml`: configures automatic site backup & monitoring data fetches using this repository;
 - `deployment_management_uninstall.yml`: disables cron jobs for automatic site backup & monitoring;
-- `backup_execute.yml`: runs a manual site backup execution (also used by scheduled backup in the repo copy).
+- `backup_execute.yml`: runs a manual site backup execution (also used by scheduled backup in the repo copy); 
+    can be run with `backup_db` or `backup_static_files` tags to perform a specific part of backup;
 
 
 # Additional Playbook Information
