@@ -1,8 +1,6 @@
 : "
-    Database backup function.
+    Function for automatic database backup
 "
-
-
 backup_db () {
     # Exit if database backup is diabled
     if (($BACKUP_DB_MAX_BACKUP_COUNT <= 0)); then log_message "INFO" "backup_db" "Database backup is disabled."; return 0; fi
@@ -22,7 +20,6 @@ backup_db () {
     local CONN_STATUS=$?
     if (($CONN_STATUS == 2)); then log_message "INFO" "backup_db" "No internet connection available."; return 0; fi
     if (($CONN_STATUS == 1)); then log_message "INFO" "backup_db" "Internet connection is metered, exiting."; return 0; fi
-
 
     # Check if server is reachable
     ping -c1 $SERVER_ADDR > /dev/null 2>&1

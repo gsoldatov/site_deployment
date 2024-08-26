@@ -13,3 +13,6 @@ backup_script_keep_log_files: "{{ lookup('env', 'BACKUP_SCRIPT_KEEP_LOG_FILES') 
 
 backup_db_ansible_log_filename: "{{ lookup('env', 'BACKUP_DB_ANSIBLE_LOG_FILENAME') }}"
 backup_db_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_DB_ANSIBLE_KEEP_LOG_FILES') }}"
+
+backup_static_files_ansible_log_filename: "{{ lookup('env', 'BACKUP_STATIC_FILES_ANSIBLE_LOG_FILENAME') }}"
+backup_static_files_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_STATIC_FILES_ANSIBLE_KEEP_LOG_FILES') }}"

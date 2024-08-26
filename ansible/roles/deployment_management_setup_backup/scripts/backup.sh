@@ -8,12 +8,20 @@
 DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )    # Script directory
 source $DIR/util.sh
 source $DIR/backup_db.sh
+source $DIR/backup_static_files.sh
 
 
 # Get script options & set paths
+BACKUP_DB=0
+BACKUP_STATIC_FILES=0
+
 while (( "$#" )); do    # Loop through input options, filter script options & save rest for Ansible
     case "$1" in
         --env-file) ENV_FILE=$2; shift; shift;;   # Relative to `ansible` folder (3 levels above script file location)
+
+        --backup-db) BACKUP_DB=1; shift;;
+
+        --backup-static-files) BACKUP_STATIC_FILES=1; shift;;
 
         *) shift;;
     esac
@@ -33,7 +41,10 @@ RUN_SH_FULLPATH="$LOCAL_SITE_FOLDER/deployment/ansible/run.sh"
 
 
 # Run database backup
-backup_db
+if ((BACKUP_DB == 1)); then backup_db; fi
+
+# Run static files backup
+if ((BACKUP_STATIC_FILES == 1)); then backup_static_files; fi
 
 # Finish script exectuion
 log_message "INFO" "main" "Finished script execution."
