@@ -1,1995 +1,2194 @@
 {
-    "annotations": {
-      "list": [
-        {
-          "builtIn": 1,
-          "datasource": {
-            "type": "grafana",
-            "uid": "-- Grafana --"
-          },
-          "enable": true,
-          "hide": true,
-          "iconColor": "rgba(0, 211, 255, 1)",
-          "name": "Annotations & Alerts",
-          "target": {
-            "limit": 100,
-            "matchAny": false,
-            "tags": [],
-            "type": "dashboard"
-          },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
           "type": "dashboard"
-        }
-      ]
-    },
-    "description": "",
-    "editable": true,
-    "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "id": 6,
-    "links": [],
-    "liveNow": false,
-    "panels": [
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 0
         },
-        "id": 8,
-        "panels": [],
-        "title": "General",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "yellow",
-                  "value": 60
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 0,
-          "y": 1
-        },
-        "id": 12,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - execution_time)) / 60)::INTEGER AS \"Time Since Update\"\nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Time Since Update",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [
-              {
-                "options": {
-                  "Failed": {
-                    "color": "red",
-                    "index": 0
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 2,
-          "x": 3,
-          "y": 1
-        },
-        "id": 13,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^Ping Status$/",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT \n  CASE\n    WHEN server_reachable THEN 'OK'\n    ELSE 'Failed'\n  END as \"Ping Status\"\nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Ping Status",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [
-              {
-                "options": {
-                  "OK": {
-                    "color": "green",
-                    "index": 0
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "red",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 2,
-          "x": 5,
-          "y": 1
-        },
-        "id": 14,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^Backend Status$/",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  CASE\n    WHEN backend_status = 'active' THEN 'OK'\n    ELSE backend_status\n  END as \"Backend Status\"  \nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Backend Status",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [
-              {
-                "options": {
-                  "OK": {
-                    "color": "green",
-                    "index": 0
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "red",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 2,
-          "x": 7,
-          "y": 1
-        },
-        "id": 15,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^DB Status$/",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT \n  CASE\n    WHEN postgresql_status = 'active' THEN 'OK'\n    ELSE postgresql_status\n  END as \"DB Status\"\nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "DB Status",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [
-              {
-                "options": {
-                  "OK": {
-                    "color": "green",
-                    "index": 0
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "red",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 2,
-          "x": 9,
-          "y": 1
-        },
-        "id": 16,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^Nginx Status$/",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT \n  CASE\n    WHEN nginx_status = 'active' THEN 'OK'\n    ELSE nginx_status\n  END as \"Nginx Status\"\nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Nginx Status",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "red",
-                  "value": null
-                },
-                {
-                  "color": "yellow",
-                  "value": 14
-                },
-                {
-                  "color": "green",
-                  "value": 30
-                }
-              ]
-            },
-            "unit": "d"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 11,
-          "y": 1
-        },
-        "id": 20,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^Days until SSL Expiration$/",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  EXTRACT(DAY FROM (ssl_expiry_time - CURRENT_TIMESTAMP)) AS \"Days until SSL Expiration\"\nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Days until SSL Expiration",
-        "type": "stat"
-      },
-      {
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 3
-        },
-        "id": 22,
-        "title": "Server Performance",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "displayMode": "auto",
-              "inspect": false,
-              "minWidth": 100
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "CPU Usage"
-              },
-              "properties": [
-                {
-                  "id": "custom.displayMode",
-                  "value": "color-text"
-                },
-                {
-                  "id": "unit",
-                  "value": "percent"
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "green",
-                        "value": null
-                      },
-                      {
-                        "color": "#EAB839",
-                        "value": 50
-                      },
-                      {
-                        "color": "red",
-                        "value": 80
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Memory Used"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "kbytes"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Memory Available"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "kbytes"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Memory Available, %"
-              },
-              "properties": [
-                {
-                  "id": "custom.displayMode",
-                  "value": "color-text"
-                },
-                {
-                  "id": "unit",
-                  "value": "percentunit"
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "red",
-                        "value": null
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 0.2
-                      },
-                      {
-                        "color": "green",
-                        "value": 0.5
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Swap Size"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "kbytes"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Memory Total"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "kbytes"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Disk Used"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "kbytes"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Disk Total"
-              },
-              "properties": [
-                {
-                  "id": "unit",
-                  "value": "kbytes"
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Disk Available, %"
-              },
-              "properties": [
-                {
-                  "id": "custom.displayMode",
-                  "value": "color-text"
-                },
-                {
-                  "id": "unit",
-                  "value": "percentunit"
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "red",
-                        "value": null
-                      },
-                      {
-                        "color": "#EAB839",
-                        "value": 0.2
-                      },
-                      {
-                        "color": "green",
-                        "value": 0.5
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 20,
-          "x": 0,
-          "y": 4
-        },
-        "id": 24,
-        "options": {
-          "footer": {
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  cpu_usage as \"CPU Usage\",\n  memory_used as \"Memory Used\",\n  memory_available as \"Memory Available\",\n  memory_available::FLOAT / memory_total as \"Memory Available, %\",\n  memory_swap as \"Swap Size\",\n  memory_total as \"Memory Total\",\n  disk_used as \"Disk Used\",\n  disk_total as \"Disk Total\",\n  (disk_total - disk_used)::FLOAT / disk_total as \"Disk Available, %\"\nFROM healthcheck",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "type": "table"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 6
-        },
-        "id": 26,
-        "panels": [],
-        "title": "Log Fetching",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "Number of jobs, which weren't successfully finished during last execution",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 1
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 0,
-          "y": 7
-        },
-        "id": 28,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "value"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  SUM(\n    CASE \n      WHEN last_execution_status != 'success' THEN 1\n      ELSE 0\n    END\n  ) as \"Number of Failed Jobs\"\nFROM fetch_jobs_status ",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Failed Jobs",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "Number of jobs, which were last executed more than an hour ago",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "yellow",
-                  "value": 1
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 3,
-          "y": 7
-        },
-        "id": 29,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "value"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  SUM(\n    CASE \n      WHEN CURRENT_TIMESTAMP - last_execution_time > INTERVAL '1 hour' THEN 1\n      ELSE 0\n    END\n  ) as \"Number of Jobs not Recently Run\"\nFROM fetch_jobs_status ",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Not Recently Run",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "Number of jobs, which didn't successfully run a full fetch during the last 2 days",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "yellow",
-                  "value": 1
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 6,
-          "y": 7
-        },
-        "id": 30,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "value"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  SUM(\n    CASE \n      WHEN CURRENT_TIMESTAMP - last_successful_full_fetch_time > INTERVAL '48 hour' THEN 1\n      ELSE 0\n    END\n  ) as \"Number of Jobs without Recent Full Fetch\"\nFROM fetch_jobs_status ",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "No Recent Full Fetch",
-        "type": "stat"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 9
-        },
-        "id": 32,
-        "panels": [],
-        "title": "Site Backup",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 1440
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 0,
-          "y": 10
-        },
-        "id": 34,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "value"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Last Execution\"\nFROM backup_script_logs \nWHERE event_source = 'main' AND message = 'Finished script execution.'",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Time Since Last Execution",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 20160
-                }
-              ]
-            },
-            "unit": "m"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 3,
-          "y": 10
-        },
-        "id": 35,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "value"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Database Backup\"\nFROM backup_script_logs \nWHERE event_source = 'backup_db' AND message = 'Finished database backup.'",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Time Since DB Backup",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "fixedColor": "text",
-              "mode": "fixed"
-            },
-            "mappings": [
-              {
-                "options": {
-                  "Error": {
-                    "color": "red",
-                    "index": 4
-                  },
-                  "Metered connection": {
-                    "color": "yellow",
-                    "index": 2
-                  },
-                  "No data": {
-                    "color": "red",
-                    "index": 0
-                  },
-                  "No internet": {
-                    "color": "yellow",
-                    "index": 1
-                  },
-                  "Server unreachable": {
-                    "color": "red",
-                    "index": 3
-                  },
-                  "Unknown": {
-                    "color": "red",
-                    "index": 5
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "string"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 6,
-          "y": 10
-        },
-        "id": 36,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
-            "fields": "/^status$/",
-            "values": false
-          },
-          "textMode": "value"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  CASE\n    WHEN message = 'Existing backup with recent modify time found, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Database backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished database backup.' THEN 'Success'\n\tWHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_db'\n  AND record_time IN (\n    SELECT\n      MAX(record_time) as record_time\n    FROM backup_script_logs \n    WHERE event_source = 'backup_db'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Last DB Backup Status",
-        "type": "stat"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 12
-        },
-        "id": 38,
-        "panels": [],
-        "title": "Auth",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "displayMode": "color-text",
-              "inspect": false,
-              "minWidth": 100
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "text",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 0.01
-                }
-              ]
-            },
-            "unit": "none"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 3,
-          "w": 4,
-          "x": 0,
-          "y": 13
-        },
-        "id": 40,
-        "options": {
-          "footer": {
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\tAVG(login_count) AS \"Avg Daily Logins\",\n\tMAX(login_count) AS \"Max Daily Logins\"\n\nFROM (\n\tSELECT\n\t\tcalendar_dates.d AS date,\n\t\tCOALESCE(login_count, 0) AS login_count\n\tFROM (\n\t\tSELECT \n\t\t\trecord_time::DATE AS login_date,\n\t\t\tCOUNT(DISTINCT server_auth_logs.record_id) AS login_count\n\t\tFROM server_auth_logs\n\n\t\tLEFT JOIN known_ips\t\t-- known_ips keeps unique pairs of login_date + remote\n\t\tON server_auth_logs.remote = known_ips.remote\n\t\tAND login_date - known_ips.login_date BETWEEN -7 AND 7\n\n\t\tWHERE\n\t\t\trecord_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\t\tAND known_ips.remote IS NULL\n\n\t\tGROUP BY record_time::DATE\n\n\t\tORDER BY login_date\n\t) login_count_by_date\t\t-- Get daily count of logins from unknown ips\n\n\tRIGHT JOIN (\n\t\tSELECT calendar_dates::date AS d\n\t\tFROM GENERATE_SERIES(\n\t\t'${__from:date:YYYY-MM-DD}'::DATE,\n\t\t'${__to:date:YYYY-MM-DD}'::DATE,\n\t\t'1 day'::INTERVAL\n\t\t) calendar_dates\n\t) calendar_dates\t-- Generate all dates for query period and join dailt login counts to them\n\tON calendar_dates.d = login_count_by_date.login_date\n\n) calendar_login_dates",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Logins from Unknown Addresses",
-        "type": "table"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "fixedColor": "text",
-              "mode": "fixed"
-            },
-            "custom": {
-              "align": "auto",
-              "displayMode": "color-text",
-              "inspect": false,
-              "minWidth": 100
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                }
-              ]
-            },
-            "unit": "none"
-          },
-          "overrides": [
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Maximum Daily Failed Logins"
-              },
-              "properties": [
-                {
-                  "id": "color"
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "text",
-                        "value": null
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 10800
-                      },
-                      {
-                        "color": "red",
-                        "value": 43200
-                      }
-                    ]
-                  }
-                }
-              ]
-            },
-            {
-              "matcher": {
-                "id": "byName",
-                "options": "Maximum Daily Bans"
-              },
-              "properties": [
-                {
-                  "id": "color"
-                },
-                {
-                  "id": "thresholds",
-                  "value": {
-                    "mode": "absolute",
-                    "steps": [
-                      {
-                        "color": "text",
-                        "value": null
-                      },
-                      {
-                        "color": "yellow",
-                        "value": 1000
-                      },
-                      {
-                        "color": "red",
-                        "value": 2000
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          ]
-        },
-        "gridPos": {
-          "h": 3,
-          "w": 10,
-          "x": 4,
-          "y": 13
-        },
-        "id": 41,
-        "options": {
-          "footer": {
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\tAVG(COALESCE(failed_logins_count, 0)) AS \"Avg Daily Failed Logins\",\n\tAVG(COALESCE(bans_count, 0)) AS \"Avg Daily Bans\",\n\tMAX(failed_logins_count) AS \"Max Daily Failed Logins\",\n\tMAX(bans_count) AS \"Max Daily Bans\"\nFROM (\n\tSELECT\n\t\tevent_date,\n\t\tSUM(CASE WHEN event_type = 'Found' THEN event_count ELSE 0 END) AS failed_logins_count,\n\t\tSUM(CASE WHEN event_type = 'Ban' THEN event_count ELSE 0 END) AS bans_count\n\tFROM (\n\t\tSELECT\n\t\t\trecord_time::DATE AS event_date,\n\t\t\tevent_type,\n\t\t\tCOUNT(*) AS event_count\n\t\tFROM fail2ban_logs\n\t\tWHERE record_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\tGROUP BY \n\t\t\trecord_time::DATE,\n\t\t\tevent_type\n\t) daily_events_count_multiline\n\n\tGROUP BY event_date\n) daily_events_count\n\nRIGHT JOIN (\n\tSELECT calendar_dates::date AS d\n\tFROM GENERATE_SERIES(\n\t'${__from:date:YYYY-MM-DD}'::DATE,\n\t'${__to:date:YYYY-MM-DD}'::DATE,\n\t'1 day'::INTERVAL\n\t) calendar_dates\n) calendar_dates\t-- Generate all dates for query period and join dailt login counts to them\nON calendar_dates.d = daily_events_count.event_date",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Fail2ban Summary",
-        "type": "table"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "custom": {
-              "align": "auto",
-              "displayMode": "color-text",
-              "inspect": false,
-              "minWidth": 100
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "text",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 1000
-                }
-              ]
-            },
-            "unit": "none"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 3,
-          "w": 4,
-          "x": 14,
-          "y": 13
-        },
-        "id": 42,
-        "options": {
-          "footer": {
-            "fields": "",
-            "reducer": [
-              "sum"
-            ],
-            "show": false
-          },
-          "showHeader": true
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\tAVG(COALESCE(number_of_failed_logins, 0)) AS \"Avg Daily Failed Logins\",\n\tMAX(number_of_failed_logins) AS \"Max Daily Failed Logins\"\nFROM (\n\tSELECT\n\t\trecord_time::DATE AS record_date,\n\t\tCOUNT(*) AS number_of_failed_logins\n\tFROM app_access_logs\n\tWHERE\n\t\trecord_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\t-- record_time BETWEEN '2023-01-08' AND '2023-02-11'\n\t\tAND path = '/auth/login'\n\t\tAND status = 401\n\tGROUP BY record_time::DATE\n) failed_logins_by_date\nRIGHT JOIN (\n\tSELECT calendar_dates::date AS d\n\tFROM GENERATE_SERIES(\n\t'${__from:date:YYYY-MM-DD}'::DATE,\n\t'${__to:date:YYYY-MM-DD}'::DATE,\n\t-- '2023-01-08',\n\t-- '2023-02-11',\n\t'1 day'::INTERVAL\n\t) calendar_dates\n) calendar_dates\t-- Generate all dates for query period and join dailt login counts to them\nON calendar_dates.d = failed_logins_by_date.record_date",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Site Logins",
-        "type": "table"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 16
-        },
-        "id": 46,
-        "panels": [],
-        "title": "Backend Errors",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "Total number of requests processed by site backend with 500+ response code over the period",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "text",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 1
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 0,
-          "y": 17
-        },
-        "id": 44,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "sum"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n  -- record_time::DATE as \"Date\",\n  COUNT(*) AS \"Number of Errors\"\nFROM app_access_logs\nWHERE\n  record_time >= '${__from:date}' AND record_time <= '${__to:date}'\n  AND status >= 500\n-- GROUP BY record_time::DATE",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Backend Errors",
-        "type": "stat"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "${logs_db}"
-        },
-        "description": "Number of scheduled database jobs, which failed during their last execution",
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "thresholds"
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "text",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 1
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 2,
-          "w": 3,
-          "x": 3,
-          "y": 17
-        },
-        "id": 47,
-        "options": {
-          "colorMode": "value",
-          "graphMode": "area",
-          "justifyMode": "auto",
-          "orientation": "auto",
-          "reduceOptions": {
-            "calcs": [
-              "sum"
-            ],
-            "fields": "",
-            "values": false
-          },
-          "textMode": "auto"
-        },
-        "pluginVersion": "9.3.2",
-        "targets": [
-          {
-            "datasource": {
-              "type": "postgres",
-              "uid": "${logs_db}"
-            },
-            "editorMode": "code",
-            "format": "table",
-            "rawQuery": true,
-            "rawSql": "SELECT\n\tSUM(\n\t\tCASE\n\t\t\tWHEN number_of_error_lines > 0 THEN 1 ELSE 0\n  \t\tEND\n\t) AS \"Number of Failed Scheduled Jobs\"\nFROM (\n\tSELECT\n\t\tjob_type,\n\t\tSUM(\n\t\t\tCASE\n\t\t\t\tWHEN level = 'ERROR' THEN 1 ELSE 0\n\t   \t\tEND\n\t\t) AS number_of_error_lines\n\tFROM (\n\t\tSELECT\n\t\t\tdatabase_scheduled_jobs_logs.job_type AS job_type,\n\t\t\tdatabase_scheduled_jobs_logs.level AS level\n\t\tFROM database_scheduled_jobs_logs\n\t\tINNER JOIN (\n\t\t\tSELECT\n\t\t\t\tjob_type,\n\t\t\t\tMAX(record_time) AS record_time\n\t\t\tFROM database_scheduled_jobs_logs\n\t\t\tWHERE\n\t\t\t\trecord_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\t\t\t-- record_time BETWEEN '2023-01-13' AND '2023-02-12'\n\t\t\tGROUP BY job_type\n\t\t) as max_timestamps\n\t\tON database_scheduled_jobs_logs.record_time = max_timestamps.record_time\n\t\tAND database_scheduled_jobs_logs.job_type = max_timestamps.job_type\n\t) last_records_per_job_type\n\tGROUP BY job_type\n) error_lines_per_job_type",
-            "refId": "A",
-            "sql": {
-              "columns": [
-                {
-                  "parameters": [],
-                  "type": "function"
-                }
-              ],
-              "groupBy": [
-                {
-                  "property": {
-                    "type": "string"
-                  },
-                  "type": "groupBy"
-                }
-              ],
-              "limit": 50
-            }
-          }
-        ],
-        "title": "Failed DB Jobs",
-        "type": "stat"
-      },
-      {
-        "collapsed": false,
-        "gridPos": {
-          "h": 1,
-          "w": 24,
-          "x": 0,
-          "y": 19
-        },
-        "id": 51,
-        "panels": [],
-        "title": "Nagivation",
-        "type": "row"
-      },
-      {
-        "datasource": {
-          "type": "postgres",
-          "uid": "e2UmDj24z"
-        },
-        "gridPos": {
-          "h": 7,
-          "w": 24,
-          "x": 0,
-          "y": 20
-        },
-        "id": 49,
-        "options": {
-          "maxItems": 10,
-          "query": "",
-          "showHeadings": false,
-          "showRecentlyViewed": false,
-          "showSearch": true,
-          "showStarred": false,
-          "tags": [
-            "Site Monitoring"
-          ]
-        },
-        "pluginVersion": "9.3.2",
-        "type": "dashlist"
+        "type": "dashboard"
       }
-    ],
-    "refresh": "1m",
-    "schemaVersion": 37,
-    "style": "dark",
-    "tags": [
-      "Site Monitoring"
-    ],
-    "templating": {
-      "list": [
-        {
-          "current": {
-            "selected": false,
-            "text": "Site Logs",
-            "value": "Site Logs"
+    ]
+  },
+  "description": "",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 6,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 8,
+      "panels": [],
+      "title": "General",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
           },
-          "description": "Logs database",
-          "hide": 0,
-          "includeAll": false,
-          "label": "Logs DB",
-          "multi": false,
-          "name": "logs_db",
-          "options": [],
-          "query": "postgres",
-          "queryValue": "",
-          "refresh": 1,
-          "regex": "",
-          "skipUrlSync": false,
-          "type": "datasource"
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 12,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - execution_time)) / 60)::INTEGER AS \"Time Since Update\"\nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
         }
-      ]
+      ],
+      "title": "Time Since Update",
+      "type": "stat"
     },
-    "time": {
-      "from": "now-60d/d",
-      "to": "now"
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "Failed": {
+                  "color": "red",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 2,
+        "x": 3,
+        "y": 1
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Ping Status$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  CASE\n    WHEN server_reachable THEN 'OK'\n    ELSE 'Failed'\n  END as \"Ping Status\"\nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Ping Status",
+      "type": "stat"
     },
-    "timepicker": {},
-    "timezone": "",
-    "title": "01. Healthcheck",
-    "uid": "DU__UXA4k",
-    "version": 26,
-    "weekStart": ""
-  }
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "OK": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 2,
+        "x": 5,
+        "y": 1
+      },
+      "id": 14,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Backend Status$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE\n    WHEN backend_status = 'active' THEN 'OK'\n    ELSE backend_status\n  END as \"Backend Status\"  \nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Backend Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "OK": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 2,
+        "x": 7,
+        "y": 1
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^DB Status$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  CASE\n    WHEN postgresql_status = 'active' THEN 'OK'\n    ELSE postgresql_status\n  END as \"DB Status\"\nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "DB Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "OK": {
+                  "color": "green",
+                  "index": 0
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 2,
+        "x": 9,
+        "y": 1
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Nginx Status$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT \n  CASE\n    WHEN nginx_status = 'active' THEN 'OK'\n    ELSE nginx_status\n  END as \"Nginx Status\"\nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Nginx Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 14
+              },
+              {
+                "color": "green",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "d"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 11,
+        "y": 1
+      },
+      "id": 20,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Days until SSL Expiration$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  EXTRACT(DAY FROM (ssl_expiry_time - CURRENT_TIMESTAMP)) AS \"Days until SSL Expiration\"\nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Days until SSL Expiration",
+      "type": "stat"
+    },
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 22,
+      "title": "Server Performance",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "inspect": false,
+            "minWidth": 100
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "CPU Usage"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 80
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Used"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Available"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Available, %"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 0.2
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.5
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Swap Size"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Memory Total"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk Used"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk Total"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "kbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Disk Available, %"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "unit",
+                "value": "percentunit"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "#EAB839",
+                      "value": 0.2
+                    },
+                    {
+                      "color": "green",
+                      "value": 0.5
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 20,
+        "x": 0,
+        "y": 4
+      },
+      "id": 24,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  cpu_usage as \"CPU Usage\",\n  memory_used as \"Memory Used\",\n  memory_available as \"Memory Available\",\n  memory_available::FLOAT / memory_total as \"Memory Available, %\",\n  memory_swap as \"Swap Size\",\n  memory_total as \"Memory Total\",\n  disk_used as \"Disk Used\",\n  disk_total as \"Disk Total\",\n  (disk_total - disk_used)::FLOAT / disk_total as \"Disk Available, %\"\nFROM healthcheck",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 26,
+      "panels": [],
+      "title": "Log Fetching",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "Number of jobs, which weren't successfully finished during last execution",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 7
+      },
+      "id": 28,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  SUM(\n    CASE \n      WHEN last_execution_status != 'success' THEN 1\n      ELSE 0\n    END\n  ) as \"Number of Failed Jobs\"\nFROM fetch_jobs_status ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Failed Jobs",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "Number of jobs, which were last executed more than an hour ago",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 3,
+        "y": 7
+      },
+      "id": 29,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  SUM(\n    CASE \n      WHEN CURRENT_TIMESTAMP - last_execution_time > INTERVAL '1 hour' THEN 1\n      ELSE 0\n    END\n  ) as \"Number of Jobs not Recently Run\"\nFROM fetch_jobs_status ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Not Recently Run",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "Number of jobs, which didn't successfully run a full fetch during the last 2 days",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 6,
+        "y": 7
+      },
+      "id": 30,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  SUM(\n    CASE \n      WHEN CURRENT_TIMESTAMP - last_successful_full_fetch_time > INTERVAL '48 hour' THEN 1\n      ELSE 0\n    END\n  ) as \"Number of Jobs without Recent Full Fetch\"\nFROM fetch_jobs_status ",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "No Recent Full Fetch",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 32,
+      "panels": [],
+      "title": "Site Backup",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1440
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 10
+      },
+      "id": 34,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Last Execution\"\nFROM backup_script_logs \nWHERE event_source = 'main' AND message = 'Finished script execution.'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Time Since Last Execution",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 20160
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 3,
+        "y": 10
+      },
+      "id": 35,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Database Backup\"\nFROM backup_script_logs \nWHERE event_source = 'backup_db' AND message = 'Finished database backup.'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Time Since DB Backup",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "Error": {
+                  "color": "red",
+                  "index": 4
+                },
+                "Metered connection": {
+                  "color": "yellow",
+                  "index": 2
+                },
+                "No data": {
+                  "color": "red",
+                  "index": 0
+                },
+                "No internet": {
+                  "color": "yellow",
+                  "index": 1
+                },
+                "Server unreachable": {
+                  "color": "red",
+                  "index": 3
+                },
+                "Unknown": {
+                  "color": "red",
+                  "index": 5
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 6,
+        "y": 10
+      },
+      "id": 36,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^status$/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE\n    WHEN message = 'Existing backup with recent modify time found, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Database backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished database backup.' THEN 'Success'\n\tWHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_db'\n  AND record_time IN (\n    SELECT\n      MAX(record_time) as record_time\n    FROM backup_script_logs \n    WHERE event_source = 'backup_db'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Last DB Backup Status",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1440
+              }
+            ]
+          },
+          "unit": "m"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 9,
+        "y": 10
+      },
+      "id": 53,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  (EXTRACT(EPOCH FROM (\n    CURRENT_TIMESTAMP - COALESCE(MAX(record_time), TIMESTAMP '1970-01-01')\n  )))::INTEGER / 60 AS \"Time Since Database Backup\"\nFROM backup_script_logs \nWHERE event_source = 'backup_static_files' AND message = 'Finished static files backup.'",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Time Since File Backup",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "mappings": [
+            {
+              "options": {
+                "Disabled": {
+                  "color": "red",
+                  "index": 1
+                },
+                "Error": {
+                  "color": "red",
+                  "index": 5
+                },
+                "Metered connection": {
+                  "color": "yellow",
+                  "index": 3
+                },
+                "No data": {
+                  "color": "red",
+                  "index": 0
+                },
+                "No internet": {
+                  "color": "yellow",
+                  "index": 2
+                },
+                "Server unreachable": {
+                  "color": "red",
+                  "index": 4
+                },
+                "Unknown": {
+                  "color": "red",
+                  "index": 6
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 12,
+        "y": 10
+      },
+      "id": 55,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^status$/",
+          "values": false
+        },
+        "textMode": "value"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE\n    -- WHEN message = 'Existing backup with recent modify time found, exiting.' THEN 'Skipped'\n    WHEN message = 'Static files backup is disabled.' THEN 'Disabled'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Static files backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished static files backup.' THEN 'Success'\n\t  WHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_static_files'\n  AND record_time IN (\n    SELECT\n      MAX(record_time) as record_time\n    FROM backup_script_logs \n    WHERE event_source = 'backup_static_files'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Last File Backup Status",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 12
+      },
+      "id": 38,
+      "panels": [],
+      "title": "Auth",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-text",
+            "inspect": false,
+            "minWidth": 100
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 0.01
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 13
+      },
+      "id": 40,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tAVG(login_count) AS \"Avg Daily Logins\",\n\tMAX(login_count) AS \"Max Daily Logins\"\n\nFROM (\n\tSELECT\n\t\tcalendar_dates.d AS date,\n\t\tCOALESCE(login_count, 0) AS login_count\n\tFROM (\n\t\tSELECT \n\t\t\trecord_time::DATE AS login_date,\n\t\t\tCOUNT(DISTINCT server_auth_logs.record_id) AS login_count\n\t\tFROM server_auth_logs\n\n\t\tLEFT JOIN known_ips\t\t-- known_ips keeps unique pairs of login_date + remote\n\t\tON server_auth_logs.remote = known_ips.remote\n\t\tAND login_date - known_ips.login_date BETWEEN -7 AND 7\n\n\t\tWHERE\n\t\t\trecord_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\t\tAND known_ips.remote IS NULL\n\n\t\tGROUP BY record_time::DATE\n\n\t\tORDER BY login_date\n\t) login_count_by_date\t\t-- Get daily count of logins from unknown ips\n\n\tRIGHT JOIN (\n\t\tSELECT calendar_dates::date AS d\n\t\tFROM GENERATE_SERIES(\n\t\t'${__from:date:YYYY-MM-DD}'::DATE,\n\t\t'${__to:date:YYYY-MM-DD}'::DATE,\n\t\t'1 day'::INTERVAL\n\t\t) calendar_dates\n\t) calendar_dates\t-- Generate all dates for query period and join dailt login counts to them\n\tON calendar_dates.d = login_count_by_date.login_date\n\n) calendar_login_dates",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Logins from Unknown Addresses",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-text",
+            "inspect": false,
+            "minWidth": 100
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Maximum Daily Failed Logins"
+            },
+            "properties": [
+              {
+                "id": "color"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "text",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 10800
+                    },
+                    {
+                      "color": "red",
+                      "value": 43200
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Maximum Daily Bans"
+            },
+            "properties": [
+              {
+                "id": "color"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "text",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 1000
+                    },
+                    {
+                      "color": "red",
+                      "value": 2000
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 10,
+        "x": 4,
+        "y": 13
+      },
+      "id": 41,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tAVG(COALESCE(failed_logins_count, 0)) AS \"Avg Daily Failed Logins\",\n\tAVG(COALESCE(bans_count, 0)) AS \"Avg Daily Bans\",\n\tMAX(failed_logins_count) AS \"Max Daily Failed Logins\",\n\tMAX(bans_count) AS \"Max Daily Bans\"\nFROM (\n\tSELECT\n\t\tevent_date,\n\t\tSUM(CASE WHEN event_type = 'Found' THEN event_count ELSE 0 END) AS failed_logins_count,\n\t\tSUM(CASE WHEN event_type = 'Ban' THEN event_count ELSE 0 END) AS bans_count\n\tFROM (\n\t\tSELECT\n\t\t\trecord_time::DATE AS event_date,\n\t\t\tevent_type,\n\t\t\tCOUNT(*) AS event_count\n\t\tFROM fail2ban_logs\n\t\tWHERE record_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\tGROUP BY \n\t\t\trecord_time::DATE,\n\t\t\tevent_type\n\t) daily_events_count_multiline\n\n\tGROUP BY event_date\n) daily_events_count\n\nRIGHT JOIN (\n\tSELECT calendar_dates::date AS d\n\tFROM GENERATE_SERIES(\n\t'${__from:date:YYYY-MM-DD}'::DATE,\n\t'${__to:date:YYYY-MM-DD}'::DATE,\n\t'1 day'::INTERVAL\n\t) calendar_dates\n) calendar_dates\t-- Generate all dates for query period and join dailt login counts to them\nON calendar_dates.d = daily_events_count.event_date",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Fail2ban Summary",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "color-text",
+            "inspect": false,
+            "minWidth": 100
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1000
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 14,
+        "y": 13
+      },
+      "id": 42,
+      "options": {
+        "footer": {
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tAVG(COALESCE(number_of_failed_logins, 0)) AS \"Avg Daily Failed Logins\",\n\tMAX(number_of_failed_logins) AS \"Max Daily Failed Logins\"\nFROM (\n\tSELECT\n\t\trecord_time::DATE AS record_date,\n\t\tCOUNT(*) AS number_of_failed_logins\n\tFROM app_access_logs\n\tWHERE\n\t\trecord_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\t-- record_time BETWEEN '2023-01-08' AND '2023-02-11'\n\t\tAND path = '/auth/login'\n\t\tAND status = 401\n\tGROUP BY record_time::DATE\n) failed_logins_by_date\nRIGHT JOIN (\n\tSELECT calendar_dates::date AS d\n\tFROM GENERATE_SERIES(\n\t'${__from:date:YYYY-MM-DD}'::DATE,\n\t'${__to:date:YYYY-MM-DD}'::DATE,\n\t-- '2023-01-08',\n\t-- '2023-02-11',\n\t'1 day'::INTERVAL\n\t) calendar_dates\n) calendar_dates\t-- Generate all dates for query period and join dailt login counts to them\nON calendar_dates.d = failed_logins_by_date.record_date",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Site Logins",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 16
+      },
+      "id": 46,
+      "panels": [],
+      "title": "Backend Errors",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "Total number of requests processed by site backend with 500+ response code over the period",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 0,
+        "y": 17
+      },
+      "id": 44,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  -- record_time::DATE as \"Date\",\n  COUNT(*) AS \"Number of Errors\"\nFROM app_access_logs\nWHERE\n  record_time >= '${__from:date}' AND record_time <= '${__to:date}'\n  AND status >= 500\n-- GROUP BY record_time::DATE",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Backend Errors",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${logs_db}"
+      },
+      "description": "Number of scheduled database jobs, which failed during their last execution",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 3,
+        "x": 3,
+        "y": 17
+      },
+      "id": 47,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "sum"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${logs_db}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n\tSUM(\n\t\tCASE\n\t\t\tWHEN number_of_error_lines > 0 THEN 1 ELSE 0\n  \t\tEND\n\t) AS \"Number of Failed Scheduled Jobs\"\nFROM (\n\tSELECT\n\t\tjob_type,\n\t\tSUM(\n\t\t\tCASE\n\t\t\t\tWHEN level = 'ERROR' THEN 1 ELSE 0\n\t   \t\tEND\n\t\t) AS number_of_error_lines\n\tFROM (\n\t\tSELECT\n\t\t\tdatabase_scheduled_jobs_logs.job_type AS job_type,\n\t\t\tdatabase_scheduled_jobs_logs.level AS level\n\t\tFROM database_scheduled_jobs_logs\n\t\tINNER JOIN (\n\t\t\tSELECT\n\t\t\t\tjob_type,\n\t\t\t\tMAX(record_time) AS record_time\n\t\t\tFROM database_scheduled_jobs_logs\n\t\t\tWHERE\n\t\t\t\trecord_time >= '${__from:date}' AND record_time <= '${__to:date}'\n\t\t\t\t-- record_time BETWEEN '2023-01-13' AND '2023-02-12'\n\t\t\tGROUP BY job_type\n\t\t) as max_timestamps\n\t\tON database_scheduled_jobs_logs.record_time = max_timestamps.record_time\n\t\tAND database_scheduled_jobs_logs.job_type = max_timestamps.job_type\n\t) last_records_per_job_type\n\tGROUP BY job_type\n) error_lines_per_job_type",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Failed DB Jobs",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 51,
+      "panels": [],
+      "title": "Nagivation",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "e2UmDj24z"
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 49,
+      "options": {
+        "maxItems": 10,
+        "query": "",
+        "showHeadings": false,
+        "showRecentlyViewed": false,
+        "showSearch": true,
+        "showStarred": false,
+        "tags": [
+          "Site Monitoring"
+        ]
+      },
+      "pluginVersion": "9.3.2",
+      "type": "dashlist"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [
+    "Site Monitoring"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Site Logs",
+          "value": "Site Logs"
+        },
+        "description": "Logs database",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Logs DB",
+        "multi": false,
+        "name": "logs_db",
+        "options": [],
+        "query": "postgres",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-60d/d",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "01. Healthcheck",
+  "uid": "DU__UXA4k",
+  "version": 28,
+  "weekStart": ""
+}
