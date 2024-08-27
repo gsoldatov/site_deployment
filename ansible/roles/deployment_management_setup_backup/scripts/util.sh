@@ -37,7 +37,7 @@ is_metered_connection() {
     Joins strings (2nd and rest args) separated by a delimiter (1st arg).
     https://stackoverflow.com/a/17841619
 "
-function join_by {
+join_by() {
   local d=${1-} f=${2-}
   if shift 2; then
     printf %s "$f" "${@/#/$d}"

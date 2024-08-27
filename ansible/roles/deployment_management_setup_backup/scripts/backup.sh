@@ -5,10 +5,11 @@
 "
 
 # Source auxillary files
-DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )    # Script directory
-source $DIR/util.sh
-source $DIR/backup_db.sh
-source $DIR/backup_static_files.sh
+DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"    # Script directory
+ROOT_DIR="$(dirname "$(dirname "$(dirname $DIR)")")"    # <project_root>/ansible
+source "$DIR/util.sh"
+source "$DIR/backup_db.sh"
+source "$DIR/backup_static_files.sh"
 
 
 # Get script options & set paths
@@ -27,17 +28,17 @@ while (( "$#" )); do    # Loop through input options, filter script options & sa
     esac
 done
 
-ENV_FILE_FULLPATH="$(dirname $(dirname $(dirname $DIR)))/$ENV_FILE"
+ENV_FILE_FULLPATH="$ROOT_DIR/$ENV_FILE"
 
 
 # Read environment variables
 if [ -z "$ENV_FILE" ]; then echo 'Missing --env-file option, exiting.'; exit 1; fi
 if [[ ! -f $ENV_FILE_FULLPATH ]]; then echo "Env file '$ENV_FILE_FULLPATH' does not exist."; exit 1; fi
 
-source $ENV_FILE_FULLPATH
+source "$ENV_FILE_FULLPATH"
 log_message "DEBUG" "main" "Finished reading environment variables from '$ENV_FILE_FULLPATH'"
 
-RUN_SH_FULLPATH="$LOCAL_SITE_FOLDER/deployment/ansible/run.sh"
+RUN_SH_FULLPATH="$ROOT_DIR/run.sh"
 
 
 # Run database backup
