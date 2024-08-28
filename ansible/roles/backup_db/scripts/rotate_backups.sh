@@ -23,12 +23,12 @@ do
 
     if [[ -f "$FROM" ]]; then
         echo "MOVING FROM $FROM TO $TO"
-        mv $FROM $TO
+        mv "$FROM" "$TO"
     fi
 done
 
 # Set number on the most recent backup
 if [[ -f "$FILEPATH_TEMPLATE" ]]; then
     echo "MOVING FROM $FILEPATH_TEMPLATE TO $FILEPATH_TEMPLATE.1"
-    mv $FILEPATH_TEMPLATE "$FILEPATH_TEMPLATE.1"
+    mv "$FILEPATH_TEMPLATE" "$FILEPATH_TEMPLATE.1"
 fi
