@@ -46,7 +46,7 @@ def setup_database(config):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-e", "--env-file",
-        help="Path to env file, relative to `ansible` folder; default filename is `production.env`")
+        help="Path to env file, absolute or relative to `ansible` folder; default filename is `production.env`")
     args = parser.parse_args()
     config = get_config(args.env_file)
 

@@ -7,5 +7,5 @@ backup_test/
 __pycache__/
 
 *.env
-*config.json
+# *config.json
 hosts.yml

@@ -15,19 +15,19 @@ Grafana must be installed and configured manually. Configuration includes the fo
 1. Run `db/setup.py` script to create database & user:
 ```bash
 source ../venv/bin/activate
-# config path can be relative to `monitoring` folder
-python db/setup.py [-c "/path/to/config.json/file"]
+# env_file path can be absolute or relative to `<project_root>/ansible` folder
+python db/setup.py [-e "/path/to/env/file"]
 ```
 2. Apply Alembic migrations:
 ```bash
 cd db
-# config path can be relative to `monitoring` folder
-alembic [-x monitoring_config="/path/to/config.json/file"] upgrade head
+# env_file path can be absolute or relative to `<project_root>/ansible` folder
+alembic [-x env_file="/path/to/env/file"] upgrade head
 ```
 
 ## Migration Script Generation
 ```bash
 cd db
-# config path can be relative to `monitoring` folder
-alembic [-x monitoring_config="/path/to/config.json/file"] revision --autogenerate -m "<Revision description>"
+# env_file path can be absolute or relative to `<project_root>/ansible` folder
+alembic [-x env_file="/path/to/env/file"] revision --autogenerate -m "<Revision description>"
 ```

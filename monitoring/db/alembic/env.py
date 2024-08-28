@@ -17,10 +17,10 @@ config = context.config
 
 # Get monitoring config
 x_arguments = context.get_x_argument(as_dictionary=True)
-monitoring_config = x_arguments.get("monitoring_config")
-if monitoring_config is not None:
-    monitoring_config = monitoring_config.replace('"', '')
-mc = get_config(monitoring_config)
+env_file = x_arguments.get("env_file")
+if env_file is not None:
+    env_file = env_file.replace('"', '')
+mc = get_config(env_file)
 
 # Set connection string
 username = urllib.parse.quote(mc["db"]["db_username"]).replace("%", "%%") # encode special characters in username and password;
