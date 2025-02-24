@@ -1,5 +1,5 @@
 # General
-A collection of Ansible playbooks for automated [frontend](https://github.com/gsoldatov/site_frontend) & [backend](https://github.com/gsoldatov/site_backend) site deployment.
+A collection of Ansible playbooks for automated deployment and monitoring of a personal blog's/notebook's [frontend](https://github.com/gsoldatov/site_frontend) & [backend](https://github.com/gsoldatov/site_backend).
 
 
 # Repository Setup & Update
