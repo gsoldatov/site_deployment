@@ -65,8 +65,14 @@
   command: "chmod -R 775 {{ backend_folder }}"
   become: yes
 
-- name: Run database migrations
+- name: Initialize database   # Create db & user + apply migrations
   command: "{{ backend_folder }}/venv/bin/python3 -m backend_main.db"
+  args:
+    chdir: "{{ backend_folder }}"
+  become: yes
+
+- name: Run database migrations   # Apply migrations only (the previous task will do nothing on subsequent calls)
+  command: "{{ backend_folder }}/venv/bin/python3 -m backend_main.db --migrate"
   args:
     chdir: "{{ backend_folder }}"
   become: yes
