@@ -5,6 +5,20 @@
 # - configures & starts backend service.
 
 # Install packages
+- name: Install repository management utility
+  ansible.builtin.apt:
+    name: software-properties-common
+    state: present
+    update_cache: true
+  become: yes
+
+- name: Add a repository with Python versions
+  ansible.builtin.apt_repository:
+    repo: 'ppa:deadsnakes/ppa'
+    state: present
+    update_cache: true
+  become: yes
+
 - name: Install backend packages
   apt:
     state: present
@@ -43,12 +57,18 @@
     version: master
   become: yes
 
-- name: Setup venv & install dependencies
+- name: Remove existing virtual env
+  file:
+    path: "{{ backend_folder }}/venv"
+    state: absent
+  become: yes
+
+- name: Setup virtual env & install dependencies
   pip:
     chdir: "{{ backend_folder }}"
-    virtualenv: venv/   # ensure venv exists
-    virtualenv_command: "python3 -m venv"   # executable for creating venv
-    requirements: requirements.txt  # required dependencies
+    virtualenv: venv/
+    virtualenv_command: "python{{ python_version }} -m venv"
+    requirements: requirements.txt
   become: yes
 
 - name: Build & copy backend config
@@ -66,13 +86,13 @@
   become: yes
 
 - name: Initialize database   # Create db & user + apply migrations
-  command: "{{ backend_folder }}/venv/bin/python3 -m backend_main.db"
+  command: "{{ backend_folder }}/venv/bin/python -m backend_main.db"
   args:
     chdir: "{{ backend_folder }}"
   become: yes
 
 - name: Run database migrations   # Apply migrations only (the previous task will do nothing on subsequent calls)
-  command: "{{ backend_folder }}/venv/bin/python3 -m backend_main.db --migrate"
+  command: "{{ backend_folder }}/venv/bin/python -m backend_main.db --upgrade head"
   args:
     chdir: "{{ backend_folder }}"
   become: yes
