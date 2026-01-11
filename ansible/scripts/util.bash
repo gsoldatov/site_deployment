@@ -11,40 +11,33 @@ join_by() {
 
 : "
     Writes a log message to stdout or a file.
-    
-    Required args:
-    -m | --message: log message text
-    -s | --source: log message source
 
-    Optional args:
-    -l | --level: log message level (defaults to INFO)
-    -f | --file: log file to write to (writes to stdout, if omitted, or an empty string is passed)
-    --sep: line separator to use (defaults to '; ')
+    Accepts log level, message source and message as positional arguments.
+
+    Uses tho following global variables:
+    - LOG_MESSAGE_FILE - the file to write to (if empty, message is written to stdout);
+    - LOG_MESSAGE_SEP - separator character(-s) between message parts (is empty, defaults to '; ')
 "
 log_message() {
-    # Parse args
+    # Set variables' values
+    local level="$1"
+    local source="$2"
+    local message="$3"
+
     local file=""
+    if [ ! -z "$LOG_MESSAGE_FILE" ]; then
+        file="$LOG_MESSAGE_FILE"
+    fi
+
     local sep="; "
-    local level="INFO"
-    local message=""
-    local source=""
-
-
-    while (( "$#" )); do    # Loop through input options, filter script options & save rest for Ansible
-        case "$1" in
-            -f | --file) file=$2; shift; shift;;
-            --sep) sep=$2; shift; shift;;
-            -l | --level) level=$2; shift; shift;;
-            -m | --message) message=$2; shift; shift;;
-            -s | --source) source=$2; shift; shift;;
-            *) echo "log_message received an unexpected argument $1"; exit 1;;
-        esac
-    done
+    if [ ! -z "$LOG_MESSAGE_SEP" ]; then
+        sep="$LOG_MESSAGE_SEP"
+    fi
 
     # Validate required args
-    for arg in "message" "source"; do
+    for arg in "level" "source" "message"; do
         if [ -z "${!arg}" ]; then
-            echo "log_message is missing a required argument '$arg'"
+            echo "log_message expects 3 non-empty positional arguments: level, source & message"
             exit 1
         fi
     done

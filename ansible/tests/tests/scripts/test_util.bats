@@ -46,48 +46,49 @@ setup() {
 }
 
 
-@test "log_message required & unallowed arguments" {
-    # Missing source & message
+@test "log_message positional arguments" {
+    # Missing level
     run log_message
     assert_equal $status 1
-    assert_output --partial "required argument"
+    assert_output "log_message expects 3 non-empty positional arguments: level, source & message"
 
     # Missing source
-    run log_message -m "msg"
+    run log_message "INFO"
     assert_equal $status 1
-    assert_output --partial "required argument 'source'"
-    
-    # Empty source
-    run log_message -m "msg" -s ""
-    assert_equal $status 1
-    assert_output --partial "required argument 'source'"
+    assert_output "log_message expects 3 non-empty positional arguments: level, source & message"
 
     # Missing message
-    run log_message -s "src"
+    run log_message "INFO" "src"
     assert_equal $status 1
-    assert_output --partial "required argument 'message'"
-    
-    # Empty message
-    run log_message -s "src" -m ""
-    assert_equal $status 1
-    assert_output --partial "required argument 'message'"
+    assert_output "log_message expects 3 non-empty positional arguments: level, source & message"
 
-    # Unexpected argument
-    run log_message -s "src" -m "msg" --unallowed
+    # Empty level
+    run log_message "" "src" "msg"
     assert_equal $status 1
-    assert_output --partial "unexpected argument"
+    assert_output "log_message expects 3 non-empty positional arguments: level, source & message"
+
+    # Empty source
+    run log_message "INFO" "" "msg"
+    assert_equal $status 1
+    assert_output "log_message expects 3 non-empty positional arguments: level, source & message"
+
+    # Empty message
+    run log_message "INFO" "src" ""
+    assert_equal $status 1
+    assert_output "log_message expects 3 non-empty positional arguments: level, source & message"
 }
 
 
-@test "log_message write to stdout + optional args" {
-    # Source & message + default delimiter
-    run log_message -s "src" -m "msg"
+@test "log_message write to stdout + default/custom separator" {
+    # Write to stdout with default separator
+    run log_message "INFO" "src" "msg"
     assert_success
     parse_log_message "$output" "; "
+    assert_equal "${log_message_elements[1]}" "INFO"
     assert_equal "${log_message_elements[2]}" "src"
     assert_equal "${log_message_elements[3]}" "msg"
 
-    # Timestamp
+    # Check message timestamp
     local now=$(date +%s)
     local log_timestamp="${log_message_elements[0]}"
     local log_timestamp_in_seconds=$(date -d "$log_timestamp" +%s)
@@ -100,65 +101,58 @@ setup() {
         fail "Log timestamp '$log_timestamp' is too far off from current time '$(date)'"
     fi
 
-    # Default log level
-    assert_equal "${log_message_elements[1]}" "INFO"
-
-    # Custom log level
-    run log_message -s "src" -m "msg" -l "ERROR"
-    assert_success
-    parse_log_message "$output" "; "
-    assert_equal "${log_message_elements[1]}" "ERROR"
-    
-    # Custom separator
-    run log_message -s "src" -m "msg" --sep "|"
+    # Write to stdout with a custom separator
+    LOG_MESSAGE_SEP="|"
+    run log_message "WARNING" "src2" "msg2"
     assert_success
     parse_log_message "$output" "|"
-    assert_equal "${log_message_elements[2]}" "src"
-    assert_equal "${log_message_elements[3]}" "msg"
+    assert_equal "${log_message_elements[1]}" "WARNING"
+    assert_equal "${log_message_elements[2]}" "src2"
+    assert_equal "${log_message_elements[3]}" "msg2"
 }
 
 
 @test "log_message write to file" {
-    logfile="$TEST_CASE_TEMP_DIR/logfile"
-    sep=";"
+    # Set log file & separator
+    LOG_MESSAGE_FILE="$TEST_CASE_TEMP_DIR/logfile"
+    LOG_MESSAGE_SEP=";"
 
     # Write a line to the file
-    run log_message -s "first src" -m "first msg" -l "WARNING" --sep "$sep" -f "$logfile"
+    run log_message "WARNING" "first src" "first msg"
     assert_success
 
     # Check if the file contains a line
-    mapfile -t lines < <(tail -n 3 "$logfile")  # read file lines to array
+    mapfile -t lines < <(tail -n 3 "$LOG_MESSAGE_FILE")  # read file lines to array
     if [ "${#lines[@]}" -ne 1 ]; then
         fail "Log file contains ${#lines[@]} lines instead of 1"
     fi
 
     # Check if line contains proper values
-    parse_log_message "${lines[0]}" "$sep"
+    parse_log_message "${lines[0]}" "$LOG_MESSAGE_SEP"
     assert_equal "${log_message_elements[1]}" "WARNING"
     assert_equal "${log_message_elements[2]}" "first src"
     assert_equal "${log_message_elements[3]}" "first msg"
 
     # Write a second line to the file
-    run log_message -s "second src" -m "second msg" -l "ERROR" --sep "$sep" -f "$logfile"
+    run log_message "ERROR" "second src" "second msg"
     assert_success
 
     # Check if file contains 2 lines
-    mapfile -t lines < <(tail -n 3 "$logfile")  # read file lines to array
+    mapfile -t lines < <(tail -n 3 "$LOG_MESSAGE_FILE")  # read file lines to array
     if [ "${#lines[@]}" -ne 2 ]; then
         fail "Log file contains ${#lines[@]} lines instead of 2"
     fi
 
     # Check if lines contain proper values
-    parse_log_message "${lines[0]}" "$sep"
+    parse_log_message "${lines[0]}" "$LOG_MESSAGE_SEP"
     assert_equal "${log_message_elements[3]}" "first msg"
 
-    parse_log_message "${lines[1]}" "$sep"
+    parse_log_message "${lines[1]}" "$LOG_MESSAGE_SEP"
     assert_equal "${log_message_elements[3]}" "second msg"
 }
 
 
-# Helper function to parse logged messages
-# Usage: parse_log_message "$line" "$separator"
+# Parses logged messages into $log_message_elements array
 parse_log_message() {
     local line="${1}"
     local sep="${2}"
