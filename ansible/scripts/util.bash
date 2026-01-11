@@ -53,3 +53,24 @@ log_message() {
         echo "$line" >> "$file"
     fi
 }
+
+
+: "
+    Checks if any of the active internet connections.
+    Returns:
+    - 0 if no active connections are metered, 1 if at least one active;
+    - 1 if at least one active connection is metered;
+    - 2 if there is no active connections.
+"
+is_metered_connection() {
+    local active_connections=$(nmcli -t -f NAME connection show --active)
+
+    if [ -z $active_connections ]; then return 2; fi
+        
+    for conn in "$active_connections"; do
+        is_metered=$(nmcli -t -f connection.metered connection show $conn | grep ':yes' | wc -l)
+        if (( $is_metered == 1 )); then return 1; fi
+    done
+
+    return 0
+}
