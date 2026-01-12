@@ -1,10 +1,10 @@
-# ansisble/scripts/util.bash module tests
+# ansisble/scripts/common/util.bash module tests
 setup() {
-    load '../../test_helpers/bats-assert/load'
-    load '../../test_helpers/bats-support/load'
-    load '../../test_helpers/fixtures'
+    load '../../../test_helpers/bats-assert/load'
+    load '../../../test_helpers/bats-support/load'
+    load '../../../test_helpers/fixtures'
     
-    load '../../../scripts/util.bash'
+    load '../../../../scripts/common/util.bash'
 
     # Create temporary directories for specific test-cases
     # https://stackoverflow.com/a/47541882
@@ -14,7 +14,6 @@ setup() {
     if printf '%s\0' "${file_using_test_cases[@]}" | grep -Fxqz -- "$BATS_TEST_DESCRIPTION"; then
         ensure_test_case_subdir
     fi
-
 }
 
 
