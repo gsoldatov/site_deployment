@@ -9,7 +9,7 @@ setup() {
     # Create temporary directories for specific test-cases
     # https://stackoverflow.com/a/47541882
     file_using_test_cases=(
-        "log_message write to file"
+        "log_message: write to file"
     )
     if printf '%s\0' "${file_using_test_cases[@]}" | grep -Fxqz -- "$BATS_TEST_DESCRIPTION"; then
         ensure_test_case_subdir
@@ -45,7 +45,7 @@ setup() {
 }
 
 
-@test "log_message positional arguments" {
+@test "log_message: positional arguments" {
     # Missing level
     run log_message
     assert_equal $status 1
@@ -78,7 +78,7 @@ setup() {
 }
 
 
-@test "log_message write to stdout + default/custom separator" {
+@test "log_message: write to stdout + default/custom separator" {
     # Write to stdout with default separator
     run log_message "INFO" "src" "msg"
     assert_success
@@ -111,7 +111,7 @@ setup() {
 }
 
 
-@test "log_message write to file" {
+@test "log_message: write to file" {
     # Set log file & separator
     LOG_MESSAGE_FILE="$TEST_CASE_TEMP_DIR/logfile"
     LOG_MESSAGE_SEP=";"
@@ -148,6 +148,30 @@ setup() {
 
     parse_log_message "${lines[1]}" "$LOG_MESSAGE_SEP"
     assert_equal "${log_message_elements[3]}" "second msg"
+}
+
+
+@test "assert_variables" {
+    # No variable names
+    run assert_variables
+    assert_success
+
+    # Single missing variable
+    run assert_variables "a"
+    assert_equal $status 1
+    assert_output --partial "Variable 'a' is not defined or empty"
+
+    # Empty variable
+    a="a"
+    b=""
+    run assert_variables "a" "b"
+    assert_equal $status 1
+    assert_output --partial "Variable 'b' is not defined or empty"
+
+    # All variables are defined
+    b="b"
+    run assert_variables "a" "b"
+    assert_success
 }
 
 

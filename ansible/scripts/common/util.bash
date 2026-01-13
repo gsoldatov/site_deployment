@@ -74,3 +74,19 @@ is_metered_connection() {
 
     return 0
 }
+
+
+: "
+    Checks if variables, which names are passed
+    as positional arguments, are defined and not empty
+"
+assert_variables() {
+    local names=("$@")
+
+    for name in "${names[@]}"; do
+        if [ -z "${!name}" ]; then
+            log_message "ERROR" "assert_variables" "Variable '$name' is not defined or empty"
+            exit 1
+        fi
+    done
+}
