@@ -63,7 +63,7 @@
 
     # Rotate backups and fetch new dump
     - name: Rotate existing local backups
-      local_action: "command bash {{ role_path }}/scripts/rotate_backups.sh"
+      local_action: "command bash {{ role_path }}/scripts/rotate_db_backups.bash"
       register: backup_rotation
 
     # - name: Print backup rotation log
