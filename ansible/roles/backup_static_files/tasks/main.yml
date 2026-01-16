@@ -1,62 +1,15 @@
 # Creates a backup of new or modified statis files and rotates previous versions of backed up file
 - name: Make a file backup, it it's enabled
   block:
-    - name: Get rsync dry run results
-      synchronize:
-        mode: pull
-        src: "{{ static_files_remote_folder }}"
-        dest: "{{ static_files_local_folder }}"
-        rsync_opts:
-          - "--dry-run"
-      # become: yes
-      register: rsync_dry_run
-    
-    - name: get static file root dir name with a trailing slash
-      set_fact:
-        root_dir_pattern: "^{{ static_files_remote_folder | basename }}/"
-    
-    - name: get files, which will be synced
-      set_fact:
-        # 1) get lines from rsync output, which represent files, that will be fetched to the local machine ('>f')
-        # 2) remove the first column with rsync evaluation for the file & space from the line (by using non-greedy regex: https://stackoverflow.com/a/54665474)
-        # 3) (not used, because rsync copies folder into subdir of dest => root dir is a part of abs path when combined with dest) remove root folder from the start of file paths
-        synced_files: "{{ rsync_dry_run.stdout_lines | select('match', '>f') | map('regex_replace', '^.*? ', '') }}"
-        # synced_files: "{{ rsync_dry_run.stdout_lines | select('match', '>f') | map('regex_replace', '^.*? ', '') | map('regex_replace', root_dir_pattern, '') }}"
-        
-        # Local backup root with trailing slash
-        _static_files_local_folder: "{{ static_files_local_folder | regex_replace('/$', '') }}/"
-    
-    - name: Get a string with absolute paths for rotated files
-      set_fact:
-        # 1) Get absolute file paths
-        # 2) enquote (to_json) 
-        # 3) merge paths into a string
-        # NOTE: file paths with backslashes & double quotes are not currently supported (these chars must be escaped before passed into rotation script)
-        rotated_files_str: "{{ synced_files | map('regex_replace', '^', _static_files_local_folder) | map('to_json') | join(' ') }}"
-    
-    - name: Rotate existing local file backups
-      local_action: "command bash {{ role_path }}/scripts/rotate_file_backups.sh"
-      environment:
-        ROTATED_FILES: "{{ rotated_files_str }}"
-      register: backup_rotation
+    - name: Rotate existing static files backups
+      local_action: "command bash {{ role_path }}/scripts/rotate_static_files_backups.bash"
+      # register: backup_rotation
     
     - name: Fetch new & modified files
       synchronize:
         mode: pull
         src: "{{ static_files_remote_folder }}"
         dest: "{{ static_files_local_folder }}"
-    
-    # - name: rsync_dry_run
-    #   debug:
-    #     msg: "{{ rsync_dry_run }}"
-    
-    # - name: synced_files
-    #   debug:
-    #     msg: "{{ synced_files }}"
-      
-    # - name: rotated_files_str
-    #   debug:
-    #     msg: "{{ rotated_files_str }}"
 
     # - name: Print backup rotation log
     #   debug:
