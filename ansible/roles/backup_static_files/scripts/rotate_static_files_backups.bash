@@ -16,7 +16,8 @@ source "$PROJECT_ROOT/ansible/scripts/common/util.bash"
 
 # Set logging to file, if corresponding env variables are provided
 if [ ! -z "$BACKUP_LOG_FOLDER" ] && [ ! -z "$BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_NAME" ]; then
-    LOG_MESSAGE_FILE="$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_NAME"
+    CURRENT_TIME=$(date "+%Y_%m_%d-%H_%M_%S")
+    LOG_MESSAGE_FILE="$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_NAME""_$CURRENT_TIME.log"
 fi
 
 if [ ! -z "$BACKUP_LOG_FILE_SEPARATOR" ]; then

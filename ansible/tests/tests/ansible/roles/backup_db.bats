@@ -68,7 +68,8 @@ setup() {
     assert_success
 
     # Check if log messages were written to the expected file
-    mapfile -t lines < <(tail -n 1 "$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_DB_ROTATION_LOG_NAME")  # read file lines to array
+    local log_filename=$(find "$BACKUP_LOG_FOLDER" -type f -name "$BACKUP_LOGGING_DB_ROTATION_LOG_NAME*" | head -n 1)
+    mapfile -t lines < <(tail -n 1 "$log_filename")  # read file lines to array
     parse_log_message "${lines[0]}" "$BACKUP_LOG_FILE_SEPARATOR"
     assert_equal "${log_message_elements[1]}" "INFO"
     assert_equal "${log_message_elements[2]}" "rotate_db_backups"
