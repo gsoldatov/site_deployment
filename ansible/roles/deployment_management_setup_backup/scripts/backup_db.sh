@@ -30,7 +30,7 @@ backup_db () {
 
     # Run database backup
     local CURRENT_TIME=$(date "+%Y_%m_%d-%H_%M_%S")
-    local PLAYBOOK_LOG_FULLPATH="$BACKUP_LOG_FOLDER/$BACKUP_DB_ANSIBLE_LOG_FILENAME""_$CURRENT_TIME.log"
+    local PLAYBOOK_LOG_FULLPATH="$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_DB_ANSIBLE_LOG_FILENAME""_$CURRENT_TIME.log"
     PLAYBOOK_LOG=$(bash $RUN_SH_FULLPATH backup_execute.yml --tags "backup_db" --env-file "$ENV_FILE"; exit $?;)
     local EXIT_CODE=$?
     echo "$PLAYBOOK_LOG" > $PLAYBOOK_LOG_FULLPATH

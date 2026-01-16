@@ -20,7 +20,7 @@ backup_static_files () {
 
     # Run static files backup
     local CURRENT_TIME=$(date "+%Y_%m_%d-%H_%M_%S")
-    local PLAYBOOK_LOG_FULLPATH="$BACKUP_LOG_FOLDER/$BACKUP_STATIC_FILES_ANSIBLE_LOG_FILENAME""_$CURRENT_TIME.log"
+    local PLAYBOOK_LOG_FULLPATH="$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_STATIC_FILES_ANSIBLE_LOG_FILENAME""_$CURRENT_TIME.log"
     PLAYBOOK_LOG=$(bash $RUN_SH_FULLPATH backup_execute.yml --tags "backup_static_files" --env-file "$ENV_FILE"; exit $?;)
     local EXIT_CODE=$?
     echo "$PLAYBOOK_LOG" > $PLAYBOOK_LOG_FULLPATH

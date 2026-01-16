@@ -14,7 +14,6 @@
     state: directory
   with_items:
     - "{{ backup_local_folder }}"
-    - "{{ backup_static_files_local_folder }}"
 
 - name: Add backup script logrotate config
   template:

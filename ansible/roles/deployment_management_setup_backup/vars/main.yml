@@ -1,7 +1,6 @@
 base_directory: "{{ playbook_dir }}"   # <deployment_repo_dir>/ansible
 
 backup_local_folder: "{{ lookup('env', 'BACKUP_LOCAL_FOLDER') }}"
-backup_static_files_local_folder: "{{ lookup('env', 'BACKUP_STATIC_FILES_LOCAL_FOLDER') }}"
 backup_log_folder: "{{ lookup('env', 'BACKUP_LOG_FOLDER') }}"
 current_username: "{{ lookup('env', 'USER') }}"
 
@@ -11,8 +10,8 @@ backup_script_log_filename: "{{ lookup('env', 'BACKUP_SCRIPT_LOG_FILENAME') }}"
 backup_script_log_max_size: "{{ lookup('env', 'BACKUP_SCRIPT_LOG_MAX_SIZE') }}"
 backup_script_keep_log_files: "{{ lookup('env', 'BACKUP_SCRIPT_KEEP_LOG_FILES') }}"
 
-backup_db_ansible_log_filename: "{{ lookup('env', 'BACKUP_DB_ANSIBLE_LOG_FILENAME') }}"
-backup_db_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_DB_ANSIBLE_KEEP_LOG_FILES') }}"
+backup_logging_db_ansible_log_filename: "{{ lookup('env', 'BACKUP_LOGGING_DB_ANSIBLE_LOG_FILENAME') }}"
+backup_logging_db_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_LOGGING_DB_ANSIBLE_KEEP_LOG_FILES') }}"
 
-backup_static_files_ansible_log_filename: "{{ lookup('env', 'BACKUP_STATIC_FILES_ANSIBLE_LOG_FILENAME') }}"
-backup_static_files_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_STATIC_FILES_ANSIBLE_KEEP_LOG_FILES') }}"
+backup_logging_static_files_ansible_log_filename: "{{ lookup('env', 'BACKUP_LOGGING_STATIC_FILES_ANSIBLE_LOG_FILENAME') }}"
+backup_logging_static_files_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_LOGGING_STATIC_FILES_ANSIBLE_KEEP_LOG_FILES') }}"

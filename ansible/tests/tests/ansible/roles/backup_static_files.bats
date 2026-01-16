@@ -63,7 +63,7 @@ setup() {
 
     # Set logging environment variables
     export BACKUP_LOG_FOLDER="$TEST_CASE_TEMP_DIR"
-    export BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_NAME="rotation.log"
+    export BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_FILENAME="rotation.log"
     export BACKUP_LOG_FILE_SEPARATOR="|"
 
     # Run db backup rotation
@@ -71,7 +71,7 @@ setup() {
     assert_success
 
     # Check if log messages were written to the expected file
-    local log_filename=$(find "$BACKUP_LOG_FOLDER" -type f -name "$BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_NAME*" | head -n 1)
+    local log_filename=$(find "$BACKUP_LOG_FOLDER" -type f -name "$BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_FILENAME*" | head -n 1)
     mapfile -t lines < <(tail -n 1 "$log_filename")  # read file lines to array
     parse_log_message "${lines[0]}" "$BACKUP_LOG_FILE_SEPARATOR"
     assert_equal "${log_message_elements[1]}" "INFO"

@@ -1,4 +1,6 @@
 backup_static_files_max_backup_count: "{{ lookup('env', 'BACKUP_STATIC_FILES_MAX_BACKUP_COUNT') }}"
 # Ensure a trailing slash is added, so that the file sync runs without creating a sub-directory in the local folder
 static_files_remote_folder: "{{ lookup('env', 'STATIC_FILES_FOLDER') | regex_replace('(?<!\\/)$', '/') }}"
-static_files_local_folder: "{{ lookup('env', 'BACKUP_STATIC_FILES_LOCAL_FOLDER') }}"
+
+backup_local_folder: "{{ lookup('env', 'BACKUP_LOCAL_FOLDER') }}"
+backup_static_folder_name: "{{ lookup('env', 'BACKUP_STATIC_FILES_FOLDER_NAME') }}"

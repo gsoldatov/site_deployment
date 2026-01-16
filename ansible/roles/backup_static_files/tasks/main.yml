@@ -9,7 +9,7 @@
       synchronize:
         mode: pull
         src: "{{ static_files_remote_folder }}"
-        dest: "{{ static_files_local_folder }}"
+        dest: "{{ backup_local_folder }}/{{ backup_static_folder_name }}"
 
     # - name: Print backup rotation log
     #   debug:
