@@ -10,6 +10,7 @@ else
     PROJECT_ROOT="$(git -C "$DIR" rev-parse --show-toplevel)"
 fi
 
+source "$PROJECT_ROOT/ansible/scripts/common/logging.bash"
 source "$PROJECT_ROOT/ansible/scripts/common/rotate.bash"
 source "$PROJECT_ROOT/ansible/scripts/common/util.bash"
 

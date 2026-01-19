@@ -3,7 +3,7 @@ setup() {
     load '../../../test_helpers/bats-assert/load'
     load '../../../test_helpers/bats-support/load'
     load '../../../test_helpers/fixtures'
-    load '../../../../scripts/common/util'
+    load '../../../../scripts/common/logging'
 
     # Create temporary directories for specific test-cases
     # https://stackoverflow.com/a/47541882
