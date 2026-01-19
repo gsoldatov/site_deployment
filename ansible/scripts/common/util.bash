@@ -90,3 +90,36 @@ assert_variables() {
         fi
     done
 }
+
+
+: '
+Accepts a log message line and a separator as positonal arguments.
+Outputs each line element on a new line, which can then be assigned to an arry like this:
+    mapfile -t my_array < <(parse_log_message "$line" "$sep")
+'
+parse_log_message() {
+    local line="${1}"
+    local sep="${2}"
+    local us=$'\x1F'  # Unit separator character
+
+    # Validate required args
+    for arg in "line" "sep"; do
+        if [ -z "${!arg}" ]; then
+            echo "parse_log_message expects 2 non-empty positional arguments: line & sep"
+            exit 1
+        fi
+    done
+    
+    # Handle multi-character separators by normalizing to US
+    local adjusted_line="${line//"$sep"/"$us"}"
+    local -a elements
+    IFS="$us" read -r -a elements <<< "$adjusted_line"
+
+    if [ "${#elements[@]}" -ne 4 ]; then
+        echo "Invalid number of fields in log line (expected 4, got ${#elements[@]})" >&2
+        exit 1
+    fi
+
+    # Output elements on separate lines
+    printf '%s\n' "${elements[@]}"
+}

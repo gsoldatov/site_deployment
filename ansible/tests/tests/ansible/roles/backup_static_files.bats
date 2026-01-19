@@ -3,7 +3,7 @@ setup() {
     load '../../../test_helpers/bats-assert/load'
     load '../../../test_helpers/bats-support/load'
     load '../../../test_helpers/fixtures'
-    load '../../../test_helpers/util/parse_log_message'
+    load '../../../../scripts/common/util'
 
     # Create temporary directories for specific test-cases
     # https://stackoverflow.com/a/47541882
@@ -73,7 +73,7 @@ setup() {
     # Check if log messages were written to the expected file
     local log_filename=$(find "$BACKUP_LOG_FOLDER" -type f -name "$BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_FILENAME*" | head -n 1)
     mapfile -t lines < <(tail -n 1 "$log_filename")  # read file lines to array
-    parse_log_message "${lines[0]}" "$BACKUP_LOG_FILE_SEPARATOR"
+    mapfile -t log_message_elements < <(parse_log_message "${lines[0]}" "$BACKUP_LOG_FILE_SEPARATOR")
     assert_equal "${log_message_elements[1]}" "INFO"
     assert_equal "${log_message_elements[2]}" "rotate_static_files_backups"
     assert_equal "${log_message_elements[3]}" "Finished static files backup rotation"
