@@ -74,6 +74,16 @@ rotate() {
     fi
 
     # Do not rotate, if current file was rotated recently
+    #
+    # NOTE: current implementation (file/dir creation time does not work,
+    # since the file/dir is copied (not moved) and its creation time stays
+    # the same and eventually will be older than any non-rotation threshold)
+    #
+    # Direction modify time is also changed when its content changes, so this
+    # may not be an option as well, if the directory is modified between rotation attempts
+    #
+    # The best alternative to use, if rotation_interval starts being used,
+    # is to scan rotation log files for last rotation time
     local current_time=$(date +%s)
     local file_creation_time=$(stat -c %W "$current_file")
     local rotation_time=$((file_creation_time + rotation_interval))
