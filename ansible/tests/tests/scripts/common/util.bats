@@ -10,7 +10,7 @@ setup() {
     # Create temporary directories for specific test-cases
     # https://stackoverflow.com/a/47541882
     file_using_test_cases=(
-        # ""
+        "get_last_matching_line"
     )
     if printf '%s\0' "${file_using_test_cases[@]}" | grep -Fxqz -- "$BATS_TEST_DESCRIPTION"; then
         ensure_test_case_subdir
@@ -67,4 +67,51 @@ setup() {
     b="b"
     run assert_variables "a" "b"
     assert_success
+}
+
+
+@test "get_last_matching_line" {
+    # Add a temp file
+    filepath="$TEST_CASE_TEMP_DIR/file.txt"
+    echo "aaa bbb ccc" >> "$filepath"
+    echo "aaa ccc ddd" >> "$filepath"
+    echo "aaa ddd eee" >> "$filepath"
+
+    # Missing required arguments
+    run get_last_matching_line
+    assert_equal $status 1
+    assert_output --partial "get_last_matching_line expects at least 2 arguments"
+
+    run get_last_matching_line "file_path"
+    assert_equal $status 1
+    assert_output --partial "get_last_matching_line expects at least 2 arguments"
+
+    # Non-existing file
+    run get_last_matching_line "$TEST_CASE_TEMP_DIR/non-existing.txt" "aaa"
+    assert_success
+    assert [ -z "$output" ]
+
+    # Non-matching pattern
+    run get_last_matching_line "$filepath" "non-existing pattern"
+    assert_success
+    assert [ -z "$output" ]
+
+    # Matching single pattern
+    run get_last_matching_line "$filepath" "aaa"
+    assert_success
+    assert_output "aaa ddd eee"
+
+    # Matching multiple patterns
+    run get_last_matching_line "$filepath" "aaa" "ccc"
+    assert_success
+    assert_output "aaa ccc ddd"
+
+    # Non-matching multiple patterns
+    run get_last_matching_line "$filepath" "aaa" "non-existing pattern"
+    assert_success
+    assert [ -z "$output" ]
+
+    run get_last_matching_line "$filepath" "non-existing pattern" "aaa"
+    assert_success
+    assert [ -z "$output" ]
 }

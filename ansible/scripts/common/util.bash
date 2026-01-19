@@ -44,3 +44,34 @@ assert_variables() {
         fi
     done
 }
+
+
+: "
+    Returns the last line from a text file, which matches provided patterns
+"
+get_last_matching_line() {
+    # Check required variables
+    if [ "$#" -lt 2 ]; then
+        echo "get_last_matching_line expects at least 2 arguments: a file path & a pattern"
+        exit 1
+    fi
+
+    local file_path="$1"
+    shift
+
+    # Check if file exists
+    if [ ! -f "$file_path" ]; then
+        return 0
+    fi
+
+    local content
+    content=$(cat "$file_path") || return 0
+
+    # Apply each pattern successively
+    for pattern in "$@"; do
+        content=$(echo "$content" | grep -F -- "$pattern") || return 0
+    done
+
+    # Output the last matching line
+    echo "$content" | tail -n 1
+}
