@@ -65,6 +65,8 @@ setup() {
 
     # Check if correct timestamp is returned
     run get_last_log_message_time "first"
+    # # bats adds stderr to output by default, so function output is taken
+    # # from the last line of output to separate it from log messages
     local timestamp=$(echo "$output" | tail -n1)
     assert_success
     assert_equal "$timestamp" $(date -d "$first_datetime" +%s)
@@ -85,6 +87,8 @@ setup() {
 
     # Check if correct timestamp is returned
     run get_last_log_message_time "first"
+    # # bats adds stderr to output by default, so function output is taken
+    # # from the last line of output to separate it from log messages
     local timestamp=$(echo "$output" | tail -n1)
     assert_success
     assert_equal "$timestamp" $(date -d "$first_datetime" +%s)
@@ -105,6 +109,8 @@ setup() {
 
     # Check if correct timestamp is returned
     run get_last_log_message_time "non-existing"
+    # # bats adds stderr to output by default, so function output is taken
+    # # from the last line of output to separate it from log messages
     local timestamp=$(echo "$output" | tail -n1)
     assert_success
     assert_equal "$timestamp" 0

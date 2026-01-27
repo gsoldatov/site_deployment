@@ -16,7 +16,7 @@ source "$PROJECT_ROOT/ansible/scripts/common/util.bash"
     Accepts log level, message source and message as positional arguments.
 
     Uses tho following global variables:
-    - LOG_MESSAGE_FILE - the file to write to (if empty, message is written to stdout);
+    - LOG_MESSAGE_FILE - the file to write to (if empty, message is written to stderr);
     - LOG_MESSAGE_SEP - separator character(-s) between message parts (is empty, defaults to '; ')
 "
 log_message() {
@@ -49,7 +49,7 @@ log_message() {
 
     # Write the log line
     if [ -z "$file" ]; then
-        echo "$line"
+        echo "$line" >&2
     else
         echo "$line" >> "$file"
     fi
