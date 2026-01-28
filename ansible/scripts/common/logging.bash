@@ -10,6 +10,9 @@ fi
 source "$PROJECT_ROOT/ansible/scripts/common/util.bash"
 
 
+LOG_TIMESTAMP_FORMAT="+%Y-%m-%dT%H:%M:%S %z"
+
+
 : "
     Writes a log message to stdout or a file.
 
@@ -44,7 +47,7 @@ log_message() {
     done
 
     # Build a log line
-    local timestamp=$(date "+%Y-%m-%dT%H:%M:%S %z")
+    local timestamp=$(date "$LOG_TIMESTAMP_FORMAT")
     local line=$(join_by "$sep" "$timestamp" "$level" "$source" "$message")
 
     # Write the log line
