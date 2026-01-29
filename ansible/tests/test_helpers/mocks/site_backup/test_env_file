@@ -1,0 +1,22 @@
+# Mock environment variables file for testing site backup modules
+
+# db & static files common settings
+export SERVER_ADDR="127.0.0.1"
+export BACKUP_LOG_FOLDER="$TEST_CASE_TEMP_DIR"
+
+# db backup settings
+export BACKUP_DB_MAX_BACKUP_COUNT=10
+export BACKUP_DB_MIN_INTERVAL=60
+export BACKUP_LOGGING_DB_ANSIBLE_LOG_FILENAME="backup_db_ansible.log"
+
+# static files backup settings
+export BACKUP_STATIC_FILES_MAX_BACKUP_COUNT=10
+export BACKUP_STATIC_FILES_MIN_INTERVAL=60
+export BACKUP_LOGGING_STATIC_FILES_ANSIBLE_LOG_FILENAME="backup_static_files_ansible.log"
+
+# Last backup execution time check settings
+export BACKUP_SCRIPT_LOG_FILENAME="backup.log"
+export BACKUP_LOG_FILE_SEPARATOR=";"
+
+# Flag for env file being source
+export FILE_SOURCE_FLAG=1
