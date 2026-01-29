@@ -3,14 +3,14 @@
 # Project root directory
 # (resolved by finding the top-level directory of a git repository
 # containing $BATS_TEST_DIRNAME directory)
-PROJECT_ROOT="$(git -C "$BATS_TEST_DIRNAME" rev-parse --show-toplevel)"
+export PROJECT_ROOT="$(git -C "$BATS_TEST_DIRNAME" rev-parse --show-toplevel)"
 
 # NOTE: see tests/setup_suite.bash for other locations,
 # where this directory is referenced
-TEMP_DIR="$PROJECT_ROOT/ansible/tests/temp"
+export TEMP_DIR="$PROJECT_ROOT/ansible/tests/temp"
 
 # Sub-directory for a specific test-case
-TEST_CASE_TEMP_DIR="$TEMP_DIR/$BATS_TEST_DESCRIPTION"
+export TEST_CASE_TEMP_DIR="$TEMP_DIR/$BATS_TEST_DESCRIPTION"
 
 
 ensure_test_case_subdir() {
