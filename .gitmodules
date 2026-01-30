@@ -1,0 +1,9 @@
+[submodule "ansible/tests/bats"]
+	path = ansible/tests/bats
+	url = https://github.com/bats-core/bats-core.git
+[submodule "ansible/tests/test_helpers/bats-support"]
+	path = ansible/tests/test_helpers/bats-support
+	url = https://github.com/bats-core/bats-support.git
+[submodule "ansible/tests/test_helpers/bats-assert"]
+	path = ansible/tests/test_helpers/bats-assert
+	url = https://github.com/bats-core/bats-assert.git

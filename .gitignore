@@ -9,8 +9,3 @@ __pycache__/
 *.env
 # *config.json
 hosts.yml
-
-.gitmodules
-ansible/tests/bats
-ansible/tests/test_helpers/bats-assert
-ansible/tests/test_helpers/bats-support
