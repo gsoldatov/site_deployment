@@ -15,3 +15,9 @@ backup_logging_db_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_LOGGING_DB_A
 
 backup_logging_static_files_ansible_log_filename: "{{ lookup('env', 'BACKUP_LOGGING_STATIC_FILES_ANSIBLE_LOG_FILENAME') }}"
 backup_logging_static_files_ansible_keep_log_files: "{{ lookup('env', 'BACKUP_LOGGING_STATIC_FILES_ANSIBLE_KEEP_LOG_FILES') }}"
+
+backup_logging_db_rotation_log_filename: "{{ lookup('env', 'BACKUP_LOGGING_DB_ROTATION_LOG_FILENAME') }}"
+backup_logging_db_rotation_log_keep_files: "{{ lookup('env', 'BACKUP_LOGGING_DB_ROTATION_LOG_KEEP_FILES') }}"
+
+backup_logging_static_files_rotation_log_filename: "{{ lookup('env', 'BACKUP_LOGGING_STATIC_FILES_ROTATION_LOG_FILENAME') }}"
+backup_logging_static_files_rotation_log_keep_files: "{{ lookup('env', 'BACKUP_LOGGING_DB_ROTATION_LOG_KEEP_FILES') }}"
