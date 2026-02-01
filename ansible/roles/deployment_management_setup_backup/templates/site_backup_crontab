@@ -2,13 +2,13 @@
 1 * * * * {{ current_username }} bash "{{ base_directory }}/roles/deployment_management_setup_backup/scripts/site_backup.bash" --backup-db --backup-static-files --env-file "{{ env_file }}"
 
 # File rotation for Ansible playbook logs (database backup)
-0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_db_ansible_log_filename }}*" { print "{{ backup_log_folder }}/"$1 }' | head -n -{{ backup_logging_db_ansible_keep_log_files }} | xargs --no-run-if-empty rm
-
-# File rotation for Ansible playbook logs (static files backup)
-0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_static_files_ansible_log_filename }}*" { print "{{ backup_log_folder }}/"$1 }' | head -n -{{ backup_logging_static_files_ansible_keep_log_files }} | xargs --no-run-if-empty rm
+0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_db_ansible_log_filename }}*" { print "{{ backup_log_folder }}/$1" }' | head -n -{{ backup_logging_db_ansible_keep_log_files }} | xargs --no-run-if-empty rm
 
 # File rotation for db backups rotation logs
-0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_db_rotation_log_filename }}*" { print "{{ backup_logging_db_rotation_log_keep_files }}/"$1 }' | head -n -{{ backup_logging_static_files_ansible_keep_log_files }} | xargs --no-run-if-empty rm
+0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_db_rotation_log_filename }}*" { print "{{ backup_log_folder }}/$1" }' | head -n -{{ backup_logging_db_rotation_log_keep_files }} | xargs --no-run-if-empty rm
+
+# File rotation for Ansible playbook logs (static files backup)
+0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_static_files_ansible_log_filename }}*" { print "{{ backup_log_folder }}/$1" }' | head -n -{{ backup_logging_static_files_ansible_keep_log_files }} | xargs --no-run-if-empty rm
 
 # File rotation for static files backups rotation logs
-0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_static_files_rotation_log_filename }}*" { print "{{ backup_log_folder }}/"$1 }' | head -n -{{ backup_logging_static_files_ansible_keep_log_files }} | xargs --no-run-if-empty rm
+0 * * * * {{ current_username }} ls -tr "{{ backup_log_folder }}" | awk '$1 ~ "{{ backup_logging_static_files_rotation_log_filename }}*" { print "{{ backup_log_folder }}/$1" }' | head -n -{{ backup_logging_static_files_rotation_log_keep_files }} | xargs --no-run-if-empty rm
