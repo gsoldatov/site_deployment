@@ -45,7 +45,18 @@ backup_main() {
     if [[ ! -f $env_file_fullpath ]]; then echo "Env file '$env_file_fullpath' does not exist."; exit 1; fi
 
     source "$env_file_fullpath"
+
+    # Set logging to file, if corresponding environment variables are provided
+    if [ ! -z "$BACKUP_LOG_FOLDER" ] && [ ! -z "$BACKUP_SCRIPT_LOG_FILENAME" ]; then
+        LOG_MESSAGE_FILE="$BACKUP_LOG_FOLDER/$BACKUP_SCRIPT_LOG_FILENAME"
+    fi
+
+    if [ ! -z "$BACKUP_LOG_FILE_SEPARATOR" ]; then
+        LOG_MESSAGE_SEP="$BACKUP_LOG_FILE_SEPARATOR"
+    fi
+
     log_message "DEBUG" "main" "Finished reading environment variables from '$env_file_fullpath'"
+    log_message "DEBUG" "main" "DB backup = $run_backup_db, static files backup = $run_backup_static_files"
 
     # Run database backup
     if ((run_backup_db == 1)); then backup_db; fi

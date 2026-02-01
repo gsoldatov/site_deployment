@@ -11,16 +11,5 @@ fi
 
 source "$PROJECT_ROOT/ansible/scripts/site_backup/main.bash"
 
-
-# Set logging to file, if corresponding environment variables are provided
-if [ ! -z "$BACKUP_LOG_FOLDER" ] && [ ! -z "$BACKUP_SCRIPT_LOG_FILENAME" ]; then
-    LOG_MESSAGE_FILE="$BACKUP_LOG_FOLDER/$BACKUP_SCRIPT_LOG_FILENAME"
-fi
-
-if [ ! -z "$BACKUP_LOG_FILE_SEPARATOR" ]; then
-    LOG_MESSAGE_SEP="$BACKUP_LOG_FILE_SEPARATOR"
-fi
-
-
 # Call site backup entrypoint with provided arguments
 backup_main "$@"
