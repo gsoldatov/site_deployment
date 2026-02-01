@@ -3,11 +3,14 @@ Tests are implemented using bats-core library.
 
 
 # Setting Up Test Environment
+Bats & its utilities are added as submodules & require initialization before tests can be run:
+
 ```bash
-# paths are relative to <project_root> directory
-git submodule add https://github.com/bats-core/bats-core.git ansible/tests/bats
-git submodule add https://github.com/bats-core/bats-support.git ansible/tests/test_helpers/bats-support
-git submodule add https://github.com/bats-core/bats-assert.git ansible/tests/test_helpers/bats-assert
+# Either a repository can be cloned with --recurse-submodules option
+git clone --recurse-submodules <repository_URL>
+
+# or submodules can be initialized from inside the <project_root> directory of an existing repository
+git submodule update --init --recursive
 ```
 
 
@@ -19,4 +22,7 @@ git submodule add https://github.com/bats-core/bats-assert.git ansible/tests/tes
 
 # Run tests inside tests/scripts directory
 ./tests/bats/bin/bats -r --setup-suite-file "tests/setup_suite.bash" tests/scripts
+
+# Filter test cases by description (run a test, which compares variable names in production.env & production.env.example)
+./tests/bats/bin/bats -r --setup-suite-file "tests/setup_suite.bash" --filter "compare production.env and production.env.example" tests/tests
 ```
