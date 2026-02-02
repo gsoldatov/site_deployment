@@ -42,7 +42,7 @@ get_last_log_message_time() {
     if [ ! -z "$line" ]; then
         mapfile -t line_elements < <(parse_log_message "$line" "$BACKUP_LOG_FILE_SEPARATOR")
         local timestamp="${line_elements[0]}"
-        log_message "INFO" "get_last_log_message_time" "Found log message matching '$pattern' at $timestamp in the current file"
+        log_message "INFO" "get_last_log_message_time" "Found log message matching pattern at $timestamp in the current file"
         echo "$(date -d "$timestamp" +%s)"
         return 0
     fi
