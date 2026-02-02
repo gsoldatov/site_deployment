@@ -19,6 +19,8 @@ source "$PROJECT_ROOT/ansible/scripts/site_backup/util.bash"
     and makes a new one, after a specified interval has passed
 '
 backup_static_files () {
+    log_message "INFO" "backup_static_files" "Started static files backup."
+
     # Validate required global variables
     assert_variables "BACKUP_STATIC_FILES_MAX_BACKUP_COUNT" \
                      "BACKUP_STATIC_FILES_MIN_INTERVAL" \
@@ -29,8 +31,8 @@ backup_static_files () {
     
     # Exit if static files backup is diabled
     if (($BACKUP_STATIC_FILES_MAX_BACKUP_COUNT <= 0));
-        then log_message "INFO" "backup_static_files" "Static files backup is disabled.";
-        return 0;
+        then log_message "INFO" "backup_static_files" "Static files backup is disabled."
+        return 0
     fi
 
     # Exit, if not enough time since last backup has passed
@@ -57,7 +59,7 @@ backup_static_files () {
     # Run static files backup
     local current_time=$(date "+%Y_%m_%d-%H_%M_%S")
     local playbook_log_file_path="$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_STATIC_FILES_ANSIBLE_LOG_FILENAME""_$current_time.log"
-    eval "$RUN_STATIC_FILES_BACKUP_COMMAND" > "$playbook_log_file_path"
+    (eval "$RUN_STATIC_FILES_BACKUP_COMMAND") > "$playbook_log_file_path"     # use a subshell to enable passing status code from ansible
     local playbook_exit_code=$?
 
     if (($playbook_exit_code > 0)); then 

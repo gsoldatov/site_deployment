@@ -19,6 +19,8 @@ source "$PROJECT_ROOT/ansible/scripts/site_backup/util.bash"
     and makes a new one, after a specified interval has passed
 '
 backup_db () {
+    log_message "INFO" "backup_db" "Started database backup."
+
     # Validate required global variables
     assert_variables "BACKUP_DB_MAX_BACKUP_COUNT" \
                      "BACKUP_DB_MIN_INTERVAL" \
@@ -28,8 +30,8 @@ backup_db () {
                      "ENV_FILE"
 
     # Exit if database backup is diabled
-    if (($BACKUP_DB_MAX_BACKUP_COUNT <= 0));
-        then log_message "INFO" "backup_db" "Database backup is disabled.";
+    if (($BACKUP_DB_MAX_BACKUP_COUNT <= 0)); then
+        log_message "INFO" "backup_db" "Database backup is disabled."
         return 0;
     fi
 
@@ -57,7 +59,7 @@ backup_db () {
     # Run database backup
     local current_time=$(date "+%Y_%m_%d-%H_%M_%S")
     local playbook_log_file_path="$BACKUP_LOG_FOLDER/$BACKUP_LOGGING_DB_ANSIBLE_LOG_FILENAME""_$current_time.log"
-    eval "$RUN_DB_BACKUP_COMMAND" > "$playbook_log_file_path"
+    (eval "$RUN_DB_BACKUP_COMMAND") > "$playbook_log_file_path"     # use a subshell to enable passing status code from ansible
     local playbook_exit_code=$?
 
     if (($playbook_exit_code > 0)); then 
