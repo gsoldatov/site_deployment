@@ -94,7 +94,7 @@ class JobRunner:
         Returns true if a non-metered Internet connection is available or 
         a metered connection is available and --force flag is passed.
         """
-        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../ansible/roles/deployment_management_setup_backup/scripts/util.sh"))
+        script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../ansible/scripts/common/util.bash"))
         cmd = f"bash -c \"source '{script_path}'; is_metered_connection\"" # bash interpreter is required to correctly source the function
                                                                         # subprocess uses /bin/sh, which may be linked to dash
         proc = subprocess.Popen(cmd, shell=True)
