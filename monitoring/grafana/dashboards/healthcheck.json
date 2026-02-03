@@ -1383,7 +1383,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CASE\n    WHEN message = 'Database backup is disabled.' THEN 'Disabled'\n    WHEN message = 'Existing backup with recent modify time found, exiting.' THEN 'Skipped'\n    WHEN message = 'Database backup was performed recently, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Database backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished database backup.' THEN 'Success'\n\tWHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_db'\n  AND record_time IN (\n    SELECT\n      MAX(record_time) as record_time\n    FROM backup_script_logs \n    WHERE event_source = 'backup_db'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
+          "rawSql": "SELECT\n  CASE\n    WHEN message = 'Database backup is disabled.' THEN 'Disabled'\n    WHEN message = 'Existing backup with recent modify time found, exiting.' THEN 'Skipped'\n    WHEN message = 'Database backup was performed recently, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Database backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished database backup.' THEN 'Success'\n\tWHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_db'\n  AND record_id IN (\n    SELECT\n      MAX(record_id) as record_id\n    FROM backup_script_logs \n    WHERE event_source = 'backup_db'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -1582,7 +1582,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\n  CASE\n    WHEN message = 'Static files backup is disabled.' THEN 'Disabled'\n    WHEN message = 'Static files backup was performed recently, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Static files backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished static files backup.' THEN 'Success'\n\t  WHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_static_files'\n  AND record_time IN (\n    SELECT\n      MAX(record_time) as record_time\n    FROM backup_script_logs \n    WHERE event_source = 'backup_static_files'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
+          "rawSql": "SELECT\n  CASE\n    WHEN message = 'Static files backup is disabled.' THEN 'Disabled'\n    WHEN message = 'Static files backup was performed recently, exiting.' THEN 'Skipped'\n    WHEN message = 'No internet connection available.' THEN 'No internet'\n    WHEN message = 'Internet connection is metered, exiting.' THEN 'Metered connection'\n    WHEN message = 'Production server is currently unreachable.' THEN 'Server unreachable'\n    WHEN message LIKE '%Static files backup execution finished with a non-zero exit code%' THEN 'Error'\n    WHEN message = 'Finished static files backup.' THEN 'Success'\n\t  WHEN message IS NULL THEN 'No data'\n    ELSE 'Unknown'\n  END as status\nFROM (\n  SELECT\n    message\n  FROM backup_script_logs\n  WHERE event_source = 'backup_static_files'\n  AND record_id IN (\n    SELECT\n      MAX(record_id) as record_id\n    FROM backup_script_logs \n    WHERE event_source = 'backup_static_files'\n  )\n  UNION ALL -- add a second line no data case\n  SELECT NULL as message\n) msg\nLIMIT 1\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -2193,6 +2193,6 @@
   "timezone": "",
   "title": "01. Healthcheck",
   "uid": "DU__UXA4k",
-  "version": 30,
+  "version": 31,
   "weekStart": ""
 }
