@@ -559,7 +559,7 @@
               },
               {
                 "color": "red",
-                "value": 1440
+                "value": 20160
               }
             ]
           },
@@ -1046,6 +1046,6 @@
   "timezone": "",
   "title": "04. Log Fetching & Backups",
   "uid": "NvoVB7JVk",
-  "version": 19,
+  "version": 20,
   "weekStart": ""
 }

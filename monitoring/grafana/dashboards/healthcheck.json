@@ -1428,7 +1428,7 @@
               },
               {
                 "color": "red",
-                "value": 1440
+                "value": 20160
               }
             ]
           },
@@ -2193,6 +2193,6 @@
   "timezone": "",
   "title": "01. Healthcheck",
   "uid": "DU__UXA4k",
-  "version": 31,
+  "version": 32,
   "weekStart": ""
 }
