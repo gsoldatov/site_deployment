@@ -1,41 +1,57 @@
 # Frontend deployment role:
-# - installs frontend dependencies;
+# - installs Node.js & frontend dependencies;
 # - pulls frontend repo from Github & builds frontend.
 
-# Verify Node installation | Install Node
-- name: Check if Node is installed
-  stat:
-    path: "{{ node_installation_bin_path }}/node"
-  register: node_binary
+# Ensure Node.js of a specific version is installed
+- name: Get current Node.js version
+  command: node --version
+  register: current_node_version
+  ignore_errors: yes
+  changed_when: false
 
-- name: Download Node distribution
-  get_url:
-    url: "{{ node_download_url }}"
-    dest: "{{ node_download_path }}"
-  when: not node_binary.stat.exists
+- name: Check if Node.js update is needed
+  set_fact:
+    node_update_needed: >-
+      {{ current_node_version.rc != 0 or
+         current_node_version.stdout != node_version }}
 
-- name: Create Node folder
-  command: "mkdir -p '{{ node_installation_path }}'"
-  when: not node_binary.stat.exists
-  become: yes
+- name: Install or update Node.js
+  block:
+    - name: Remove existing Node.js installations
+      file:
+        path: "{{ node_installation_path }}"
+        state: absent
+      become: yes
+    
+    - name: Create Node.js install directory
+      file: 
+        path: "{{ node_installation_path }}"
+        state: directory
+      become: yes
 
-- name: Extract Node distribution
-  command: "tar -xJvf '{{ node_download_path }}' -C '{{ node_installation_path }}'"
-  when: not node_binary.stat.exists
-  become: yes
+    - name: Download Node distribution
+      get_url:
+        url: "{{ node_download_url }}"
+        dest: "{{ node_download_path }}"
 
-- name: Ensure CLI shortcuts for Node binaries exist
-  file:
-    src: "{{ node_installation_bin_path }}/{{ item }}"
-    dest: "/usr/bin/{{ item }}"
-    state: link
-  loop: ["node", "npm", "npx"]
-  become: yes
+    - name: Extract Node distribution
+      command: "tar -xJvf '{{ node_download_path }}' -C '{{ node_installation_path }}'"
+      become: yes
 
-- name: Delete Node distribution
-  file:
-    path: "{{ node_download_path }}"
-    state: absent
+    - name: Ensure CLI shortcuts for Node binaries exist
+      file:
+        src: "{{ node_installation_bin_path }}/{{ item }}"
+        dest: "/usr/bin/{{ item }}"
+        state: link
+      loop: ["node", "npm", "npx"]
+      become: yes
+
+    - name: Delete Node distribution
+      file:
+        path: "{{ node_download_path }}"
+        state: absent
+  
+  when: node_update_needed
 
 # Setup frontend repository
 - name: Clone | update repository
