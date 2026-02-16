@@ -1,0 +1,22 @@
+# Disables swap file on remote host
+
+
+# Check if swap with specific name and type exists
+- name: Check if swap with specific name exists
+  command: swapon --show | awk '$1 == "{{ swap_file_name }}" && $2 == "file" { print $1 }'
+  register: swap_file_status
+  changed_when: false
+  failed_when: false
+  become: yes
+
+# Fail if swap is not enabled
+- name: Fail if swap is not enabled
+  fail:
+    msg: "Swap file {{ swap_file_name }} is not enabled"
+  when: swap_file_status.stdout == ""
+  become: yes
+
+# Disable swap
+- name: Disable the swap file
+  command: swapoff "{{ swap_file_name }}"
+  become: yes

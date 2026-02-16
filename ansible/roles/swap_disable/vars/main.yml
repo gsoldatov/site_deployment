@@ -1,0 +1,2 @@
+# Swap configuration variables
+swap_file_name: "{{ lookup('env', 'SWAP_FILE_NAME') }}"

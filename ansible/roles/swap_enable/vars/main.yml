@@ -1,0 +1,3 @@
+# Swap configuration variables
+swap_file_name: "{{ lookup('env', 'SWAP_FILE_NAME') }}"
+swap_file_size: "{{ lookup('env', 'SWAP_FILE_SIZE') }}"

@@ -2,5 +2,7 @@
 - hosts: srv
   roles:
     - frontend_update_on_start
+    - swap_enable
     - frontend_deploy
+    - swap_disable
     - frontend_update_on_finish

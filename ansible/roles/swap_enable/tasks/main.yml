@@ -1,0 +1,37 @@
+# Configures & enables swap file on remote host
+
+
+# Check if swap with specific name and type exists
+- name: Check if swap with specific name exists
+  command: swapon --show | awk '$1 == "{{ swap_file_name }}" && $2 == "file" { print $1 }'
+  register: swap_file_status
+  changed_when: false
+  failed_when: false
+  become: yes
+
+# Fail if swap is already enabled
+- name: Fail if swap is already enabled
+  fail:
+    msg: "Swap file {{ swap_file_name }} is already enabled"
+  when: swap_file_status.stdout != ""
+  become: yes
+
+# Configure & enable swap
+- name: Create swap file directory
+  file:
+    path: "{{ swap_file_name }}"
+    state: touch
+    mode: "0600"
+  become: yes
+
+- name: Allocate disk space for swap file
+  command: fallocate -l "{{ swap_file_size }}" "{{ swap_file_name }}"
+  become: yes
+
+- name: Format the file as swap space
+  command: mkswap "{{ swap_file_name }}"
+  become: yes
+
+- name: Enable the swap file
+  command: swapon "{{ swap_file_name }}"
+  become: yes
